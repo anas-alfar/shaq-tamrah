@@ -1,0 +1,4 @@
+Status(Draft|Pending|Active|Blocked|Deleted),Sequence,Published,Name(English),Description(English),Name(Arabic),Description(Arabic)
+Active,1,Yes,test cat 1,test cat 1,test cat 1 arabic,test cat 1 arabic
+Active,2,Yes,test name,test,test,test
+Active,3,No,english,english des,arabic ,arebic des

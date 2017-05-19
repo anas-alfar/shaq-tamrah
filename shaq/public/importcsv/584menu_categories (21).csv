@@ -1,0 +1,5 @@
+#ID,Locale,Name,Locale Title,Published,Status(Draft|Pending|Active|Blocked|Deleted),Sequence,Country Id,Icon
+1,US,English,English,Yes,Active,1,1,,
+2,AR,Arabic,Arabic,Yes,Active,2,1,,
+3,MA,Malesiya,Malesiya,No,Active,4,1,1,
+4,AS,aas,aas,Yes,Active,1,1,,

@@ -1,0 +1,2 @@
+Name,Description,Config Key,Config Value,Config Type(System|Website|Organization|Beneficiary|Donor|Payment|Agent|Project|Post),Environment(DEV|STG|LIVE),Allow Override,Force,Published
+ Configurations,Configurations, Configurations, Configurations,System,DEV,Yes,Yes,Yes,

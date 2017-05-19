@@ -1,0 +1,11 @@
+Name,Config Key,Config Value,Config Type,Environment,Allow Override,Force,Published
+test1,fdg,cvb,Donor,DEV,Yes,Yes,Yes
+vivekqwe,aaa,ds,Agent,LIVE,Yes,Yes,No
+rutvik,aaa,sd,Beneficiary,LIVE,Yes,Yes,Yes
+fdg,aaa,dfggfg,System,DEV,Yes,No,No
+dsf,aaa,dfgfdg,Organization,DEV,Yes,Yes,No
+dsf,aaa,dfgfdg,Organization,DEV,No,Yes,Yes
+adminadmin,aaa,dfgf,Payment,LIVE,No,Yes,Yes
+viv,mnnbm,nbmnbm,System,LIVE,No,Yes,No
+test 1,test_1,test 1,Donor,LIVE,Yes,Yes,Yes
+Anas,AAAAAAA,fdsf,Website,STG,No,No,No

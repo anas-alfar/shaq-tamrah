@@ -1,0 +1,6 @@
+Status(Draft|Pending|Active|Blocked|Deleted),Sequence,Published,Name(English),Description(English),Name(Arabic),Description(Arabic),Name(Malesiya),Description(Malesiya),Name(aas),Description(aas)
+Active,1,No,test cat 11,test cat 111,test cat 1 arabic 111,test cat 1 arabic 111,m test 1211,m desc 11,aas test 11,aas desc 11
+Active,2,No,test name1,test11,test111,test111,m test 222,m desc 222,aas test 222,aas desc 222
+Active,3,No,english1,english des11,arabic 111,arebic des 11,m test 333,m desc 333,aas test 333,aas desc 333
+Active,4,Yes,new eng 1,new eng d 1,new arb 1,new arb desv 1,new m 1,new m desv 1,new aas 1,new aas des 1
+Draft,5,Yes,new eng 2,new end d 2,new arb 2,new arb desv 2,new m 2,new m desv 2,new aas 2,new aas des 2

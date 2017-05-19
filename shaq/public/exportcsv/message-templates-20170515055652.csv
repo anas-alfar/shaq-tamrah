@@ -1,0 +1,6 @@
+#ID,Message Type,Message For,From Mobile Number,From Email,To Mobile Number,To Email,Published,From Name(English),To Name(English),Description(English),Subject(English),From Name(Arabic),To Name(Arabic),Description(Arabic),Subject(Arabic),
+11,Message ,Donor,gfhgfhf,hghg,ghgfhfg,fhgfhgfh,Yes,sdfdsf,dsfdsf,dsfdsf,dsfdsfds,gfhgfhgfh,hgfhgf,gfhgfh,gfhgf,
+12,Message ,Donor,gfhgfhf,hghg,ghgfhfg,fhgfhgfh,Yes,sdfdsf,dsfdsf,dsfdsf,dsfdsfds,gfhgfhgfh,hgfhgf,gfhgfh,gfhgf,
+13,Message ,Donor,123546535,test@gmail.com,52754421354,test@gmail.com,No,test,test,test1,test,test2,test2,test2,test2,
+14,Message ,Donor,123546535,test@gmail.com,52754421354,test@gmail.com,Yes,test1,test,test1,test,test2,test2,test2,test2,
+15,Message ,Donor,123546535,test@gmail.com,52754421354,test@gmail.com,No,test11,test,test1,test,test2,test2,test2,test2,

@@ -1,0 +1,6 @@
+#ID,Country,Population Count,Houses Count,Distance To Capital,Published,Name(English),Name(Arabic),
+1,India,1,1,1,Yes,RAJKOT,RAJKOT,
+2,India,1,1,1,No,AHEMDABAD,AHEMDABAD,
+3,India,1,2,3,No,Rajkot,Rajkot,
+4,India,3,2,5,No,RAJKOT,RAJKOT,
+5,India,4,2,5,Yes,Morbi,RAJKOT,
