@@ -17,6 +17,7 @@ class BeneficiaryRelationsController extends AbstractActionController
 	private $config;
 	private $redisCache;
 	private $memCached;
+	private $global_locale_id;
 	
 	protected static $Aula_UID;
 	protected static $Aula_OrgID;
@@ -31,6 +32,7 @@ class BeneficiaryRelationsController extends AbstractActionController
 		$this->config = $config;
 		$this->redisCache = $redis;
 		$this->memCached = $memcached;
+		$this->global_locale_id = $config['global_locale_id'];
 				
 		self::$Aula_UID = $this->sessionContainer->Aula_UID;
 		self::$Aula_OrgID = $this->sessionContainer->Aula_OrgID;
@@ -62,7 +64,7 @@ class BeneficiaryRelationsController extends AbstractActionController
 	public function fnGrid()
 	{
 		$activeLocalesArray = $this->AdminfunctionsPlugin()->getActiveLocales($this->dbAdapter);
-		$aColumns = array( '`id`','`name`','`allow_recurrence`','`published`');
+		$aColumns = array( '`id`','`name`','`country_name`','`allow_recurrence`','`published`');
 		if(!($this->memCached->hasItem('aula_beneficiaryrelation_data')) || !is_array($this->memCached->getItem('aula_beneficiaryrelation_data')))
 		{	
 			$sTable = 'view_beneficiary_relation';
@@ -175,7 +177,7 @@ class BeneficiaryRelationsController extends AbstractActionController
 			$resultSet 			= new ResultSet; 			   
 			$resultSet->initialize($resultData);        
 			$rowset 			= $resultSet->toArray();
-			$csvData .= "#ID,Allow Recurrence,Published,";
+			$csvData .= "#ID,Country,Allow Recurrence(Yes|No),Published(Yes|No),";
 			foreach($activeLocalesArray as $locale)
 			{
 				$csvData .= "Name(".$locale['name']."),";
@@ -189,6 +191,7 @@ class BeneficiaryRelationsController extends AbstractActionController
 			{
 				
 				$csvData .= $row['id'].",";
+				$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['country_name']).",";
 				$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['allow_recurrence']).",";
 				$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['published']).",";
 				foreach($activeLocalesArray as $locale)
@@ -243,18 +246,27 @@ class BeneficiaryRelationsController extends AbstractActionController
 					{
 						fgetcsv($handle);   
 					   	while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
-							if($data[1] != "" && $data[2] != "" && $data[3] != "" )
+							if($data[1] != "" && $data[2] != "" && $data[3] != ""&& $data[4] != "" )
 							{
 								$saveDataArray = array();
 								$column_index = 1;
 								
-								
+								$getCountryID = $this->AdminfunctionsPlugin()->validateduplicateLocaleCSV('country_locale',$this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]),'name','country_id',$this->dbAdapter,$this->config['global_locale_id'],'locale_id');
+								$saveDataArray['country_id']= $getCountryID;
 								$saveDataArray['allow_recurrence'] 	= $this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]);
 								$saveDataArray['published'] 	= $this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]);
 								
 								$detailData = array();
 								$detailData['name'] = $data[$column_index++];
 								
+								$fnameValPair = array();
+								$fnameValPair['name']=$detailData['name'];
+								$fnameValPair['country_id ']=$saveDataArray['country_id'];
+								$existRecordID = $this->AdminfunctionsPlugin()->validateduplicateCSV('view_beneficiary_relation',$detailData['name'],'name',$this->dbAdapter,$data[0]);	
+								if($existRecordID > 0)
+								{
+									continue;
+								}
 								$existRecordID = $data[0]; 
 								if($existRecordID > 0)
 								{
@@ -266,11 +278,7 @@ class BeneficiaryRelationsController extends AbstractActionController
 								}
 								else
 								{
-									$existRecordID = $this->AdminfunctionsPlugin()->validateduplicateCSV('view_beneficiary_relation',$detailData['name'],'name',$this->dbAdapter);	
-									if($existRecordID > 0)
-									{
-										continue;
-									}
+									
 									$saveDataArray['owner_organization_id'] = self::$Aula_OwnerOrgID;
 									$saveDataArray['owner_organization_user_id'] = self::$Aula_OwnerOrgUserID;								
 									$projectTable->insert($saveDataArray);	
@@ -340,7 +348,7 @@ class BeneficiaryRelationsController extends AbstractActionController
 		$activeLocalesArray = $this->AdminfunctionsPlugin()->getActiveLocales($this->dbAdapter);
 		$csvData = '';		
 		
-		$csvData .= "#ID,Allow Recurrence,Published,";
+		$csvData .= "#ID,Country,Allow Recurrence(Yes|No),Published(Yes|No),";
 		foreach($activeLocalesArray as $locale)
 		{
 			$csvData .= "Name(".$locale['name']."),";
@@ -355,14 +363,12 @@ class BeneficiaryRelationsController extends AbstractActionController
 	}
 	public function validateduplicateAction()
     {
-        if ($this->request->isPost()) {
+         if ($this->request->isPost()) {
             $tableName = $this->request->getPost('tableName');
-            $ID = $this->request->getPost('KEY_ID');
 			$EDIT_ID = $this->request->getPost('iActiveID');
-            $fieldName = $this->request->getPost('fieldName'); 
+			$fnameValPair = $this->request->getPost('fnameValPair');			
 			
-			
-			$this->AdminfunctionsPlugin()->validateduplicatelocale($tableName,$ID,$fieldName,$EDIT_ID,'beneficiary_relation_id',$this->dbAdapter,$this->config);           
+			$this->AdminfunctionsPlugin()->validateduplicatemultiple($tableName,$EDIT_ID,$fnameValPair,$this->dbAdapter);           
         }
 		else {
 			$result1['DBStatus'] = 'ERR';
@@ -487,7 +493,7 @@ class BeneficiaryRelationsController extends AbstractActionController
 			if ($this->request->getPost("pAction") == "ADD")
 			{
 				$masterData = array();
-				
+				$masterData['country_id'] 		= $aData['country_id'];
 				$masterData['allow_recurrence'] 	= $aData['allow_recurrence'];
 				$masterData['published'] 			= $aData['published'];
 				
@@ -516,7 +522,7 @@ class BeneficiaryRelationsController extends AbstractActionController
 				$iMasterID=$aData['MASTER_KEY_ID'];				
 				
 				$masterData = array();
-				
+				$masterData['country_id'] 		= $aData['country_id'];
 				$masterData['allow_recurrence'] 	= $aData['allow_recurrence'];
 				$masterData['published'] 			= $aData['published'];
 				$masterData['date_updated'] 		= date('Y-m-d H:i:s');
@@ -526,9 +532,23 @@ class BeneficiaryRelationsController extends AbstractActionController
 				{
 					$detailData = array();
 					$detailData['name'] = $aData['name_'.$locale['id']];
-					$detailData['date_updated'] = date('Y-m-d H:i:s');
 					
-					$projectTableLocale->update($detailData,array("beneficiary_relation_id=".$iMasterID,"locale_id=".$locale['id']));
+					$rowset = $projectTableLocale->select(array("beneficiary_relation_id=".$iMasterID,"locale_id=".$locale['id']));
+					$rowset = $rowset->toArray();
+					if(isset($rowset[0]['id']) && $rowset[0]['id'] > 0 ) 
+					{					
+						$detailData['date_updated'] = date('Y-m-d H:i:s');
+						$projectTableLocale->update($detailData,array("id=".$rowset[0]['id']));						
+					} 
+					else 
+					{
+						$detailData['locale_id'] = $locale['id'];
+						$detailData['beneficiary_relation_id'] = $iMasterID;
+						$detailData['owner_organization_id'] = self::$Aula_OwnerOrgID;
+						$detailData['owner_organization_user_id'] = self::$Aula_OwnerOrgUserID;
+						$projectTableLocale->insert($detailData);	
+					}
+					
 				}									
 				$result['DBStatus'] = 'OK';
 			}
@@ -543,4 +563,22 @@ class BeneficiaryRelationsController extends AbstractActionController
         echo $result;
         exit;
     }
+	public function getrelationAction() 
+	  {                
+		$sql="select * from view_beneficiary_relation where published='Yes'";	
+		if ($this->request->getPost("country_id") !='' &&$this->request->getPost("country_id") >= 0) 
+		$sql .= " AND country_id = '".$this->request->getPost("country_id")."' ";		        
+		$optionalParameters=array();        
+		$statement 		   = $this->dbAdapter->createStatement($sql, $optionalParameters);       
+	    $result = $statement->execute();        
+		$resultSet = new ResultSet;        
+		$resultSet->initialize($result);        
+		$rowset=$resultSet->toArray();        
+		$result1['DBData'] = $rowset;        
+		$result1['recordsTotal'] = count($rowset);        
+		$result1['DBStatus'] = 'OK';        
+		$result = json_encode($result1);       
+		echo $result;        
+		exit;    
+	 }
 }

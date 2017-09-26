@@ -5,13 +5,14 @@
 <html lang="en">
     <?php include("site_head.php");?>	
     <body id="body-main" class="smart-style-0 desktop-detected">
-
 		<?php include("top_header.php");?>	
 			
 		<?php include("left_menu.php");?>	
 			
 		<!-- #MAIN PANEL -->
 		<div id="main" role="main">
+			<div class="body_overlay_dark hide"></div>
+			<div class="common_loader hide"><img src="<?php echo $this->basePath(); ?>/public/img/loading1.gif"></div>
 			<?php echo $this->content ?>
 		</div>
 		<!-- END #MAIN PANEL -->

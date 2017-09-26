@@ -3,11 +3,46 @@
  */
 $(document).ready(function () {	
 			
+	$("#btnSave1").click(function(){
+				$("#frmForm1").submit();
+			});	    
+		
+	$("#btnBack1").click(function (e) {
+		e.stopPropagation();
+		fullscreenModeChange('btnBack1');
+		visibleControl("widForm1", false);
+		visibleControl("widGrid", true);
+
+	});
+	
 	$("#btnSave").click(function(){
 		$("#frmForm").submit();
-	});	    
+	});
+	$("#btnSaveType").click(function(){
+		$("#frmFormType").submit();
+	});
+	$("#btnSaveOrder1").click(function(){
+		saveorderData();  
+	});
+	$("#btnReorder").click(function(e){
+									
+		e.stopPropagation();  
+		fetch_grid_data_draggable();
+		fullscreenModeChange('btnReorder');
+        objMyDetailRecords.length=0;
+        tblDetailsListBody.html('');
+		visibleControl("widGrid", false);
+		 visibleControl("reorderForm", true);
+	});
+	
+    $("#btnReorderBack").click(function (e) {
+        e.stopPropagation();
+		fullscreenModeChange('btnReorderBack');
+        visibleControl("reorderForm", false);
+        visibleControl("widGrid", true);
 
-    btnBack.click(function (e) {
+    });
+	 btnBack.click(function (e) {
         e.stopPropagation();
 		fullscreenModeChange('btnBack');
         visibleControl("widForm", false);
@@ -27,11 +62,16 @@ $(document).ready(function () {
         strActionMode="ADD";
         glbControlEnable(true);		
 		$('#frmForm').bootstrapValidator("resetForm",true); 
+		$('#langFormTabs a:first').tab('show').trigger('click');
 		//alert($('ul#langFormTabs li:first-child').html());
 		// $('.nav-tabs a[href="#tabs-1"]').tab('show');
 		$('ul#langFormTabs li').each(function(){
 		   $(this).find('i').removeClass('fa-check').removeClass('fa-times');
 		});
+		
+		if (typeof funCallAfterNew == 'function') { 
+					funCallAfterNew();	
+		}
 		
 		//ckeditorData1.setData();
 		

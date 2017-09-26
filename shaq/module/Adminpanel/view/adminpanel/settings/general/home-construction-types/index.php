@@ -28,7 +28,7 @@
 <!-- END #MAIN CONTENT -->
 <script type="text/javascript">
 			
-		var gridData;
+		var gridData = [];
 		function fetch_grid_data(objFormData)
 		{
 			hideShowLoader(true);
@@ -134,6 +134,7 @@
 					responsiveHelper_tblMasterList.createExpandIcon(nRow);
 				},
 				"drawCallback" : function(oSettings) {
+					grid_tooltip();
 					responsiveHelper_tblMasterList.respond();
 				},	
 				"aaData": gridData,

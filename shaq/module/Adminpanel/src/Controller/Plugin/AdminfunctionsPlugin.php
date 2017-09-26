@@ -40,7 +40,7 @@ class AdminfunctionsPlugin extends AbstractPlugin {
 	}
 	public function validateduplicatelocale($tableName,$ID,$fieldName,$EDIT_ID,$matchFild,$dbAdapter,$config)
 	{
-		$sql = "select id from $tableName where $fieldName='".$ID."' AND $matchFild != '".$EDIT_ID."' AND locale_id='".$config['global_locale_id']."'";
+		 $sql = "select id from $tableName where $fieldName='".$ID."' AND $matchFild != '".$EDIT_ID."' AND locale_id='".$config['global_locale_id']."'";
 		
 		$optionalParameters = array();
 		$statement = $dbAdapter->createStatement($sql, $optionalParameters);
@@ -65,9 +65,9 @@ class AdminfunctionsPlugin extends AbstractPlugin {
 		exit;
 	}
 
-	public function validateduplicateCSV($tableName,$ID,$fieldName,$dbAdapter)
+	public function validateduplicateCSV($tableName,$ID,$fieldName,$dbAdapter,$EDIT_ID=0)
 	{
-		$sql = "SELECT id FROM $tableName WHERE $fieldName='".$ID."'";
+		$sql = "SELECT id FROM $tableName WHERE $fieldName='".$ID."' AND id !='".$EDIT_ID."'";
 
 		$optionalParameters = array();
 		$statement = $dbAdapter->createStatement($sql, $optionalParameters);
@@ -110,6 +110,59 @@ class AdminfunctionsPlugin extends AbstractPlugin {
 		{
 			return 0;
 		}
+	}
+	public function validateduplicatemultiple($tableName,$EDIT_ID,$fnameValPair,$dbAdapter)
+	{
+		$sql = "select id from $tableName where id !='".$EDIT_ID."' ";
+		foreach($fnameValPair as $fieldName => $fieldValue)
+		{
+			$sql .= " AND   $fieldName =  '$fieldValue' ";
+		}
+		$optionalParameters = array();
+		$statement = $dbAdapter->createStatement($sql, $optionalParameters);
+
+		$result = $statement->execute();
+		$resultSet = new ResultSet;
+		$resultSet->initialize($result);
+		$rowset = $resultSet->toArray();
+
+		if(count($rowset)>0) {
+
+			$result1['recordsTotal'] = count($rowset);
+			$result1['DBStatus'] = 'ERR';
+		}
+		else
+		{
+			$result1['DBStatus'] = 'OK';
+		}
+
+		$result1 = json_encode($result1);
+		echo $result1;
+		exit;
+	}
+	public function validateduplicatemultipleCSV($tableName,$EDIT_ID,$fnameValPair,$dbAdapter)
+	{
+		$sql = "select id from $tableName where id !='".$EDIT_ID."' ";
+		foreach($fnameValPair as $fieldName => $fieldValue)
+		{
+			$sql .= " AND   $fieldName =  '$fieldValue' ";
+		}
+		$optionalParameters = array();
+		$statement = $dbAdapter->createStatement($sql, $optionalParameters);
+
+		$result = $statement->execute();
+		$resultSet = new ResultSet;
+		$resultSet->initialize($result);
+		$rowset = $resultSet->toArray();
+		if(count($rowset)>0) {
+
+			return $rowset[0]['id'];
+		}
+		else
+		{
+			return 0;
+		}
+
 	}
 	public function exportDataValidate($string)
 	{
@@ -162,6 +215,34 @@ class AdminfunctionsPlugin extends AbstractPlugin {
 		$result = json_encode($result);
         echo $result;
         exit;
+	}
+	
+	public function getSingleRecord($ID,$cacheObj,$cacheName,$tableName,$dbAdapter)
+	{
+		$rowset = array();
+		if($cacheObj->hasItem($cacheName) && is_array($cacheObj->getItem($cacheName)))
+		{
+			$itemObj = $cacheObj->getItem($cacheName);
+			$rowset[0] = $itemObj[$ID];
+		}
+		else
+		{
+			$projectTable = new TableGateway($tableName, $dbAdapter);
+			$rowset = $projectTable->select(array('id' => $iID));
+			$rowset = $rowset->toArray();
+		}
+
+		return $rowset[0];
+	}
+	public function getSingleRecord2($fieldName,$fieldValue,$tableName,$dbAdapter)
+	{
+		$rowset = array();
+		
+		$projectTable = new TableGateway($tableName, $dbAdapter);
+		$rowset = $projectTable->select(array($fieldName => $fieldValue));
+		$rowset = $rowset->toArray();
+
+		return $rowset;
 	}
 }
 ?>

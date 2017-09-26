@@ -58,6 +58,7 @@
 					        <thead>
 								<tr>
 									<th></th>
+									<th></th>
 									<th class="hasinput">
 										<input type="text" class="form-control" placeholder="Filter Family Name" />
 									</th>
@@ -72,7 +73,7 @@
 									</th>
 									<th class="hasinput">
 										<input type="text" class="form-control" placeholder="Filter Country" >
-									
+									</th>
 									
 									
 																		
@@ -83,9 +84,11 @@
 												<option value="<!--No-->">No</option>
 										   </select>   
 									</th>
+									<th></th>
 								</tr>
 					            <tr>
 									<th>Id</th>
+									<th></th>
 				                    <th data-class="expand">Family Name</th>
 				                    <th>Sequence</th>
 									<th data-hide="phone,tablet">Family Book Number</th>

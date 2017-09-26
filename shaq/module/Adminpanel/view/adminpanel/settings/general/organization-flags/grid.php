@@ -19,7 +19,7 @@
 				-->
 				<header>
 					<span class="widget-icon"> <i class="fa fa-list-ul"></i> </span>
-					<h2>Spending Types Listing</h2>
+					<h2>Organization Flags</h2>
 							
 						<div class="widget-toolbar">
 							<a href="<?php echo $this->url('adminpanel/organization-flags', array('action'=>'downloadtemplate'));?>" target="_blank">
@@ -76,7 +76,7 @@
 								</tr>
 					            <tr>
 									<th>Id</th>
-				                    <th data-class="expand">Name</th>
+				                    <th data-class="expand">Flag Name</th>
 				                    <th>Country</th>
 									<th data-hide="phone,tablet">Published</th>
 									<th data-hide="phone" class="action">Action</th>

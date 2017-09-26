@@ -15,7 +15,6 @@
 							    </button>
 					</div>
 				</header>
-				
 				<div>
 					<div class="widget-body">
 						<div id="tabs">
@@ -46,6 +45,34 @@
 												<label class="control-label">Family Name<span>*</span></label>
 												<input type="text" class="form-control" name="family_name_<?php echo $this->global_locale_id; ?>" id="family_name_<?php echo $this->global_locale_id; ?>"/>
 											</div>
+										</section>
+										<section class="col-md-6">
+											<div class="form-group">
+												<label class="control-label">Family Book Number<span>*</span></label>
+													<input type="text" class="form-control" name="family_book_number" id="family_book_number"/>
+											</div>	
+										</section>
+										
+										
+									</div>
+									<div class="row">
+										<section class="col-md-4">
+											<div class="form-group">
+												<label class="control-label">Country<span>*</span></label>
+													<select class="select2" id="country_id" name="country_id" type="select">														
+														<option value="0">Select Country</option>
+													</select> 
+											</div>
+										</section>
+										<section class="col-md-4">
+											<div class="form-group">
+												<label class="control-label">Beneficiary Profile<span>*</span></label>
+													<select class="select2" id="beneficiary_profile_id" name="beneficiary_profile_id" type="select">														
+														<option value="0">Select Beneficiary Profile</option>
+													</select> 
+											</div>
+										</section>
+										<section class="col-md-4">
 											<div class="form-group">
 												<label>&nbsp;</label>
 												<label class="customwidth">
@@ -59,74 +86,31 @@
 													</span>
 												</label>
 											</div>
-										</section>
-										<section class="col-md-6">
+										</section>	
+									</div>
+									<div class="row">
+										<section class="col-md-4">
 											<div class="form-group">
 												<label class="control-label">Intro Text<span></span></label>
 												<textarea type="text" id="intro_text_<?php echo $this->global_locale_id; ?>" name="intro_text_<?php echo $this->global_locale_id; ?>" class="description form-control"  ></textarea>
 											</div>
 										</section>
-										
-									</div>
-									<div class="row">
-										<section class="col-md-6">
-											<div class="form-group">
-												<label class="control-label">Sequence<span>*</span></label>
-													<input type="number" class="form-control" name="sequence" id="sequence"/>
-											</div>	
-										</section>
-										<section class="col-md-6">
-											<div class="form-group">
-												<label class="control-label">Family Book Number<span>*</span></label>
-													<input type="number" class="form-control" name="family_book_number" id="family_book_number"/>
-											</div>	
-										</section>
-									</div>
-									<div class="row">								
-										<section class="col-md-6">
-											<div class="form-group">
-												<label class="control-label">Status<span>*</span></label>
-													<select class="select2" id="status" name="status" type="select">														
-														<option value="0">Select Status</option>
-														<option value="New">New</option>
-														<option value="Draft">Draft</option>
-														<option value="Review">In Review</option>
-														<option value="Moved">Moved</option>
-														<option value="Approved">Approved</option>
-														<option value="Rejected">Rejected</option>
-														<option value="Duplicate">Duplicate</option>
-														<option value="Deleted">Deleted</option>
-													</select> 
-											</div>
-										</section>
-										<section class="col-md-6">
-											<div class="form-group">
-												<label class="control-label">Country<span>*</span></label>
-													<select class="select2" id="country_id" name="country_id" type="select">														
-														<option value="0">Select Country</option>
-													</select> 
-											</div>
-										</section>
-									</div>
-									<div class="row">
-										<section class="col-md-6">
+										<section class="col-md-4">
 											<div class="form-group">
 												<label class="control-label">Notes<span></span></label>
 												<textarea type="text"  class="description form-control" name="notes" id="notes" ></textarea>
 											</div>
 										</section>
-										<section class="col-md-6">
+										<section class="col-md-4">
 											<div class="form-group">
 												<label class="control-label">Options<span></span></label>
 												<textarea type="text" id="options" name="options" class="description form-control" ></textarea>
 											</div>
 										</section>
-										
 									</div>
 									<div class="row">
-										<section class="col-md-6">
-											
-										</section>
+										
+										
 									</div>
 								</div>
 								<?php 
@@ -156,12 +140,12 @@
 								?>
 							</div>
 						</div>
-					  </div>	
-					</form>
+					  	</form>
+					</div>
 				   </div>
 				</div>
-			 </div>
+			  </div>
 		</div>
 	</div>
 </section>	
-								
+<?php include("beneficiary_details.php");?>

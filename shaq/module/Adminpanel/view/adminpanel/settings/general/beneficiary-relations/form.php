@@ -47,7 +47,17 @@
 												<input type="text" class="form-control" name="name_<?php echo $this->global_locale_id; ?>" id="name_<?php echo $this->global_locale_id; ?>"/>
 											</div>
 										</section>
-										<section class="col-md-3">
+										<section class="col-md-6">
+											<div class="form-group">
+												<label class="control-label">Country<span>*</span></label>
+													<select class="select2" id="country_id" name="country_id" type="select">														
+														<option value="0">Select Country</option>
+													</select> 
+												</div>
+										</section>
+									</div>
+									<div class="row">	
+										<section class="col-md-6">
 											<div class="form-group">
 												<label>&nbsp;</label>
 												<label class="customwidth">
@@ -62,7 +72,7 @@
 												</label>
 											</div>
 										</section>
-										<section class="col-md-3">
+										<section class="col-md-6">
 											<div class="form-group">
 												<label>&nbsp;</label>
 												<label class="customwidth">

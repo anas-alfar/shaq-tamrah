@@ -41,10 +41,16 @@ class MediaCategoriesController extends AbstractActionController
     }
     public function indexAction()
     {		
+		$activeLocalesArray = $this->AdminfunctionsPlugin()->getActiveLocales($this->dbAdapter);
+		$globalLocalName = $this->AdminfunctionsPlugin()->getLocalNameById($this->dbAdapter,$this->config['global_locale_id']);
+		
 		return new ViewModel([
 			'admin_layout_dir_path' => $this->config['site_dir_path']['admin_layout_dir_path'],
 			'public_dir_path' => $this->config['site_dir_path']['public_dir_path'],
 			'public_dir_url' => $this->config['site_dir_path']['public_dir_url'],
+			'activeLocalesArray' => $activeLocalesArray,
+			'global_locale_id' => $this->config['global_locale_id'],
+			'globalLocalName' => $globalLocalName,
 		]);
     }
 	public function listAction()
@@ -55,7 +61,7 @@ class MediaCategoriesController extends AbstractActionController
 	
 	public function fnGrid()
 	{
-		$aColumns = array( '`id`','`name`','`published`');
+		$aColumns = array('`id`','`id`','`name`','`published`');
 		if(!($this->memCached->hasItem('aula_media_category_data')) || !is_array($this->memCached->getItem('aula_media_category_data')))
 		{	
 			$sTable = 'media_category';
@@ -126,6 +132,45 @@ class MediaCategoriesController extends AbstractActionController
 	
 	}
 	
+	public function getgriddetailslistAction()
+	{
+		
+		$iID = $this->request->getPost("KEY_ID");
+		$category = $this->AdminfunctionsPlugin()->getSingleRecord2('media_category_id',$iID,'view_media_type',$this->dbAdapter);	
+						
+			$grid_list = '';
+			$grid_list .= '<h5 class="gridDetailSectionHeading">Media Type:    ';
+			$grid_list .= '<button class="btn addEventBtn" id="btnMediaType" row-id="'.$iID.'">
+								<i class="fa fa-plus"></i> &nbsp;Add Media Type
+							</button></h5>';
+			$grid_list .= '<table cellpadding="5" cellspacing="0" border="0" class="table table-hover table-condensed gridDetailTable" id="menu_category_detail_tbl">';
+			if(count($category) > 0)
+			{	
+				foreach($category as $categorydata)
+				{
+					$grid_list .= '<tr >
+										<td>'.$categorydata['name'].'</td>
+									</tr>';
+				}
+			}
+			else
+			{
+				$grid_list .= '<tr >
+									<td class="datafound">No Data Found</td>
+							</tr>';
+			}	
+			$grid_list .= '</table>';
+			
+		/** Output **/
+		$output = array(
+			"status" => 'OK',
+			"grid_list" => $grid_list
+		);
+		echo json_encode( $output ); 
+		die();
+	
+	}
+
 	
 	
 	public function exportcsvAction()
@@ -156,12 +201,12 @@ class MediaCategoriesController extends AbstractActionController
 			$resultSet->initialize($resultData);        
 			$rowset 			= $resultSet->toArray();	
 			
-			$csvData .= "Name,Published";
+			$csvData .= "#ID,Name,Published(Yes|No)";
 			$csvData .= "\n";
 			foreach($rowset as $row)
 			{
 				
-				
+				$csvData .= $row['id'].",";
 				$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['name']).",";
 				$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['published']).",";
 				$csvData .= "\n";		
@@ -201,15 +246,21 @@ class MediaCategoriesController extends AbstractActionController
 					{
 						fgetcsv($handle);   
 					   	while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
-							if($data[0] != "" )
+							if($data[1] != "" && $data[2] != "")
 							{
 								
 							 	
 								$saveDataArray = array();
-								$saveDataArray['name'] 				= $this->AdminfunctionsPlugin()->importDataValidate($data[0]);
-								$saveDataArray['published'] 		= $this->AdminfunctionsPlugin()->importDataValidate($data[1]);
+								$column_index = 1;
+								$saveDataArray['name'] 				= $this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]);
+								$saveDataArray['published'] 		= $this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]);
 													
-								$existRecordID = $this->AdminfunctionsPlugin()->validateduplicateCSV('media_category',$saveDataArray['name'],'name',$this->dbAdapter);  
+								$existRecordID = $this->AdminfunctionsPlugin()->validateduplicateCSV('media_category',$saveDataArray['name'],'name',$this->dbAdapter,$data[0]);  
+								if($existRecordID > 0)
+									{
+										continue;
+									}
+								$existRecordID = $data[0];
 								
 								
 								if($existRecordID > 0)
@@ -221,7 +272,6 @@ class MediaCategoriesController extends AbstractActionController
 								{
 									
 									
-									//$saveDataArray['organization_id'] = self::$Aula_OrgID;
 									$saveDataArray['owner_organization_id'] = self::$Aula_OwnerOrgID;
 									$saveDataArray['owner_organization_user_id'] = self::$Aula_OwnerOrgUserID;								
 									$projectTable->insert($saveDataArray);	
@@ -299,7 +349,7 @@ class MediaCategoriesController extends AbstractActionController
 	public function downloadtemplateAction()
 	{
 		$csvData = '';		
-		$csvData .= "Name,Published";
+		$csvData .= "#ID,Name,Published(Yes|No)";
 		$csvData .= "\n";
 		header('Content-Type: text/csv; charset=utf-8');
 		header("Content-Disposition: attachment; filename=media_categories.csv");

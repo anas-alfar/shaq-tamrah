@@ -69,7 +69,7 @@
 								<a href="menu-categories" title="Menu Categories"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> Menu Categories</span></a>
 							</li>
 							<li class="">
-								<a href="#" title="Menus"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> Menus</span></a>
+								<a href="menu" title="Menus"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> Menus</span></a>
 							</li>
 							<li class="">
 								<a href="marital-statuses" title="Marital Statuses"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> Marital Statuses</span></a>
@@ -102,10 +102,10 @@
 								<a href="message-templates" title="Message Templates"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> Message Templates</span></a>
 							</li>
 							<li class="">
-								<a href="#" title="Assets"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> Assets</span></a>
+								<a href="asset" title="Assets"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> Assets</span></a>
 							</li>
 							<li class="">
-								<a href="#" title="Asset Types"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> Asset Types</span></a>
+								<a href="asset-type" title="Asset Types"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> Asset Types</span></a>
 							</li>
 							<li class="">
 								<a href="asset-storage-types" title="Asset Storage Types"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> Asset Storage Types</span></a>
@@ -179,22 +179,22 @@
 								<a href="organization-types" title="Organization Types"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> Organization Types</span></a>
 							</li>
 							<li class="">
-								<a href="#" title="Organization Branches"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> Organization Branches</span></a>
+								<a href="organization-branches" title="Organization Branches"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> Organization Branches</span></a>
 							</li>
 							<li class="">
-								<a href="#" title="Branch Committees"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> Branch Committees</span></a>
+								<a href="branch-committee" title="Branch Committees"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> Branch Committees</span></a>
 							</li>
 							<li class="">
-								<a href="#" title="Committee Users"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> Committee Users</span></a>
+								<a href="branch-committee-user" title="Committee Users"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> Committee Users</span></a>
 							</li>
 							<li class="">
-								<a href="#" title="User Position"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> User Position</span></a>
+								<a href="organization-user-position" title="Organization User Position"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> User Position</span></a>
 							</li>
 							<li class="">
-								<a href="#" title="Assets"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> Assets</span></a>
+								<a href="organization-asset" title="Assets"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> Assets</span></a>
 							</li>
 							<li class="">
-								<a href="#" title="Assets Locations"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> Assets Locations</span></a>
+								<a href="assets-locations" title="Assets Locations"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> Assets Locations</span></a>
 							</li>
 						</ul>
 					</li>
@@ -202,13 +202,13 @@
 						<a href="#" title="Post Settings"><i class="fa fa-lg fa-fw fa-gear"></i> <span class="menu-item-parent">Post Settings</span></a>
 						<ul>
 							<li class="">
-								<a href="#" title="Categories"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> Categories</span></a>
+								<a href="post-categories" title="Categories"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> Categories</span></a>
 							</li>
 							<li class="">
-								<a href="#" title="Types"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> Types</span></a>
+								<a href="post-types" title="Types"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> Types</span></a>
 							</li>
 							<li class="">
-								<a href="#" title="Authors"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> Authors</span></a>
+								<a href="post-author" title="Authors"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> Authors</span></a>
 							</li>
 						</ul>
 					</li>
@@ -216,22 +216,22 @@
 						<a href="#" title="Projects Settings"><i class="fa fa-lg fa-fw fa-gear"></i> <span class="menu-item-parent">Projects Settings</span></a>
 						<ul>
 							<li class="">
-								<a href="#" title="Categories"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> Categories</span></a>
+								<a href="project-categories" title="Categories"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> Categories</span></a>
 							</li>
 							<li class="">
-								<a href="#" title="Types"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> Types</span></a>
+								<a href="project-types" title="Types"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> Types</span></a>
 							</li>
 							<li class="">
-								<a href="#" title="Masjid Types"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> Masjid Types</span></a>
+								<a href="project-masjed-type" title="Masjed Types"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> Masjed Types</span></a>
 							</li>
 							<li class="">
-								<a href="#" title="Masjid Type Details"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> Masjid Type Details</span></a>
+								<a href="project-masjed-type-details" title="Masjed Type Details"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> Masjed Type Details</span></a>
 							</li>
 							<li class="">
-								<a href="#" title="Masjid Construction Types"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> Masjid Construction Types</span></a>
+								<a href="project-masjed-construction-type" title="Masjed Construction Types"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> Masjed Construction Types</span></a>
 							</li>
 							<li class="">
-								<a href="#" title="Masjid Furniture Types"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> Masjid Furniture Types</span></a>
+								<a href="project-masjed-furniture-type" title="Masjed Furniture Types"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> Masjed Furniture Types</span></a>
 							</li>
 						</ul>
 					</li>
@@ -239,10 +239,13 @@
 						<a href="#" title="Payments Settings"><i class="fa fa-lg fa-fw fa-gear"></i> <span class="menu-item-parent">Payments Settings</span></a>
 						<ul>
 							<li class="">
-								<a href="#" title="Methods"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> Methods</span></a>
+								<a href="payment-method" title="Methods"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> Methods</span></a>
 							</li>
 							<li class="">
-								<a href="#" title="Processing Fees"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> Processing Fees</span></a>
+								<a href="payment-method-configuration" title="Method Configurations"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> Method Configurations</span></a>
+							</li>
+							<li class="">
+								<a href="payment-processing-fees" title="Processing Fees"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> Processing Fees</span></a>
 							</li>
 						</ul>
 					</li>
@@ -250,24 +253,24 @@
 						<a href="#" title="Currency Settings"><i class="fa fa-lg fa-fw fa-gear"></i> <span class="menu-item-parent">Currency Settings</span></a>
 						<ul>
 							<li class="">
-								<a href="#" title="Currencies"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> Currencies</span></a>
+								<a href="currencies" title="Currencies"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> Currencies</span></a>
 							</li>
 							<li class="">
-								<a href="#" title="Exchange Rate"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> Exchange Rate</span></a>
+								<a href="currency-exchange-rate" title="Exchange Rate"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> Exchange Rate</span></a>
 							</li>
 						</ul>
 					</li>
 					<li class="">
-						<a href="#" title="Currency Settings"><i class="fa fa-lg fa-fw fa-gear"></i> <span class="menu-item-parent">Accounting Settings</span></a>
+						<a href="#" title="Accounting Settings"><i class="fa fa-lg fa-fw fa-gear"></i> <span class="menu-item-parent">Accounting Settings</span></a>
 						<ul>
 							<li class="">
-								<a href="#" title="Account Types"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> Account Types</span></a>
+								<a href="gl-account-type" title="Account Types"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> Account Types</span></a>
 							</li>
 							<li class="">
-								<a href="#" title="Accounts"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> Accounts</span></a>
+								<a href="gl-account" title="Accounts"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> Accounts</span></a>
 							</li>
 							<li class="">
-								<a href="#" title="Transaction Types"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> Transaction Types</span></a>
+								<a href="transaction-type" title="Transaction Types"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> Transaction Types</span></a>
 							</li>
 						</ul>
 					</li>
@@ -275,19 +278,19 @@
 						<a href="#" title="Authorization Settings"><i class="fa fa-lg fa-fw fa-gear"></i> <span class="menu-item-parent">Authorization Settings</span></a>
 						<ul>
 							<li class="">
-								<a href="#" title="Roles"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> Roles</span></a>
+								<a href="admin-authorization-role" title="Roles"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> Roles</span></a>
 							</li>
 							<li class="">
-								<a href="#" title="Resources"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> Resources</span></a>
+								<a href="authorization-resource" title="Resources"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> Resources</span></a>
 							</li>
 							<li class="">
-								<a href="#" title="Rules"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> Rules</span></a>
+								<a href="admin-authorization-rule" title="Rules"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> Rules</span></a>
 							</li>
 							<li class="">
 								<a href="#" title="Authorization"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> Authorization</span></a>
 							</li>
 							<li class="">
-								<a href="#" title="Organization Relation Roles"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> Organization Relation Roles</span></a>
+								<a href="authorization-organization-relation-role" title="Organization Relation Roles"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> Organization Relation Roles</span></a>
 							</li>
 							<li class="">
 								<a href="#" title="Organization User Relations"><span class="menu-item-parent"> <i class="fa fa-fw fa-folder-open"></i> Organization User Relations</span></a>
@@ -300,7 +303,7 @@
 				<a href="#" title="Beneficiaries"><i class="fa fa-lg fa-fw fa-group"></i> <span class="menu-item-parent">Beneficiaries</span></a>
 				<ul>
 					<li class="">
-						<a href="#" title="Manage"><i class="fa fa-lg fa-fw fa-list-alt"></i> <span class="menu-item-parent">Manage</span></a>
+						<a href="beneficiary" title="Manage"><i class="fa fa-lg fa-fw fa-list-alt"></i> <span class="menu-item-parent">Manage</span></a>
 					</li>
 					<li class="">
 						<a href="#" title="Advance search form"><i class="fa fa-lg fa-fw fa-search"></i> <span class="menu-item-parent">Advance search form</span></a>
@@ -315,13 +318,13 @@
 						<a href="#" title="Research Notes"><i class="fa fa-lg fa-fw fa-outdent"></i> <span class="menu-item-parent">Research Notes</span></a>
 					</li>
 					<li class="">
-						<a href="#" title="Assets received"><i class="fa fa-lg fa-fw fa-mail-reply-all"></i> <span class="menu-item-parent">Assets received</span></a>
+						<a href="beneficiary-profile-asset-received" title="Assets received"><i class="fa fa-lg fa-fw fa-mail-reply-all"></i> <span class="menu-item-parent">Assets received</span></a>
 					</li>
 					<li class="">
-						<a href="#" title="Assets required"><i class="fa fa-lg fa-fw fa-thumbs-up"></i> <span class="menu-item-parent">Assets required</span></a>
+						<a href="beneficiary-profile-asset-required" title="Assets required"><i class="fa fa-lg fa-fw fa-thumbs-up"></i> <span class="menu-item-parent">Assets required</span></a>
 					</li>
 					<li class="">
-						<a href="#" title="Groups"><i class="fa fa-lg fa-fw fa-tasks"></i> <span class="menu-item-parent">Groups</span></a>
+						<a href="group" title="Groups"><i class="fa fa-lg fa-fw fa-tasks"></i> <span class="menu-item-parent">Groups</span></a>
 					</li>
 					<li class="">
 						<a href="#" title="Messages"><i class="fa fa-lg fa-fw fa-envelope"></i> <span class="menu-item-parent">Messages</span></a>

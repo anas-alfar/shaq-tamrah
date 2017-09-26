@@ -54,6 +54,41 @@ return [
 			Controller\SpendingTypesController::class => Controller\InitFactory::class,
 			Controller\OrganizationFlagsController::class => Controller\InitFactory::class,
 			Controller\OrganizationTypesController::class => Controller\InitFactory::class,
+			Controller\OrganizationBranchesController::class => Controller\InitFactory::class,
+			Controller\OrganizationController::class => Controller\InitFactory::class,
+			Controller\OrganizationUserController::class => Controller\InitFactory::class,
+			Controller\OrganizationUserPositionController::class => Controller\InitFactory::class,
+			Controller\BranchCommitteeController::class => Controller\InitFactory::class,
+			Controller\AssetsLocationsController::class => Controller\InitFactory::class,
+			Controller\BranchCommitteeUserController::class => Controller\InitFactory::class,
+			Controller\PostTypesController::class => Controller\InitFactory::class,
+			Controller\PostCategoriesController::class => Controller\InitFactory::class,
+			Controller\PostAuthorController::class => Controller\InitFactory::class,
+			Controller\ProjectCategoriesController::class => Controller\InitFactory::class,
+			Controller\ProjectTypesController::class => Controller\InitFactory::class,
+			Controller\ProjectMasjedTypeController::class => Controller\InitFactory::class,
+			Controller\ProjectMasjedTypeDetailsController::class => Controller\InitFactory::class,
+			Controller\ProjectMasjedConstructionTypeController::class => Controller\InitFactory::class,
+			Controller\ProjectMasjedFurnitureTypeController::class => Controller\InitFactory::class,
+			Controller\PaymentProcessingFeesController::class => Controller\InitFactory::class,
+			Controller\PaymentMethodController::class => Controller\InitFactory::class,
+			Controller\PaymentMethodConfigurationController::class => Controller\InitFactory::class,
+			Controller\CurrenciesController::class => Controller\InitFactory::class,
+			Controller\CurrencyExchangeRateController::class => Controller\InitFactory::class,
+			Controller\GlAccountTypeController::class => Controller\InitFactory::class,
+			Controller\GlAccountController::class => Controller\InitFactory::class,
+			Controller\TransactionTypeController::class => Controller\InitFactory::class,
+			Controller\AdminAuthorizationRoleController::class => Controller\InitFactory::class,
+			Controller\AuthorizationResourceController::class => Controller\InitFactory::class,
+			Controller\AdminAuthorizationRuleController::class => Controller\InitFactory::class,
+			Controller\MenuController::class => Controller\InitFactory::class,
+			Controller\AssetController::class => Controller\InitFactory::class,
+			Controller\AssetTypeController::class => Controller\InitFactory::class,
+			Controller\OrganizationAssetController::class => Controller\InitFactory::class,
+			Controller\AuthorizationOrganizationRelationRoleController::class => Controller\InitFactory::class,
+			Controller\GroupController::class => Controller\InitFactory::class,
+			Controller\BeneficiaryProfileAssetReceivedController::class => Controller\InitFactory::class,
+			Controller\BeneficiaryProfileAssetRequiredController::class => Controller\InitFactory::class,
 			
 			
         ],
@@ -658,6 +693,84 @@ return [
 						'may_terminate' => true,
 					],
 					
+					'organization-user' => 	 [
+						'type'    => Segment::class,
+						'options' => [
+							'route'    => 'organization-user[/:action]',
+							 'constraints' => [
+								 'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+							 ],
+
+							'defaults' => [
+								'controller' => Controller\OrganizationUserController::class,
+								'action'     => 'index',
+							],
+						],
+						'may_terminate' => true,
+					],
+					
+					'organization-user-position' => 	 [
+						'type'    => Segment::class,
+						'options' => [
+							'route'    => 'organization-user-position[/:action]',
+							 'constraints' => [
+								 'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+							 ],
+
+							'defaults' => [
+								'controller' => Controller\OrganizationUserPositionController::class,
+								'action'     => 'index',
+							],
+						],
+						'may_terminate' => true,
+					],
+					
+					'branch-committee' => 	 [
+						'type'    => Segment::class,
+						'options' => [
+							'route'    => 'branch-committee[/:action]',
+							 'constraints' => [
+								 'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+							 ],
+
+							'defaults' => [
+								'controller' => Controller\BranchCommitteeController::class,
+								'action'     => 'index',
+							],
+						],
+						'may_terminate' => true,
+					],
+					'assets-locations' => 	 [
+						'type'    => Segment::class,
+						'options' => [
+							'route'    => 'assets-locations[/:action]',
+							 'constraints' => [
+								 'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+							 ],
+
+							'defaults' => [
+								'controller' => Controller\AssetsLocationsController::class,
+								'action'     => 'index',
+							],
+						],
+						'may_terminate' => true,
+					],
+					'branch-committee-user' => 	 [
+						'type'    => Segment::class,
+						'options' => [
+							'route'    => 'branch-committee-user[/:action]',
+							 'constraints' => [
+								 'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+							 ],
+
+							'defaults' => [
+								'controller' => Controller\BranchCommitteeUserController::class,
+								'action'     => 'index',
+							],
+						],
+						'may_terminate' => true,
+					],
+					
 					'organization-flags' => 	 [
 						'type'    => Segment::class,
 						'options' => [
@@ -688,6 +801,460 @@ return [
 						],
 						'may_terminate' => true,
 					],
+					'organization-branches' => 	 [
+						'type'    => Segment::class,
+						'options' => [
+							'route'    => 'organization-branches[/:action]',
+							 'constraints' => [
+								 'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+							 ],
+
+							'defaults' => [
+								'controller' => Controller\OrganizationBranchesController::class,
+								'action'     => 'index',
+							],
+						],
+						'may_terminate' => true,
+					],
+					'organization' => 	 [
+						'type'    => Segment::class,
+						'options' => [
+							'route'    => 'organization[/:action]',
+							 'constraints' => [
+								 'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+							 ],
+
+							'defaults' => [
+								'controller' => Controller\OrganizationController::class,
+								'action'     => 'index',
+							],
+						],
+						'may_terminate' => true,
+					],
+					'post-types' => 	 [
+						'type'    => Segment::class,
+						'options' => [
+							'route'    => 'post-types[/:action]',
+							 'constraints' => [
+								 'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+							 ],
+
+							'defaults' => [
+								'controller' => Controller\PostTypesController::class,
+								'action'     => 'index',
+							],
+						],
+						'may_terminate' => true,
+					],
+					'post-categories' => 	 [
+						'type'    => Segment::class,
+						'options' => [
+							'route'    => 'post-categories[/:action]',
+							 'constraints' => [
+								 'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+							 ],
+
+							'defaults' => [
+								'controller' => Controller\PostCategoriesController::class,
+								'action'     => 'index',
+							],
+						],
+						'may_terminate' => true,
+					],
+					'post-author' => 	 [
+						'type'    => Segment::class,
+						'options' => [
+							'route'    => 'post-author[/:action]',
+							 'constraints' => [
+								 'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+							 ],
+
+							'defaults' => [
+								'controller' => Controller\PostAuthorController::class,
+								'action'     => 'index',
+							],
+						],
+						'may_terminate' => true,
+					],
+					'project-categories' => 	 [
+						'type'    => Segment::class,
+						'options' => [
+							'route'    => 'project-categories[/:action]',
+							 'constraints' => [
+								 'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+							 ],
+
+							'defaults' => [
+								'controller' => Controller\ProjectCategoriesController::class,
+								'action'     => 'index',
+							],
+						],
+						'may_terminate' => true,
+					],
+					'project-types' => 	 [
+						'type'    => Segment::class,
+						'options' => [
+							'route'    => 'project-types[/:action]',
+							 'constraints' => [
+								 'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+							 ],
+
+							'defaults' => [
+								'controller' => Controller\ProjectTypesController::class,
+								'action'     => 'index',
+							],
+						],
+						'may_terminate' => true,
+					],
+					'project-masjed-type' => 	 [
+						'type'    => Segment::class,
+						'options' => [
+							'route'    => 'project-masjed-type[/:action]',
+							 'constraints' => [
+								 'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+							 ],
+
+							'defaults' => [
+								'controller' => Controller\ProjectMasjedTypeController::class,
+								'action'     => 'index',
+							],
+						],
+						'may_terminate' => true,
+					],
+					'project-masjed-type-details' => 	 [
+						'type'    => Segment::class,
+						'options' => [
+							'route'    => 'project-masjed-type-details[/:action]',
+							 'constraints' => [
+								 'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+							 ],
+
+							'defaults' => [
+								'controller' => Controller\ProjectMasjedTypeDetailsController::class,
+								'action'     => 'index',
+							],
+						],
+						'may_terminate' => true,
+					],
+					'project-masjed-construction-type' => 	 [
+						'type'    => Segment::class,
+						'options' => [
+							'route'    => 'project-masjed-construction-type[/:action]',
+							 'constraints' => [
+								 'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+							 ],
+
+							'defaults' => [
+								'controller' => Controller\ProjectMasjedConstructionTypeController::class,
+								'action'     => 'index',
+							],
+						],
+						'may_terminate' => true,
+					],
+					'project-masjed-furniture-type' => 	 [
+						'type'    => Segment::class,
+						'options' => [
+							'route'    => 'project-masjed-furniture-type[/:action]',
+							 'constraints' => [
+								 'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+							 ],
+
+							'defaults' => [
+								'controller' => Controller\ProjectMasjedFurnitureTypeController::class,
+								'action'     => 'index',
+							],
+						],
+						'may_terminate' => true,
+					],
+					'payment-processing-fees' => 	 [
+						'type'    => Segment::class,
+						'options' => [
+							'route'    => 'payment-processing-fees[/:action]',
+							 'constraints' => [
+								 'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+							 ],
+
+							'defaults' => [
+								'controller' => Controller\PaymentProcessingFeesController::class,
+								'action'     => 'index',
+							],
+						],
+						'may_terminate' => true,
+					],
+					'payment-method' => 	 [
+						'type'    => Segment::class,
+						'options' => [
+							'route'    => 'payment-method[/:action]',
+							 'constraints' => [
+								 'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+							 ],
+
+							'defaults' => [
+								'controller' => Controller\PaymentMethodController::class,
+								'action'     => 'index',
+							],
+						],
+						'may_terminate' => true,
+					],
+					'payment-method-configuration' => 	 [
+						'type'    => Segment::class,
+						'options' => [
+							'route'    => 'payment-method-configuration[/:action]',
+							 'constraints' => [
+								 'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+							 ],
+
+							'defaults' => [
+								'controller' => Controller\PaymentMethodConfigurationController::class,
+								'action'     => 'index',
+							],
+						],
+						'may_terminate' => true,
+					],
+					'currencies' => 	 [
+						'type'    => Segment::class,
+						'options' => [
+							'route'    => 'currencies[/:action]',
+							 'constraints' => [
+								 'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+							 ],
+
+							'defaults' => [
+								'controller' => Controller\CurrenciesController::class,
+								'action'     => 'index',
+							],
+						],
+						'may_terminate' => true,
+					],
+					'currency-exchange-rate' => 	 [
+						'type'    => Segment::class,
+						'options' => [
+							'route'    => 'currency-exchange-rate[/:action]',
+							 'constraints' => [
+								 'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+							 ],
+
+							'defaults' => [
+								'controller' => Controller\CurrencyExchangeRateController::class,
+								'action'     => 'index',
+							],
+						],
+						'may_terminate' => true,
+					],
+					'gl-account-type' => 	 [
+						'type'    => Segment::class,
+						'options' => [
+							'route'    => 'gl-account-type[/:action]',
+							 'constraints' => [
+								 'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+							 ],
+
+							'defaults' => [
+								'controller' => Controller\GlAccountTypeController::class,
+								'action'     => 'index',
+							],
+						],
+						'may_terminate' => true,
+					],
+					'gl-account' => 	 [
+						'type'    => Segment::class,
+						'options' => [
+							'route'    => 'gl-account[/:action]',
+							 'constraints' => [
+								 'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+							 ],
+
+							'defaults' => [
+								'controller' => Controller\GlAccountController::class,
+								'action'     => 'index',
+							],
+						],
+						'may_terminate' => true,
+					],
+					'transaction-type' => 	 [
+						'type'    => Segment::class,
+						'options' => [
+							'route'    => 'transaction-type[/:action]',
+							 'constraints' => [
+								 'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+							 ],
+
+							'defaults' => [
+								'controller' => Controller\TransactionTypeController::class,
+								'action'     => 'index',
+							],
+						],
+						'may_terminate' => true,
+					],
+					'admin-authorization-role' => 	 [
+						'type'    => Segment::class,
+						'options' => [
+							'route'    => 'admin-authorization-role[/:action]',
+							 'constraints' => [
+								 'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+							 ],
+
+							'defaults' => [
+								'controller' => Controller\AdminAuthorizationRoleController::class,
+								'action'     => 'index',
+							],
+						],
+						'may_terminate' => true,
+					],
+					'authorization-resource' => 	 [
+						'type'    => Segment::class,
+						'options' => [
+							'route'    => 'authorization-resource[/:action]',
+							 'constraints' => [
+								 'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+							 ],
+
+							'defaults' => [
+								'controller' => Controller\AuthorizationResourceController::class,
+								'action'     => 'index',
+							],
+						],
+						'may_terminate' => true,
+					],
+					'admin-authorization-rule' => 	 [
+						'type'    => Segment::class,
+						'options' => [
+							'route'    => 'admin-authorization-rule[/:action]',
+							 'constraints' => [
+								 'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+							 ],
+
+							'defaults' => [
+								'controller' => Controller\AdminAuthorizationRuleController::class,
+								'action'     => 'index',
+							],
+						],
+						'may_terminate' => true,
+					],
+					'menu' => 	 [
+						'type'    => Segment::class,
+						'options' => [
+							'route'    => 'menu[/:action]',
+							 'constraints' => [
+								 'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+							 ],
+
+							'defaults' => [
+								'controller' => Controller\MenuController::class,
+								'action'     => 'index',
+							],
+						],
+						'may_terminate' => true,
+					],
+					'asset' => 	 [
+						'type'    => Segment::class,
+						'options' => [
+							'route'    => 'asset[/:action]',
+							 'constraints' => [
+								 'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+							 ],
+
+							'defaults' => [
+								'controller' => Controller\AssetController::class,
+								'action'     => 'index',
+							],
+						],
+						'may_terminate' => true,
+					],
+					'asset-type' => 	 [
+						'type'    => Segment::class,
+						'options' => [
+							'route'    => 'asset-type[/:action]',
+							 'constraints' => [
+								 'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+							 ],
+
+							'defaults' => [
+								'controller' => Controller\AssetTypeController::class,
+								'action'     => 'index',
+							],
+						],
+						'may_terminate' => true,
+					],
+					
+					'organization-asset' => 	 [
+						'type'    => Segment::class,
+						'options' => [
+							'route'    => 'organization-asset[/:action]',
+							 'constraints' => [
+								 'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+							 ],
+
+							'defaults' => [
+								'controller' => Controller\OrganizationAssetController::class,
+								'action'     => 'index',
+							],
+						],
+						'may_terminate' => true,
+					],
+					
+					'authorization-organization-relation-role' => 	 [
+						'type'    => Segment::class,
+						'options' => [
+							'route'    => 'authorization-organization-relation-role[/:action]',
+							 'constraints' => [
+								 'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+							 ],
+
+							'defaults' => [
+								'controller' => Controller\AuthorizationOrganizationRelationRoleController::class,
+								'action'     => 'index',
+							],
+						],
+						'may_terminate' => true,
+					],
+					
+					'group' => 	 [
+						'type'    => Segment::class,
+						'options' => [
+							'route'    => 'group[/:action]',
+							 'constraints' => [
+								 'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+							 ],
+
+							'defaults' => [
+								'controller' => Controller\GroupController::class,
+								'action'     => 'index',
+							],
+						],
+						'may_terminate' => true,
+					],
+					'beneficiary-profile-asset-received' => 	 [
+						'type'    => Segment::class,
+						'options' => [
+							'route'    => 'beneficiary-profile-asset-received[/:action]',
+							 'constraints' => [
+								 'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+							 ],
+
+							'defaults' => [
+								'controller' => Controller\BeneficiaryProfileAssetReceivedController::class,
+								'action'     => 'index',
+							],
+						],
+						'may_terminate' => true,
+					],
+					'beneficiary-profile-asset-required' => 	 [
+						'type'    => Segment::class,
+						'options' => [
+							'route'    => 'beneficiary-profile-asset-required[/:action]',
+							 'constraints' => [
+								 'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+							 ],
+
+							'defaults' => [
+								'controller' => Controller\BeneficiaryProfileAssetRequiredController::class,
+								'action'     => 'index',
+							],
+						],
+						'may_terminate' => true,
+					],
+					
 					
 					'login' => [
 						'type'    => Segment::class,
@@ -761,8 +1328,45 @@ return [
 			'aula_adminpanel/home-contract-types/index' => __DIR__ . '/../view/adminpanel/settings/general/home-contract-types/index.phtml',
 			'aula_adminpanel/beneficiary-relations/index' => __DIR__ . '/../view/adminpanel/settings/general/beneficiary-relations/index.phtml',
 			'aula_adminpanel/spending-types/index' => __DIR__ . '/../view/adminpanel/settings/general/spending-types/index.phtml',
+			'aula_adminpanel/organization-user/index' => __DIR__ . '/../view/adminpanel/settings/general/organization-user/index.phtml',
+			'aula_adminpanel/organization-user-position/index' => __DIR__ . '/../view/adminpanel/settings/general/organization-user-position/index.phtml',
+			'aula_adminpanel/branch-committee/index' => __DIR__ . '/../view/adminpanel/settings/general/branch-committee/index.phtml',
+			'aula_adminpanel/assets-locations/index' => __DIR__ . '/../view/adminpanel/settings/general/assets-locations/index.phtml',
+			'aula_adminpanel/branch-committee-user/index' => __DIR__ . '/../view/adminpanel/settings/general/branch-committee-user/index.phtml',
 			'aula_adminpanel/organization-flags/index' => __DIR__ . '/../view/adminpanel/settings/general/organization-flags/index.phtml',
 			'aula_adminpanel/organization-types/index' => __DIR__ . '/../view/adminpanel/settings/general/organization-types/index.phtml',
+			'aula_adminpanel/organization-branches/index' => __DIR__ . '/../view/adminpanel/settings/general/organization-branches/index.phtml',
+			'aula_adminpanel/organization/index' => __DIR__ . '/../view/adminpanel/settings/general/organization/index.phtml',
+			'aula_adminpanel/categories/index' => __DIR__ . '/../view/adminpanel/settings/general/categories/index.phtml',
+			'aula_adminpanel/post-types/index' => __DIR__ . '/../view/adminpanel/settings/general/post-types/index.phtml',
+			'aula_adminpanel/post-categories/index' => __DIR__ . '/../view/adminpanel/settings/general/post-categories/index.phtml',
+			'aula_adminpanel/post-author/index' => __DIR__ . '/../view/adminpanel/settings/general/post-author/index.phtml',
+			'aula_adminpanel/project-categories/index' => __DIR__ . '/../view/adminpanel/settings/general/project-categories/index.phtml',
+			'aula_adminpanel/project-types/index' => __DIR__ . '/../view/adminpanel/settings/general/project-types/index.phtml',
+			'aula_adminpanel/project-masjed-type/index' => __DIR__ . '/../view/adminpanel/settings/general/project-masjed-type/index.phtml',
+			'aula_adminpanel/project-masjed-type-details/index' => __DIR__ . '/../view/adminpanel/settings/general/project-masjed-type-details/index.phtml',
+			'aula_adminpanel/project-masjed-construction-type/index' => __DIR__ . '/../view/adminpanel/settings/general/project-masjed-construction-type/index.phtml',
+			'aula_adminpanel/project-masjed-furniture-type/index' => __DIR__ . '/../view/adminpanel/settings/general/project-masjed-furniture-type/index.phtml',
+			'aula_adminpanel/payment-processing-fees/index' => __DIR__ . '/../view/adminpanel/settings/general/payment-processing-fees/index.phtml',
+			'aula_adminpanel/payment-method/index' => __DIR__ . '/../view/adminpanel/settings/general/payment-method/index.phtml',
+			'aula_adminpanel/payment-method-configuration/index' => __DIR__ . '/../view/adminpanel/settings/general/payment-method-configuration/index.phtml',
+			'aula_adminpanel/currencies/index' => __DIR__ . '/../view/adminpanel/settings/general/currencies/index.phtml',
+			'aula_adminpanel/currency-exchange-rate/index' => __DIR__ . '/../view/adminpanel/settings/general/currency-exchange-rate/index.phtml',
+			'aula_adminpanel/gl-account-type/index' => __DIR__ . '/../view/adminpanel/settings/general/gl-account-type/index.phtml',
+			'aula_adminpanel/gl-account/index' => __DIR__ . '/../view/adminpanel/settings/general/gl-account/index.phtml',
+			'aula_adminpanel/transaction-type/index' => __DIR__ . '/../view/adminpanel/settings/general/transaction-type/index.phtml',
+			'aula_adminpanel/admin-authorization-role/index' => __DIR__ . '/../view/adminpanel/settings/general/admin-authorization-role/index.phtml',
+			'aula_adminpanel/authorization-resource/index' => __DIR__ . '/../view/adminpanel/settings/general/authorization-resource/index.phtml',
+			'aula_adminpanel/admin-authorization-rule/index' => __DIR__ . '/../view/adminpanel/settings/general/admin-authorization-rule/index.phtml',
+			'aula_adminpanel/menu/index' => __DIR__ .'/../view/adminpanel/settings/general/menu/index.phtml',
+			'aula_adminpanel/asset/index' => __DIR__ .'/../view/adminpanel/settings/general/asset/index.phtml',
+			'aula_adminpanel/asset-type/index' => __DIR__ .'/../view/adminpanel/settings/general/asset-type/index.phtml',
+			'aula_adminpanel/organization-asset/index' => __DIR__ .'/../view/adminpanel/settings/general/organization-asset/index.phtml',
+			'aula_adminpanel/authorization-organization-relation-role/index' => __DIR__ .'/../view/adminpanel/settings/general/authorization-organization-relation-role/index.phtml',
+			'aula_adminpanel/group/index' => __DIR__ .'/../view/adminpanel/settings/general/group/index.phtml',
+			'aula_adminpanel/beneficiary-profile-asset-received/index' => __DIR__ .'/../view/adminpanel/settings/general/beneficiary-profile-asset-received/index.phtml',
+			'aula_adminpanel/beneficiary-profile-asset-required/index' => __DIR__ .'/../view/adminpanel/settings/general/beneficiary-profile-asset-required/index.phtml',
+			
 			
 			'aula_adminpanel/login/index' => '/../view/adminpanel/admin-layout/login-layout.phtml',
 			

@@ -21,6 +21,7 @@
 			<article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">	
 				<?php include("grid.php");?> 
 				<?php include("form.php");?> 
+				<?php include("reorder.php");?> 
 			</article>
 		</div>
 	</section>
@@ -28,7 +29,8 @@
 <!-- END #MAIN CONTENT -->
 <script type="text/javascript">
 			
-		var gridData;
+		var gridData = [];
+		
 		function fetch_grid_data(objFormData)
 		{
 			hideShowLoader(true);
@@ -49,6 +51,29 @@
 			});
 			
 		}
+		function fetch_grid_data_draggable(objFormData)
+		{
+			
+			$("#draggable-output").val('');
+			hideShowLoader(true);
+			$.ajax({
+			  type: "POST",
+			  url: "<?php echo $this->url('adminpanel/menu-categories', array('action'=>'getorderlist'));?>",
+			  data: objFormData,
+			  dataType: "json",
+			  success: function(data){
+			  		hideShowLoader(false);
+					$('#draggableListId').html(data.draggable_list);
+					$('#draggableListId').sortable({
+					   update: function(event, ui) {
+						  var draggableOrder = $(this).sortable('toArray').toString();
+						  $("#draggable-output").val(draggableOrder);
+					   }
+					});									
+			  }
+			});
+			
+		}
 
 		function savefrmFormData()  {
 			 if(strActionMode=="ADD") {
@@ -58,7 +83,7 @@
 			//Validate  duplicate
 			var isDuplicate = fn_validate_duplicate($("#name_<?php echo $this->global_locale_id; ?>").val(), 'menu_category_locale', "name", "<?php echo $this->url('adminpanel/menu-categories', array('action'=>'validateduplicate'));?>",iActiveID);
 			if (isDuplicate) {
-				mySmallAlert('Duplicate Error...!', 'Duplicate Found. Nmae is Already exists !', 0);
+				mySmallAlert('Duplicate Error...!', 'Duplicate Found. Name is Already exists !', 0);
 				return false;
 			}
 			
@@ -97,7 +122,37 @@
 			}
 
 		}		
-		
+		function saveorderData()  {
+			var dragorder=$("#draggable-output").val();
+			
+			if(dragorder=='')
+			{
+				mySmallAlert('Error...!', 'You did not change anything', 0);
+			}
+			hideShowLoader(true);
+			var $form = $('#reorderGrid');
+			var objMasterData = $form.serializeObject();
+			var objFormData =
+			{
+				
+				dragorder: dragorder
+
+			};
+			hideShowLoader(true);
+			var objMyPost = AJAX_Post("<?php echo $this->url('adminpanel/menu-categories', array('action'=>'saveorder'));?>", objFormData);
+			if (objMyPost.ERR_NO === 0) {
+				if (objMyPost.DATA.DBStatus === 'OK') {
+					mySmallAlert('Save Record', 'Menu Categories Order Saved successfully', 1);
+					iActiveID = objMyPost.DATA.MY_ID;
+					fetch_grid_data_draggable();
+				}
+			}
+			else {
+				hideShowLoader(false);
+				mySmallAlert('Error...!', 'There was an error', 0);
+			}
+
+		}	
 		var pagefunction = function() { 
 		$('#tabs').tabs();
 			var responsiveHelper_tblMasterList = undefined;			
@@ -125,26 +180,29 @@
 						
 					}
 				},				
-				"createdRow": function( nRow, data, dataIndex ) {
-					// Set the data-status attribute, and add a class
-					
-					$( nRow ).find('td:eq(7)').attr('data-search', data[3]);
-				},
+				
 				"rowCallback" : function(nRow) {
 					responsiveHelper_tblMasterList.createExpandIcon(nRow);
 				},
 				"drawCallback" : function(oSettings) {
+					grid_tooltip();
 					responsiveHelper_tblMasterList.respond();
 				},	
 				"aaData": gridData,
                 "aoColumns": [
-                    { "bSearchable": false, "bVisible": false },                  
+                    { "bSearchable": false, "bVisible": false },
+					{
+						"class":          'details-control',
+						"orderable":      false,
+						"data":           null,
+						"defaultContent": ''
+					},                     
                     null,
                     null,
 					
 					{ "bSearchable": true, "bSortable": true,
                         "mRender" : function (data, type, full) {							
-							return grid_switch(full[0],'published',full[3],'Yes');							
+							return grid_switch(full[0],'published',full[4],'Yes');							
 						}
 					},
                     {"bSearchable": false, "bSortable": false,
@@ -155,9 +213,45 @@
                 ],
                 "columnDefs": [
                     { className: "hidden", "targets": [ 0 ] },
-					{ "type": "html-input", "targets": [3] }
+					{ "type": "html-input", "targets": [4] }
                 ]	
-			});			
+			});
+						
+			$('#tblMasterList tbody').on('click', 'td.details-control', function () {
+				var tr = $(this).closest('tr');
+				var row = oTable.row( tr );
+				
+				if ( row.child.isShown() ) {
+					// This row is already open - close it
+					row.child.hide();
+					tr.removeClass('shown');
+				}
+				else if(tr.hasClass('loaded'))
+				{
+					row.child.show();
+					tr.addClass('shown');
+				}				
+				else {
+					tr.addClass('loading');
+					var KEY_ID = $(this).parent().find('input[name="gridHiddenIdArray[]"]').val();
+					var returnData;
+					hideShowLoader(true);
+					$.ajax({
+					  type: "POST",
+					  url: "<?php echo $this->url('adminpanel/menu-categories', array('action'=>'getgriddetailslist'));?>",
+					  data:{'KEY_ID':KEY_ID},
+					  dataType: "json",
+					  success: function(data){
+							hideShowLoader(false);
+							row.child(data.grid_list).show();
+							tr.addClass('loaded');
+							tr.removeClass('loading');
+							tr.addClass('shown');
+					  }
+					});
+					
+				}
+			});						
 			$("#tblMasterList thead th input[type=text]").on( 'keyup change', function () {	    	
 				oTable
 					.column( $(this).parent().index()+':visible' )
@@ -208,10 +302,14 @@
 				sequence : {
 					validators : {
 						notEmpty : {
-							message : 'Please enter sequence'
+							message : 'Please enter sequence'						
+						},
+						digits : {
+							message : 'The sequence is not valid'
 						}
 					}
-				}
+				},
+
 			}
 		}) 
 		 .on('status.field.bv', function(e, data) {
@@ -260,7 +358,11 @@
 				loadScript("<?php echo $this->basePath(); ?>/public/admin/js/plugin/datatables/dataTables.tableTools.min.js", function(){
 					loadScript("<?php echo $this->basePath(); ?>/public/admin/js/plugin/datatables/dataTables.bootstrap.min.js", function(){
 						loadScript("<?php echo $this->basePath(); ?>/public/admin/js/plugin/datatable-responsive/datatables.responsive.min.js", function(){
-							loadScript("<?php echo $this->basePath(); ?>/public/admin/js/plugin/bootstrapvalidator/bootstrapValidator.min.js", pagefunction)
+							loadScript("<?php echo $this->basePath(); ?>/public/admin/js/plugin/bootstrapvalidator/bootstrapValidator.min.js", function(){
+								loadScript("<?php echo $this->basePath(); ?>/public/admin/js/plugin/sortable/jquery.sortable.js", function(){
+									loadScript("<?php echo $this->basePath(); ?>/public/admin/js/plugin/sortable/jquery.sortable.demo.js", pagefunction);
+								});	
+							});
 						});	
 					});
 				});

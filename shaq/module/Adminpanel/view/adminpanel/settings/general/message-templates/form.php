@@ -89,7 +89,7 @@
 										<section class="col-md-6">
 											<div class="form-group">
 												<label class="control-label">From Mobile Number<span>*</span></label>
-												<input type="number" class="form-control" name="from_mobile_number" id="from_mobile_number"/>
+												<input type="text" class="form-control" name="from_mobile_number" id="from_mobile_number"/>
 											</div>
 										</section>
 									</div>
@@ -103,7 +103,7 @@
 										<section class="col-md-6">
 											<div class="form-group">
 												<label class="control-label">To Mobile Number<span>*</span></label>
-												<input type="number" class="form-control" name="to_mobile_number" id="to_mobile_number"/>
+												<input type="text" class="form-control" name="to_mobile_number" id="to_mobile_number"/>
 											</div>
 										</section>
 									</div>

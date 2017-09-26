@@ -62,6 +62,9 @@
 										<input type="text" class="form-control" placeholder="Filter Name" />
 									</th>
 									<th class="hasinput">
+										<input type="text" class="form-control" placeholder="Filter Country" />
+									</th>
+									<th class="hasinput">
 											<select id="allowrecurrencefilter" name="allowrecurrencefilter"class="searchdrop">
 												<option value="">All</option>														
 												<option value="<!--Yes-->">Yes</option>
@@ -79,6 +82,7 @@
 					            <tr>
 									<th>Id</th>
 				                    <th data-class="expand">Name</th>
+									<th>Country</th>
 									<th data-hide="phone,tablet">Allow Recurrence</th>
 									<th data-hide="phone,tablet">Published</th>
 									<th data-hide="phone" class="action">Action</th>

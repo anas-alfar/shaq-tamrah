@@ -87,6 +87,8 @@
 											continue;
 										?>
 										<div id="tabs-<?php echo $locale['id']; ?>">
+										
+										
 											<div class="row">
 												<section class="col-md-6">
 													<div class="form-group">
@@ -101,6 +103,12 @@
 													</div>
 												</section>
 											</div>
+										
+										
+										
+										
+										
+										
 										</div>
 										<?php 
 									}

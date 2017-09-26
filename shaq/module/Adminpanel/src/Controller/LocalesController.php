@@ -17,6 +17,7 @@ class LocalesController extends AbstractActionController
 	private $config;
 	private $redisCache;
 	private $memCached;
+	private $global_locale_id;
 	
 	protected static $Aula_UID;
 	protected static $Aula_OrgID;
@@ -31,6 +32,7 @@ class LocalesController extends AbstractActionController
 		$this->config = $config;
 		$this->redisCache = $redis;
 		$this->memCached = $memcached;
+		$this->global_locale_id = $config['global_locale_id'];
 				
 		self::$Aula_UID = $this->sessionContainer->Aula_UID;
 		self::$Aula_OrgID = $this->sessionContainer->Aula_OrgID;
@@ -126,7 +128,73 @@ class LocalesController extends AbstractActionController
 	
 	}
 	
-	
+	public function getorderlistAction()
+	{
+		$sTable = 'view_locale';
+		$sIndexColumn = "id";  
+		
+		$sWhere = " WHERE 1=1";
+		$sOrder = " ORDER BY sequence ASC ";		
+		
+		/** SQL queries ** Get data to display **/ 
+		$sQuery = "
+			SELECT *
+			FROM   $sTable
+			$sWhere
+			$sOrder
+		"; 	
+		$optionalParameters	= array();        
+		$statement 			= $this->dbAdapter->createStatement($sQuery, $optionalParameters);        
+		$resultData			= $statement->execute();        
+		$resultSet 			= new ResultSet; 			   
+		$resultSet->initialize($resultData);        
+		$rowset 			= $resultSet->toArray();	
+		$draggable_list = '';
+		$rowsetCache = array();
+		foreach($rowset as $aRow)
+		{			
+			$draggable_list .= '<li class="list-group-item" id="'.$aRow['id'].'" draggable="true" role="option" aria-grabbed="false">
+											
+																								
+													 <em class="fa fa-reorder fa-fw text-muted mr-lg"></em>		'.$aRow['name'].'						
+											';
+			$draggable_list .= '</li>';
+		}
+		/** Output **/
+		$output = array(
+			"status" => 'OK',
+			"draggable_list" => $draggable_list
+		);
+		echo json_encode( $output ); 
+		die();
+	}
+	public function saveorderAction()
+	{	
+		$projectTable = new TableGateway('locale',$this->dbAdapter);	 
+        if ($this->request->isPost()) {		
+			$aData =$this->request->getPost("dragorder");
+			$orderRecordsArray =  explode(",",$aData);
+			$sequence =0;	
+			foreach($orderRecordsArray as $OrderID)
+			{
+				$sequence++;
+				$updateData = array();
+				$updateData['sequence'] = $sequence;
+				$projectTable->update($updateData,array("id=".$OrderID));				
+			}
+			$this->memCached->setItem('aula_locale_data','');
+			$result['DBStatus'] = 'OK';
+		}
+		else
+        {
+            $result['DBStatus'] = 'ERR';
+        }	
+        $output = array(
+			"DBStatus" => 'OK'
+		);
+		echo json_encode( $output ); 
+		die();
+	}
 	
 	public function exportcsvAction()
 	{
@@ -156,11 +224,12 @@ class LocalesController extends AbstractActionController
 			$resultSet->initialize($resultData);        
 			$rowset 			= $resultSet->toArray();	
 			
-			$csvData .= "Locale,Name,Locale Title,Published,Status(Draft|Pending|Active|Blocked|Deleted),Sequence,Country Name,Icon";
+			$csvData .= "#ID,Locale,Name,Locale Title,Published(Yes|No),Status(Draft|Pending|Active|Blocked|Deleted),Sequence,Country,Icon";
 			$csvData .= "\n";
 			foreach($rowset as $row)
 			{
 				
+				$csvData .= $row['id'].",";
 				$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['locale']).",";
 				$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['name']).",";
 				$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['locale_title']).",";
@@ -206,22 +275,29 @@ class LocalesController extends AbstractActionController
 					{
 						fgetcsv($handle);   
 					   	while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
-							if($data[0] != "" && $data[1] != "" && $data[2] != "" && $data[3] != "" && $data[4] != "" && $data[5] != "" && $data[6] != "" )
+							if($data[1] != "" && $data[2] != "" && $data[3] != "" && $data[4] != "" && $data[5] != "" && $data[6] != "" && $data[7] != "" )
 							{
 								
-							 	$getCountryID = $this->AdminfunctionsPlugin()->validateduplicateLocaleCSV('country_locale',$this->AdminfunctionsPlugin()->importDataValidate($data[6]),'name','country_id',$this->dbAdapter,$this->config['global_locale_id'],'locale_id');
+							 	
 								$saveDataArray = array();
-								$saveDataArray['locale'] 			= $this->AdminfunctionsPlugin()->importDataValidate($data[0]);
-								$saveDataArray['name'] 				= $this->AdminfunctionsPlugin()->importDataValidate($data[1]);
-								$saveDataArray['locale_title'] 		= $this->AdminfunctionsPlugin()->importDataValidate($data[2]);
-								$saveDataArray['published'] 		= $this->AdminfunctionsPlugin()->importDataValidate($data[3]);
-								$saveDataArray['status'] 			= $this->AdminfunctionsPlugin()->importDataValidate($data[4]);
-								$saveDataArray['sequence'] 			= $this->AdminfunctionsPlugin()->importDataValidate($data[5]);
+								$column_index = 1;
+								$saveDataArray['locale'] 			= $this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]);
+								$saveDataArray['name'] 				= $this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]);
+								$saveDataArray['locale_title'] 		= $this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]);
+								$saveDataArray['published'] 		= $this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]);
+								$saveDataArray['status'] 			= $this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]);
+								$saveDataArray['sequence'] 			= $this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]);
+								$getCountryID = $this->AdminfunctionsPlugin()->validateduplicateLocaleCSV('country_locale',$this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]),'name','country_id',$this->dbAdapter,$this->config['global_locale_id'],'locale_id');
 								$saveDataArray['country_id']		= $getCountryID;
-								$saveDataArray['icon'] 				= $this->AdminfunctionsPlugin()->importDataValidate($data[7]);
+								$saveDataArray['icon'] 				= $this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]);
 								
 								
-								$existRecordID = $this->AdminfunctionsPlugin()->validateduplicateCSV('locale',$saveDataArray['locale'],'locale',$this->dbAdapter);  
+								$existRecordID = $this->AdminfunctionsPlugin()->validateduplicateCSV('locale',$saveDataArray['locale'],'locale',$this->dbAdapter,$data[0]);  
+								if($existRecordID > 0)
+									{
+										continue;
+									}
+								$existRecordID = $data[0];
 								
 								
 								if($existRecordID > 0)
@@ -311,7 +387,7 @@ class LocalesController extends AbstractActionController
 	public function downloadtemplateAction()
 	{
 		$csvData = '';		
-		$csvData .= "Locale,Name,Locale Title,Published,Status(Draft|Pending|Active|Blocked|Deleted),Sequence,Country Id,Icon";
+		$csvData .= "#ID,Locale,Name,Locale Title,Published(Yes|No),Status(Draft|Pending|Active|Blocked|Deleted),Sequence,Country,Icon";
 		$csvData .= "\n";
 		header('Content-Type: text/csv; charset=utf-8');
 		header("Content-Disposition: attachment; filename=locales.csv");
@@ -454,7 +530,17 @@ class LocalesController extends AbstractActionController
 
 			if ($this->request->getPost("pAction") == "ADD")
 			{	
-				unset($aData['MASTER_KEY_ID']);			
+				$sql="select sequence from locale order by sequence DESC LIMIT 1 ";
+				
+				$optionalParameters	= array();        
+				$statement 			= $this->dbAdapter->createStatement($sql, $optionalParameters);        
+				$resultData			= $statement->execute();        
+				$resultSet 			= new ResultSet; 			   
+				$resultSet->initialize($resultData);        
+				$rowset 			= $resultSet->toArray();
+				
+				unset($aData['MASTER_KEY_ID']);	
+				$aData['sequence'] 				 		= $rowset[0]['sequence']+1;
 				//$aData['organization_id'] = self::$Aula_OrgID;
 				$aData['owner_organization_id'] = self::$Aula_OwnerOrgID;
 				$aData['owner_organization_user_id'] = self::$Aula_OwnerOrgUserID;
@@ -482,4 +568,21 @@ class LocalesController extends AbstractActionController
         echo $result;
         exit;
     }
+	public function getlocaleAction() 
+	  {                
+		$sql="select id as id,name as name from locale";		        
+		$optionalParameters=array();        
+		$statement 		   = $this->dbAdapter->createStatement($sql, $optionalParameters);       
+	    $result = $statement->execute();        
+		$resultSet = new ResultSet;        
+		$resultSet->initialize($result);        
+		$rowset=$resultSet->toArray();        
+		$result1['DBData'] = $rowset;        
+		$result1['recordsTotal'] = count($rowset);        
+		$result1['DBStatus'] = 'OK';        
+		$result = json_encode($result1);       
+		echo $result;        
+		exit;    
+	 }
+
 }

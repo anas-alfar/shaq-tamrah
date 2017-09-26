@@ -28,7 +28,7 @@
 <!-- END #MAIN CONTENT -->
 <script type="text/javascript">
 			
-		var gridData;
+		var gridData = [];
 		function fetch_grid_data(objFormData)
 		{
 			hideShowLoader(true);
@@ -56,9 +56,14 @@
 			 }
 			 					
 			//Validate  duplicate
-			var isDuplicate = fn_validate_duplicate($("#name_<?php echo $this->global_locale_id; ?>").val(), 'asset_storage_type_locale', "name", "<?php echo $this->url('adminpanel/asset-storage-types', array('action'=>'validateduplicate'));?>",iActiveID);
+			var objFormData =
+			{
+				name				: $("#name_<?php echo $this->global_locale_id; ?>").val(),
+				country_id			: $("#country_id").val(),
+			};
+			var isDuplicate = fn_validate_duplicate_multiple('view_asset_storage_type',"<?php echo $this->url('adminpanel/asset-storage-types', array('action'=>'validateduplicate'));?>",iActiveID,objFormData);
 			if (isDuplicate) {
-				mySmallAlert('Duplicate Error...!', 'Duplicate Found. Name is Already exists !', 0);
+				mySmallAlert('Duplicate Error...!', 'Duplicate Found. Asset Storage Types for Selected Country Already exists !', 0);
 				return false;
 			}
 			
@@ -134,6 +139,7 @@
 					responsiveHelper_tblMasterList.createExpandIcon(nRow);
 				},
 				"drawCallback" : function(oSettings) {
+					grid_tooltip();
 					responsiveHelper_tblMasterList.respond();
 				},	
 				"aaData": gridData,

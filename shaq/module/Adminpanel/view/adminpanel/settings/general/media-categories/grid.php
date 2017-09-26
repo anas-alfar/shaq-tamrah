@@ -54,10 +54,11 @@
 					<!-- widget content -->
 					<div class="widget-body no-padding">
 						<form name="bulkSaveForm" id="bulkSaveForm">
-						<table id="tblMasterList" class="table table-striped table-bordered" width="100%">	
+						<table id="tblMasterList" class="display projects-table table table-striped table-bordered table-hover" cellspacing="0" width="100%">	
 					        <thead>
 								<tr>
 									<th></th>
+									<th width="10%"></th>
 									<th class="hasinput">
 										<input type="text" class="form-control" placeholder="Filter Name" >
 									</th>
@@ -71,6 +72,7 @@
 								</tr>
 					            <tr>
 									<th>Id</th>
+									<th width="10%"></th>
 				                    <th data-class="expand">Name</th>
 									<th data-hide="phone,tablet">Published</th>
 									<th data-hide="phone" class="action">Action</th>

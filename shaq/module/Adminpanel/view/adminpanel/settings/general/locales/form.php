@@ -46,9 +46,11 @@
 											 </section>
 											 <section class="col-md-6">
 												<div class="form-group">
-													<label class="control-label">Sequence<span>*</span></label>
-													 <input type="number" id="sequence" name="sequence" class="form-control " placeholder="Sequence">
-												</div>	
+												    <label class="control-label">Country<span>*</span></label>
+													<select class="select2" id="country_id" name="country_id" type="select">														
+														<option value="0">Select Country</option>
+													</select>
+												</div>
 											 </section>
 										</div>
 									    <div class="row">
@@ -65,17 +67,6 @@
 													   </select> 
 												</div>	
 											 </section>
-											 <section class="col-md-6">
-												<div class="form-group">
-												    <label class="control-label">Country<span>*</span></label>
-													<select class="select2" id="country_id" name="country_id" type="select">														
-														<option value="0">Select Country</option>
-													</select>
-												</div>
-											 </section>
-										  </div>	 
-										<div class="row">
-											 <div class="col-md-6">
 											 <section class="col-md-4">
 												<div class="form-group">
 												   <label>&nbsp;</label>
@@ -91,6 +82,11 @@
 													</label>
 												</div>
 											 </section>
+											 
+										  </div>	 
+										<div class="row">
+											 <div class="col-md-6">
+											 
 											 </div>
 											 <!--<section class="col-md-6">
 												

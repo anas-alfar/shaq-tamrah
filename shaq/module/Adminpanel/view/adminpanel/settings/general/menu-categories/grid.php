@@ -22,6 +22,8 @@
 					<h2>Menu Categories Listing</h2>
 							
 						<div class="widget-toolbar">
+							<button class="btn btnExport" id="btnReorder" >Reorder 
+							</button>
 							<a href="<?php echo $this->url('adminpanel/menu-categories', array('action'=>'downloadtemplate'));?>" target="_blank">
 							<button class="btn btnDownload" id="btnDownloadTemplate">Download Template
 							</button>
@@ -54,9 +56,10 @@
 					<!-- widget content -->
 					<div class="widget-body no-padding">
 						<form name="bulkSaveForm" id="bulkSaveForm">
-						<table id="tblMasterList" class="table table-striped table-bordered" width="100%">	
+						<table id="tblMasterList" class="display projects-table table table-striped table-bordered table-hover" cellspacing="0" width="100%">	
 					        <thead>
 								<tr>
+									<th></th>
 									<th></th>
 									<th class="hasinput">
 										<input type="text" class="form-control" placeholder="Filter Name" />
@@ -76,6 +79,7 @@
 								</tr>
 					            <tr>
 									<th>Id</th>
+									<th></th>
 				                    <th data-class="expand">Name</th>
 				                    <th>Status</th>
 									<th data-hide="phone,tablet">Published</th>

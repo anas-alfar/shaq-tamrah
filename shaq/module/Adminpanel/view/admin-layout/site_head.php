@@ -65,6 +65,9 @@
 		<!-- BOOTSTRAP JS -->
 		<script src="<?php echo $this->basePath(); ?>/public/admin/js/bootstrap/bootstrap.min.js" type="text/javascript"></script>		
 		
+		<!-- BOOTSTRAP wizard -->
+		
+		
 		<!-- IMPORTANT: APP CONFIG -->
 		<script language="javascript">
 			var navAjaxMainUrl = '<?php echo $this->url('adminpanel',['action' => 'index']); ?>';

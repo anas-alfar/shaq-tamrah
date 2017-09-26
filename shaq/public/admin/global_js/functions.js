@@ -7,6 +7,15 @@ function hideShowLoader(action)
 		$(".body_overlay_dark").addClass('hide');	
 		$(".common_loader").addClass('hide');		}*/
 }
+function hideShowLoaderActive(action)
+{
+	if(action) {
+		$(".body_overlay_dark").removeClass('hide');	
+		$(".common_loader").removeClass('hide');	}
+	else {
+		$(".body_overlay_dark").addClass('hide');	
+		$(".common_loader").addClass('hide');		}
+}
 function fullscreenModeChange(objId)
 {
 	$('#'+objId).parent().parent().find('.fa-compress').parent('a').trigger('click');
@@ -153,14 +162,14 @@ function grid_buttons(id)
 	strAction += '<input type="hidden" name="gridHiddenIdArray[]" value="'+id+'" />';
     strAction += '<div class="btn-group" style="width:140px;" >';
    		if(acl_VIEW == 1) {
-			strAction += '<a href="#" title="View" class="btn btn-primary fa fa-eye btn-sm view" row-id="' + id + '">';
+			strAction += '<a href="#" title="View" rel="tooltip" data-placement="bottom" data-original-title ="View" class="btn btn-primary fa fa-eye btn-sm view" row-id="' + id + '">';
 			strAction += '</a>';
 		}
     
-        strAction += '<a href="#" title="Edit" class="btn btn-success fa fa-pencil-square-o btn-sm edit" row-id="' + id + '">';
+        strAction += '<a href="#" title="Edit" rel="tooltip" data-placement="bottom" data-original-title ="Edit" class="btn btn-success fa fa-pencil-square-o btn-sm edit" row-id="' + id + '">';
         strAction += '</a>';
     
-        strAction += '<a href="#" title="Delete" class="btn btn-info fa fa-trash-o btn-sm delete" row-id="' + id + '" >';
+        strAction += '<a href="#" title="Delete" rel="tooltip" data-placement="bottom" data-original-title ="Delete" class="btn btn-info fa fa-trash-o btn-sm delete" row-id="' + id + '" >';
         strAction += '</a>';
     
     strAction += '</div>';
@@ -168,6 +177,126 @@ function grid_buttons(id)
     return strAction;
 
 }
+function grid_buttons_beneficiary(id)
+{
+    var strAction = "";
+	strAction += '<input type="hidden" name="gridHiddenIdArray[]" value="'+id+'" />';
+    strAction += '<div class="btn-group" style="width:236px;" >';
+   		if(acl_VIEW == 1) {
+			strAction += '<a href="#" title="View" rel="tooltip" data-placement="bottom" data-original-title ="View" class="btn btn-primary fa fa-eye btn-sm view" row-id="' + id + '">';
+			strAction += '</a>';
+		}
+    
+        strAction += '<a href="#" title="Edit" rel="tooltip" data-placement="bottom" data-original-title ="Edit" class="btn btn-success fa fa-pencil-square-o btn-sm edit" row-id="' + id + '">';
+        strAction += '</a>';
+    
+        strAction += '<a href="#" title="Delete" rel="tooltip" data-placement="bottom" data-original-title ="Delete" class="btn btn-info fa fa-trash-o btn-sm delete" row-id="' + id + '" >';
+        strAction += '</a>';
+		
+		 strAction += '<a href="#" title="New Donation" rel="tooltip" data-placement="bottom" data-original-title ="New Donation" class="btn btn-warning fa fa-gift btn-sm newdonation" row-id="' + id + '" >';
+        strAction += '</a>';
+		
+		strAction += '<a href="#" title="Sponsorship" rel="tooltip" data-placement="bottom" data-original-title ="Sponsorship" class="btn btn-danger fa fa-thumbs-o-up btn-sm sponsorship" row-id="' + id + '" >';
+        strAction += '</a>';
+		
+		strAction += '<a href="#" title="Manage Groups" rel="tooltip" data-placement="bottom" data-original-title ="Manage Groups" class="btn btn-primary fa fa-users btn-sm manage_groups" row-id="' + id + '" >';
+        strAction += '</a>';
+    
+    strAction += '</div>';
+    return strAction;
+
+}
+function detail_grid_buttons(id)
+{
+    var strAction = "";
+    strAction += '<div class="btn-group" style="width:140px;" >';
+    
+        strAction += '<a href="#" title="Edit" rel="tooltip" data-placement="bottom" data-original-title ="Edit" class="btn btn-success fa fa-pencil-square-o btn-sm edit" row-id="' + id + '">';
+        strAction += '</a>';
+    
+        strAction += '<a href="#" title="Delete" rel="tooltip" data-placement="bottom" data-original-title ="Delete" class="btn btn-info fa fa-trash-o btn-sm delete" row-id="' + id + '" >';
+        strAction += '</a>';
+    
+    strAction += '</div>';
+
+    return strAction;
+
+}
+function grid_buttons_popup(id,name,type)
+{
+    var strAction = "";
+	strAction += '<input type="hidden" name="gridHiddenIdArray[]" value="'+id+'" />';
+    strAction += '<div class="btn-group" style="width:140px;" >';
+   		if(acl_VIEW == 1) {
+			strAction += '<a href="#" title="View" rel="tooltip" data-placement="bottom" data-original-title ="View" class="btn btn-primary fa fa-eye btn-sm view" row-id="' + id + '">';
+			strAction += '</a>';
+		}
+    
+        strAction += '<a href="#" title="Edit" rel="tooltip" data-placement="bottom" data-original-title ="Edit"  class="btn btn-success fa fa-pencil-square-o btn-sm edit" row-id="' + id + '">';
+        strAction += '</a>';
+    
+        strAction += '<a href="#" title="Delete" rel="tooltip" data-placement="bottom" data-original-title ="Delete" class="btn btn-info fa fa-trash-o btn-sm delete" row-id="' + id + '" >';
+        strAction += '</a>';
+		
+		strAction += '<a href="#" title="Popup" rel="tooltip" data-placement="bottom" data-original-title ="Popup" class="btn btn-warning fa fa-plus btn-sm popup" row-id="' + id +  '" row-name="' + name +  '" row-type-id="' + type +  '">';
+        strAction += '</a>';
+    
+    strAction += '</div>';
+
+    return strAction;
+
+}
+function grid_buttons_plus(id)
+{
+    var strAction = "";
+	strAction += '<input type="hidden" name="gridHiddenIdArray[]" value="'+id+'" />';
+    strAction += '<div class="btn-group" style="width:100px;" >';
+    
+        strAction += '<a href="#" title="Plus" rel="tooltip" data-placement="bottom" data-original-title ="Delete" class="btn btn-warning fa fa-plus btn-sm plus" row-id="' + id + '" >';
+        strAction += '</a>';
+    
+    strAction += '</div>';
+
+    return strAction;
+
+}
+
+
+function grid_buttons_new(id,name)
+{
+    var strAction = "";
+	strAction += '<input type="hidden" name="gridHiddenIdArray[]" value="'+id+'" />';
+    strAction += '<div class="btn-group" style="width:140px;" >';
+   		if(acl_VIEW == 1) {
+			strAction += '<a href="#" title="View" rel="tooltip" data-placement="bottom" data-original-title ="View" class="btn btn-primary fa fa-eye btn-sm view" row-id="' + id + '">';
+			strAction += '</a>';
+		}
+    
+        strAction += '<a href="#" title="Edit" rel="tooltip" data-placement="bottom" data-original-title ="Edit"  class="btn btn-success fa fa-pencil-square-o btn-sm edit" row-id="' + id + '">';
+        strAction += '</a>';
+    
+        strAction += '<a href="#" title="Delete" rel="tooltip" data-placement="bottom" data-original-title ="Delete"  class="btn btn-info fa fa-trash-o btn-sm delete" row-id="' + id + '" >';
+        strAction += '</a>';
+		
+		strAction += '<a href="#" title="New" rel="tooltip" data-placement="bottom" data-original-title ="New"  class="btn btn-warning fa fa-plus btn-sm new" row-id="' + id +  '" row-name="' + name +  '" >';
+        strAction += '</a>';
+    
+    strAction += '</div>';
+
+    return strAction;
+
+}
+
+function grid_tooltip()
+{
+	
+	if ($("[rel=tooltip]").length) 
+	{
+		$("[rel=tooltip]").tooltip();
+	}
+	
+}
+
 
 /// ------------------- grid switch -----------------------
 function grid_switch(id,fieldName,fieldValue,MatchValue)
@@ -177,6 +306,15 @@ function grid_switch(id,fieldName,fieldValue,MatchValue)
 		checked = 'checked="checked"';
 	var returnString = '<!--'+fieldValue+'-->';
 	returnString += '<span class="onoffswitch"><input name="'+fieldName+id+'" class="onoffswitch-checkbox" id="'+fieldName+id+'" '+checked+' type="checkbox"><label class="onoffswitch-label" for="'+fieldName+id+'"><span class="onoffswitch-inner" data-swchon-text="Yes" data-swchoff-text="No"></span> <span class="onoffswitch-switch"></span></label></span>';							
+	return returnString;
+}
+function grid_switch_active(id,fieldName,fieldValue,MatchValue)
+{
+	var checked = '';
+	if(fieldValue == MatchValue)
+		checked = 'checked="checked"';
+	var returnString = '<!--'+fieldValue+'-->';
+	returnString += '<span class="onoffswitch"><input name="'+fieldName+id+'" class="onoffswitch-checkbox" id="'+fieldName+id+'" '+checked+' type="checkbox"><label class="onoffswitch-label" for="'+fieldName+id+'"><span class="onoffswitch-inner" data-swchon-text="Active" data-swchoff-text="Inactive"></span> <span class="onoffswitch-switch"></span></label></span>';							
 	return returnString;
 }
 function hiddenIdArray(id)
@@ -275,6 +413,9 @@ function populateEditEntries(iID,strURL) {
 				{
 					key = key+"1";
 				}
+				
+				if(key == "map_location")
+						maploc = value;
 		   
 				var count = 0;
 
@@ -298,6 +439,120 @@ function populateEditEntries(iID,strURL) {
 						
 						}	         
                     }
+ 					if(key == "status"){
+				
+						if(value == "Active")
+							$("#frmForm").find("#"+key).prop("checked", true);
+						else
+							$("#frmForm").find("#"+key).prop("checked", false);
+                   }
+                if ($("#"+key).length > 0 || key == ckeditorvar || key == "hobby" ) {  // check if exists or not
+					
+                    strElementType= $("#"+key).attr("type");
+
+                    if(strElementType == "text") {  // if textbox
+                        $("#" + key).val(value);
+                    }
+					if(strElementType == "number") {  // if number
+                        $("#" + key).val(value);
+                    }					
+					else if(strElementType == "email") {  // if email
+                        $("#" + key).val(value);
+                    }
+					
+					else if(strElementType == "password") {  // if password
+                        $("#" + key).val(value);
+                    }
+					else if($("#"+key).attr("name") == "map_location"){
+								$("#" + key).val(value);
+						}
+					/*else if(key == ckeditorvar ) {  // if textarea 
+                        $("#description_ckeditor").text(value);
+                    }*/					 
+					else if(strElementType == "select") {  // if Select Box
+						
+                        //$("#" + key).select2("val",value);
+						$("#" + key).val(value); // Select the option with a value of 'US'
+						$("#" + key).trigger('change'); // Notify any JS components that the value changed 
+						
+						
+                    }					
+				  	else if($("#"+key).attr("name") == "image") {  // if textbox   
+						$("#display_img").attr("src", "public/uploads/localeicons/"+value);	
+                    }					
+                    else if(strElementType == "multiselect") {  // if Select Box with multi select
+                        var arrValues = $.parseJSON(stripslashes(value));
+                        $("#" + key).select2("val", arrValues);
+                    }					
+                    else if(strElementType == "image") {  // if Image
+                        $("#" + key).attr("src",value);
+                    }					
+					else if(strElementType == "textarea") { 
+                       $("#" + key).html(value);
+                    }					
+					else if(strElementType == "checkbox"){	
+						if(value=="1" || value == "Yes")
+							$("#" + key).prop("checked", true);							
+					}
+					else if($("#"+key).attr("name") == "gender"){	
+													
+							if(value=="Male")
+								$("#gender1").prop("checked", true);
+							else if(value=="Female")
+                            	$("#gender2").prop("checked", true);
+                   }
+				    
+					else {
+					  	$("#" + key).val(value);	
+					}
+                }
+            });
+			
+			if (typeof funCallAfterEdit == 'function') { 
+					funCallAfterEdit(arrForms);	
+			}
+			
+			
+        }
+    }
+    else {
+        mySmallAlert('Error...!', 'There was an error', 0);
+    }
+}
+function populateEditEntries_view(iID,strURL) {
+    iActiveID = iID;
+
+    var arrForms=[]; // Keep Form Values
+    var strElementType; // Keep element type
+
+    var objFormData =
+    {
+        pAction: 'GETREC',
+        KEY_ID : iActiveID
+    };
+	hideShowLoader(true);
+    var objMyPost = AJAX_Post(strURL, objFormData);
+	hideShowLoader(false);
+    if (objMyPost.ERR_NO === 0) {
+        if (objMyPost.DATA.DBStatus === 'OK') {
+/*			if(is_single == false) {
+				visibleControl('widForm', true);
+				visibleControl('widGrid', false);
+			}
+*/            strActionMode = 'EDIT';
+			$("#filediv").html('');
+            arrForms=objMyPost.DATA.data[0];
+			var gender="";
+			var additional_image = 1;
+			
+			
+			if (typeof funCallBeforeEdit == 'function') { 
+					funCallBeforeEdit(arrForms);	
+			}
+            $.each( arrForms, function( key, value ) {
+				key='view_'+key;					   
+		   
+				var count = 0;
 
                 if ($("#"+key).length > 0 || key == ckeditorvar || key == "hobby") {  // check if exists or not
 					
@@ -328,7 +583,7 @@ function populateEditEntries(iID,strURL) {
 						
                     }					
 				  	else if($("#"+key).attr("name") == "image") {  // if textbox   
-						$("#display_img").attr("src", "public/uploads/"+value);	
+						$("#display_img").attr("src", "public/uploads/localeicons/"+value);	
                     }					
                     else if(strElementType == "multiselect") {  // if Select Box with multi select
                         var arrValues = $.parseJSON(stripslashes(value));
@@ -344,7 +599,15 @@ function populateEditEntries(iID,strURL) {
 						if(value=="1" || value == "Yes")
 							$("#" + key).prop("checked", true);							
 					}
+					else if($("#"+key).attr("name") == "gender"){	
+													
+							if(value=="Male")
+								$("#gender1").prop("checked", true);
+							else if(value=="Female")
+                            	$("#gender2").prop("checked", true);
+                   }
 					else {
+
 					  	$("#" + key).val(value);	
 					}
                 }
@@ -380,8 +643,12 @@ function fnEdit(strUrl)
 		$("#display_img").removeClass('hide');
 		$("#type_id").removeClass('hide');
 		$("#sh").removeClass('hide');
+		$('#langFormTabs a:first').tab('show').trigger('click');
         populateEditEntries(iActiveID, strUrl);
         glbControlEnable(true);
+		$('ul#langFormTabs li').each(function(){
+		   $(this).find('i').removeClass('fa-check').removeClass('fa-times');
+		});
 		
     });
 
@@ -469,6 +736,8 @@ function fnView(strUrl)
         iActiveID=$(this).attr("row-id");
         clearForm("frmForm");
 		$("#display_img").removeClass('hide');
+		$('#langFormTabs a:first').tab('show').trigger('click');
+		$("#langFormTabs").find('i.fa-times').hide()
         populateEditEntries(iActiveID,strUrl);
         glbControlEnable(false);
     });
@@ -579,13 +848,16 @@ function fnExport(strUrl)
         $.SmartMessageBox({
             title  : "Alert!",
             content: "How you want to export data !",
-            buttons: '[ALL][Current Showing Only]'
+            buttons: '[ALL][Current Showing Only][No]'
         }, function (ButtonPressed) {
             if (ButtonPressed === "ALL") {
 				var export_data = "ALL";
 			}
             if (ButtonPressed === "Current Showing Only") {
 				var export_data = "SEARCHED";
+            }
+			if (ButtonPressed === "No") {
+				return false;
             }
 		    var $form = $('#bulkSaveForm');
 			var objMasterData = $form.serializeObject();
@@ -708,6 +980,496 @@ function fnDeletePermenant(strUrl)
     });
 
 }
+function fnPopup(strUrl)
+{	 
+	$("#tblMasterList").delegate('a.popup', 'click', function (e) {
+        e.preventDefault();
+		var intID=$(this).attr("row-id");
+       var	name=$(this).attr("row-name");
+	   var	typeID=$(this).attr("row-type-id");
+	   if (typeof funCallBeforePopup == 'function') { 
+					funCallBeforePopup(intID,name,typeID);	
+		}
+		$('#PopupGridModal').modal('show');	
+		 if (typeof funCallAfterPopup == 'function') { 
+					funCallAfterPopup(intID,name,typeID);	
+		}
+		return false; 										 
+	});
+
+}
+function fnDonation()
+{	 
+	$("#tblMasterList").delegate('a.newdonation', 'click', function (e) {
+        e.preventDefault();
+		var intID=$(this).attr("row-id");
+		$("#frmFormDonation").find('#beneficiary_id').val(intID);
+		$('#DonationModal').modal('show');	
+		return false; 										 
+	});
+
+}
+function fnSponsorship(strUrl)
+{	 
+	$("#tblMasterList").delegate('a.sponsorship', 'click', function (e) {
+        e.preventDefault();
+		var intID=$(this).attr("row-id");
+		var beneficiary_profile_family=$("#frmFormSponsorship").find("#beneficiary_profile_family_id");
+		var beneficiary_profile_family_array=[beneficiary_profile_family];
+		var objFormData = {
+			beneficiaryID    : intID
+		}
+				
+				populateDependentOptionValuesObjectBulk(beneficiary_profile_family_array,strUrl,"Select Beneficiary Profile Family",objFormData);
+		$("#frmFormSponsorship").find('#beneficiary_id').val(intID);		
+		$('#SponsorshipModal').modal('show');	
+		return false; 										 
+	});
+
+}
+function fnManageGroups()
+{	 
+	$("#tblMasterList").delegate('a.manage_groups', 'click', function (e) {
+        e.preventDefault();
+		var intID=$(this).attr("row-id");
+		$("#frmFormManageGroups").find('#beneficiary_id').val(intID);
+		$('#ManageGroupsModal').modal('show');	
+		return false; 										 
+	});
+
+}
+
+
+/******************************************************NEW SCREEN***************************************************************/
+function glbControlEnable1(bolFlag) {
+
+    if (bolFlag) {
+
+        $("#frmForm1").find("input, button, textarea, select").attr("disabled", false);
+        $("#frmForm1").find("input, textarea").removeClass("bg-color-lighten");
+		$(".customAddNewClientVendor").attr("disabled", false);
+		$(".customAddNewProduct").attr("disabled", false);
+		$(".customDisableDiv").removeClass("hide");
+        $("#btnSave1").show();
+    }
+    else {
+        $("#frmForm1").find("input, button, textarea, select").attr("disabled", true);
+        $("#frmForm1").find("input, textarea").addClass("bg-color-lighten");
+        $(".editRecord ").attr("disabled", true);
+		$(".customAddNewClientVendor").attr("disabled", true);
+		$(".customAddNewProduct").attr("disabled", true);
+		$(".customDisableDiv").addClass("hide");
+        $("#btnSave1").hide();
+    }
+}
+
+function populateEditEntries1(iID,strURL) {
+    iActiveID = iID;
+    var arrForms=[]; // Keep Form Values
+    var strElementType; // Keep element type
+
+    var objFormData =
+    {
+        pAction: 'GETREC1',
+        KEY_ID : iActiveID
+    };
+	hideShowLoader(true);
+    var objMyPost = AJAX_Post(strURL, objFormData);
+	hideShowLoader(false);
+    if (objMyPost.ERR_NO === 0) {
+        if (objMyPost.DATA.DBStatus === 'OK') {
+			
+            strActionMode = 'EDIT1';
+			$("#filediv").html('');
+            arrForms=objMyPost.DATA.data[0];
+			var gender="";
+			var additional_image = 1;
+			
+			
+			if (typeof funCallBeforeEdit == 'function') { 
+					funCallBeforeEdit(arrForms);	
+			}
+            $.each( arrForms, function( key, value ) {
+				if(key == "gender")   //radio button
+				{
+					key = key+"1";
+				}
+		   
+				var count = 0;
+
+				if(key == "additional_images")
+				{
+						$("#additionalimageshidden").val(value);
+						
+						if(value != "")
+						{
+						$("#additional_img_main_wrap").html("");
+                   		var img = value.split(',');
+						var imgData = '';
+						$.each(img, function(index, val) {
+							count++;
+							
+							imgData += '<div  style="float:left;margin-right:20px; margin-top:10px;"><img id="allimg" src="public/uploads/'+val+'" height="100px" width="130px"/> <img src="public/img/x.png" height="20px" width="20px" class="cimgclick" row-id="'+val+'" onClick="deleteImageEditMode(\''+val+'\',iActiveID,this)" /></div>';
+							
+						});
+						
+						$('#filedivedit').html(imgData);
+						
+						}	         
+                    }
+				var keyObject = $("#frmForm1").find("#"+key);
+                if (keyObject.length > 0 || key == ckeditorvar || key == "hobby"  || key == "published") {  // check if exists or not
+					
+                    strElementType= keyObject.attr("type");
+
+                    if(strElementType == "text") {  // if textbox
+                        keyObject.val(value);
+                    }
+					if(strElementType == "number") {  // if number
+                        keyObject.val(value);
+                    }					
+					else if(strElementType == "email") {  // if email
+                        keyObject.val(value);
+                    }
+					
+					else if(strElementType == "password") {  // if password
+                        keyObject.val(value);
+                    }				 
+					else if(strElementType == "select") {  // if Select Box
+						keyObject.val(value); // Select the option with a value of 'US'
+						keyObject.trigger('change'); // Notify any JS components that the value changed 						
+                    }					
+				  	else if(keyObject.attr("name") == "image") {  // if textbox   
+						$("#display_img").attr("src", "public/uploads/localeicons/"+value);	
+                    }					
+                    else if(strElementType == "multiselect") {  // if Select Box with multi select
+                        var arrValues = $.parseJSON(stripslashes(value));
+                        keyObject.select2("val", arrValues);
+                    }					
+                    else if(strElementType == "image") {  // if Image
+                        keyObject.attr("src",value);
+                    }					
+					else if(strElementType == "textarea") { 
+                       keyObject.html(value);
+                    }					
+					else if(strElementType == "checkbox"){	
+						if(value=="1" || value == "Yes")
+							keyObject.prop("checked", true);							
+					}
+					else if(keyObject.attr("name") == "gender"){	
+													
+							if(value=="Male")
+								$("#gender1").prop("checked", true);
+							else if(value=="Female")
+                            	$("#gender2").prop("checked", true);
+                   }
+				   else if(key == "published"){			
+						if(value == "Yes")
+							$("#frmForm1").find("#"+key+"1").prop("checked", true);
+						else
+							$("#frmForm1").find("#"+key+"1").prop("checked", false);
+                   }
+					else {
+
+					  	keyObject.val(value);	
+					}
+                }
+            });
+			if (typeof funCallAfterEdit == 'function') { 
+					funCallAfterEdit(arrForms);	
+			}
+			
+        }
+    }
+    else {
+        mySmallAlert('Error...!', 'There was an error', 0);
+    }
+}
+
+
+function fnNew(strUrl)
+{	 
+	$("#tblMasterList").delegate('a.new', 'click', function (e) {
+        e.preventDefault();
+		strActionMode = "ADD1";
+		intID=$(this).attr("row-id");
+		parentId = intID;
+      	var	name=$(this).attr("row-name");
+		parentName=name;
+		if(typeof cllBeforefnNew === "function")
+		{
+			cllBeforefnNew(parentId,name);	
+		}
+
+		fullscreenModeChange('new');
+        objMyDetailRecords.length=0;
+        tblDetailsListBody.html('');
+		
+        visibleControl("widForm1", true);
+        visibleControl("widGrid", false);
+        clearForm("frmForm1");
+        strActionMode="ADD1";
+        glbControlEnable1(true);		
+		$('#frmForm1').bootstrapValidator("resetForm",true); 
+		$("#"+parentIdFieldName).val(parentId);
+		$('#tblname').html(parentName);
+		$('#tblname1').html(parentName);
+		
+		//alert($('ul#langFormTabs li:first-child').html());
+		// $('.nav-tabs a[href="#tabs-1"]').tab('show');
+		$('ul#langFormTabs li').each(function(){
+		   $(this).find('i').removeClass('fa-check').removeClass('fa-times');
+		});
+	});
+}
+function fnEdit1(strUrl)
+{	
+    $("#widGrid1").delegate('a.edit_drag', 'click', function (e) {
+        e.preventDefault();
+		strActionMode = "EDIT1";
+		$('html,body').animate({ scrollTop: 0 }, 1000);
+		$("#"+parentIdFieldName).val(parentId);
+		$('#frmForm1').bootstrapValidator("resetForm",true);    
+        iActiveID = $(this).attr("row-id");
+        clearForm("frmForm1");
+		$("#display_img").removeClass('hide');
+		$("#type_id").removeClass('hide');
+		$("#sh").removeClass('hide');
+		$('#langFormTabs a:first').tab('show').trigger('click');
+		//$('.nav-tabs a:first').tab('show');
+        populateEditEntries1(iActiveID, strUrl);
+        glbControlEnable1(true);
+		
+    });
+
+}
+
+function fnView1(strUrl)
+{
+    $("#widGrid1").delegate('a.view_drag', 'click', function (e) {
+        e.preventDefault();	
+		 $('html,body').animate({ scrollTop: 0 }, 1000);
+		$('#frmForm1').bootstrapValidator("resetForm",true);
+        iActiveID=$(this).attr("row-id");
+        clearForm("frmForm1");
+		$("#display_img").removeClass('hide');
+		$('#langFormTabs a:first').tab('show').trigger('click');
+        populateEditEntries1(iActiveID,strUrl);
+        glbControlEnable1(false);
+    });
+}
+function fnDelete1(strUrl)
+{
+
+    $("#widGrid1").delegate('a.delete_drag', 'click', function (e) {
+        e.preventDefault();
+        intID=$(this).attr("row-id");
+        var url = "pAction=DELETE1&ID=" + intID;
+        $.SmartMessageBox({
+            title  : "Alert!",
+            content: "Are you sure you want to delete?",
+            buttons: '[Yes][No]'
+        }, function (ButtonPressed) {
+            if (ButtonPressed === "Yes") {
+                var objFormData =
+                {
+                    pAction: 'DELETE1',
+                    KEY_ID : intID
+                };
+				hideShowLoader(true);
+                var objMyPost = AJAX_Post(strUrl, objFormData);
+                if (objMyPost.ERR_NO === 0) {
+                    if (objMyPost.DATA.DBStatus === 'OK') {   
+						if(is_single == false) {
+							fetch_grid_data_draggable();
+						}
+						else {
+							reorderTable.ajax.reload( null, false );    		
+						}							
+						hideShowLoader(false);
+                        mySmallAlert('Success', 'Record  Deleted successfully', 1);
+                    }
+                    else {
+                        mySmallAlert('Error...!', 'There was an error', 0);
+                    }
+                }
+            }
+            if (ButtonPressed === "No") {
+            }
+        });
+    });
+
+}
+function fnExport1(strUrl)
+{
+
+    $("#btnExport1").click(function (e) {
+        e.preventDefault();  
+		var exportfilename = parentName;
+      
+        $.SmartMessageBox({
+            title  : "Alert!",
+            content: "How you want to export data !",
+            buttons: '[ALL][Current Showing Only][No]'
+        }, function (ButtonPressed) {
+            if (ButtonPressed === "ALL") {
+				var export_data = "ALL";
+			}
+            if (ButtonPressed === "Current Showing Only") {
+				var export_data = "SEARCHED";
+            }
+			if (ButtonPressed === "No") {
+				return false;
+            }
+		    var $form = $('#bulkSaveForm1');
+			var objMasterData = $form.serializeObject();
+			objMasterData = JSON.stringify(objMasterData);
+
+			var objFormData =
+			{
+				FORM_DATA1: objMasterData,
+				export_data: export_data,
+				exportfilename:exportfilename,
+				parentId : parentId
+			};
+			hideShowLoader(true);
+			var objMyPost = AJAX_Post(strUrl, objFormData);
+			if (objMyPost.ERR_NO === 0) {				
+				//downloadCSV(objMyPost.DATA.CSVDATA,exportfilename);
+				window.open(objMyPost.DATA.EXPORTURL);
+			}
+			else
+			{
+				mySmallAlert('Error...!', 'There was an error', 0);	
+			}
+           
+        });
+    });
+
+}
+
+
+function fnBulkSave1(strUrl)
+{
+
+    $("#btnBulkSave1").click(function (e) {
+        e.preventDefault();       
+      $("#"+parentIdFieldName).val(parentId);
+        $.SmartMessageBox({
+            title  : "Alert!",
+            content: "Are you sure you want to save all?",
+            buttons: '[Yes][No]'
+        }, function (ButtonPressed) {
+            if (ButtonPressed === "Yes") {
+               var $form = $('#bulkSaveForm1');
+				var objMasterData = $form.serializeObject();
+				objMasterData = JSON.stringify(objMasterData);
+
+				var objFormData =
+				{
+					FORM_DATA1: objMasterData,
+					parentId : parentId
+				};
+				hideShowLoader(true);
+                var objMyPost = AJAX_Post(strUrl, objFormData);
+                if (objMyPost.ERR_NO === 0) {
+                    if (objMyPost.DATA.DBStatus === 'OK') {   
+						fetch_grid_data1();							
+						hideShowLoader(false);
+                        mySmallAlert('Success', 'All records updated successfully', 1);
+                    }
+                    else {
+                        mySmallAlert('Error...!', 'There was an error', 0);
+                    }
+                }
+            }
+            if (ButtonPressed === "No") {
+            }
+        });
+    });
+
+}
+function fnImport1(strUrl)
+{	
+	$("#btnImport1").click(function(){
+		$('#ImportCsvFileModal1').modal({backdrop: 'static', keyboard: false});	
+		$("#importFileError1").addClass("hide");	
+		$("#importFileLabel1").removeClass("has-error");	
+		$('#importcsvform1').find('input:text, input:file').val('');
+		$('#popup_titles_span').html(parentName);
+	});
+
+	$("#importsavebutton1").click(function (e) {
+		e.stopPropagation();
+		$("#importFileError1").addClass("hide");	
+		$("#importFileLabel1").removeClass("has-error");	
+		var this1 = document.getElementById("importfile1");			
+	
+		if (this1.files && this1.files[0]) {
+	   
+			//Save img
+			
+			var $form = $('#importcsvform1');
+			var oMyForm = new FormData($form.get(0));
+			//*============================image=====================================
+			file = document.getElementById("importfile1").files[0];
+			if (file && file.size > 0) {
+				var fileInputProfile = document.getElementById("importfile1");
+				oMyForm.append("importfile", file);
+			} else {
+				//oMyForm.append("importfile", 0);
+				$("#importFileError1").removeClass("hide");					
+				$("#importFileLabel1").addClass("has-error");		
+				return false;
+			}					
+			oMyForm.append("parentId", parentId);
+			var deferred;
+			deferred = $.ajax({
+			
+				url: strUrl,
+				type: "POST",
+				processData: false,
+				contentType: false,
+				dataType: 'json',
+				data: oMyForm,
+				beforeSend: function () {					
+				},
+				success: function () {					
+					
+				}					
+			});					
+			
+			deferred.done(function (result) {
+			
+				mySmallAlert('Success', result.message1, 1);
+				fetch_grid_data();
+				$('#import1').val(null);
+				if (result.status === 'OK') {
+					$('#ImportCsvFileModal1').modal('hide')
+				}
+				else
+				{
+					$('#ImportCsvFileModal1').modal('show')
+			}
+			}).fail(function (result) {
+				mySmallAlert('Error', 'Unable to open file!', 0);
+			});			   
+	  }
+	  	else
+		{
+			$("#importFileError1").removeClass("hide");						
+			$("#importFileLabel1").addClass("has-error");
+		}
+		
+		return false; 										 
+	});
+
+}
+
+
+
+
+/******************************************************END NEW SCREEN***************************************************************/
 
 
 //function used to find the duplicate
@@ -731,7 +1493,7 @@ function fn_validate_duplicate(iID,tableName,fieldName,strURL,iActiveID)
 
 
 //function used to find the duplicate for two fields
-function fn_validate_duplicate_two(iVal1,iVal2,field1,field2,tableName,strURL)
+function fn_validate_duplicate_two(iVal1,iVal2,field1,field2,tableName,strURL,iActiveID)
 {
 
     var objFormData =
@@ -740,10 +1502,29 @@ function fn_validate_duplicate_two(iVal1,iVal2,field1,field2,tableName,strURL)
         field1: field1,
         field2: field2,
         value1: iVal1,
-        value2: iVal2
+        value2: iVal2,
+		
 
     };
     var objMyPost = AJAX_Post(strURL, objFormData);
+
+        if (objMyPost.DATA.DBStatus === 'ERR') {
+            return true;
+        }
+
+}
+
+function fn_validate_duplicate_multiple(tableName,strURL,iActiveID,objFormData)
+{
+
+    var objFormData1 =
+    {
+        tableName: tableName,
+		fnameValPair:objFormData,
+		iActiveID:iActiveID
+
+    };
+    var objMyPost = AJAX_Post(strURL, objFormData1);
 
         if (objMyPost.DATA.DBStatus === 'ERR') {
             return true;
@@ -770,9 +1551,8 @@ function populateOptionValues(strObjectName,Url,Select_heading) {
     cboObject.html(items);
 	cboObject.val("0").trigger("change");
 }
-function populateBeneficiaryOptionValues(strObjectName,Url,Select_heading) {
-
-    var cboObject = $('#' + strObjectName);
+function populateOptionValuesBulk(strObjectName,Url,Select_heading) {
+	var objectcount=strObjectName.length;
     var objGet = AJAX_Get(Url);
     var items = "";
     var iVal = "";		
@@ -780,12 +1560,38 @@ function populateBeneficiaryOptionValues(strObjectName,Url,Select_heading) {
         var arrMyData = objGet.DATA.DBData;
         items += "<option value='0'><column>"+Select_heading+"</column></option>";
         $.each(arrMyData, function (index, item) {
-            items += "<option value='" + item.id + "'><column>" + item.family_name + "</column></option>";
+            items += "<option value='" + item.id + "'><column>" + item.name + "</column></option>";
+        });
+    }
+    for(var i=0 ; i<objectcount ;i++)
+	{
+		var cboObject = strObjectName[i];
+	
+		cboObject.html(items);
+	
+		cboObject.select2("val", "0");
+	}
+}
+
+function populateOptionValues2(cboObject,Url,Select_heading) {
+
+    //var cboObject = $('#' + strObjectName);
+    var objGet = AJAX_Get(Url);
+    var items = "";
+    var iVal = "";		
+    if (objGet.DATA.DBStatus === 'OK') {
+        var arrMyData = objGet.DATA.DBData;
+        items += "<option value='0'><column>"+Select_heading+"</column></option>";
+        $.each(arrMyData, function (index, item) {
+            items += "<option value='" + item.id + "'><column>" + item.name + "</column></option>";
         });
     }
     cboObject.html(items);
 	cboObject.val("0").trigger("change");
 }
+
+
+
 
 function populateMultiSelectOptionValues(strObjectName,Url) {
 
@@ -803,6 +1609,7 @@ function populateMultiSelectOptionValues(strObjectName,Url) {
     cboObject.html(items);
    
 }
+
 function populateDependentOptionValues(strObjectName,Url,Select_heading,dataObject) {
 
     var cboObject = $('#' + strObjectName);
@@ -818,4 +1625,269 @@ function populateDependentOptionValues(strObjectName,Url,Select_heading,dataObje
     }
     cboObject.html(items);
     cboObject.select2("val", "0");
+}
+
+function populateDependentOptionValuesObject(strObjectName,Url,Select_heading,dataObject) {
+
+    var cboObject = strObjectName;
+    var objGet = AJAX_Post(Url, dataObject);
+    var items = "";
+    var iVal = "";		
+    if (objGet.DATA.DBStatus === 'OK') {
+        var arrMyData = objGet.DATA.DBData;
+        items += "<option value='0'><column>"+Select_heading+"</column></option>";
+        $.each(arrMyData, function (index, item) {
+            items += "<option value='" + item.id + "'><column>" + item.name + "</column></option>";
+        });
+    }
+    cboObject.html(items);
+    cboObject.select2("val", "0");
+}
+
+function populateDependentOptionValuesObjectBulk(strObjectName,Url,Select_heading,dataObject) {
+
+	var objectcount=strObjectName.length;
+    var objGet = AJAX_Post(Url, dataObject);
+    var items = "";
+    var iVal = "";		
+    if (objGet.DATA.DBStatus === 'OK') {
+        var arrMyData = objGet.DATA.DBData;
+        items += "<option value='0'><column>"+Select_heading+"</column></option>";
+        $.each(arrMyData, function (index, item) {
+            items += "<option value='" + item.id + "'><column>" + item.name + "</column></option>";
+        });
+    }
+    for(var i=0 ; i<objectcount ;i++)
+	{
+		var cboObject = strObjectName[i];
+	
+		cboObject.html(items);
+	
+		cboObject.select2("val", "0");
+	}
+}
+
+function populateOptionValuesSortable(strObjectName,Url,Select_heading) {
+
+    var cboObject = $('#' + strObjectName);
+    var objGet = AJAX_Get(Url);
+    var items = "";
+    var iVal = "";		
+    if (objGet.DATA.DBStatus === 'OK') {
+        var arrMyData = objGet.DATA.DBData;
+            $.each(arrMyData, function (index, item) {
+            items += "<li id='" + item.id + "'><column>" + item.name + "</column></li>";
+        });
+    }
+    cboObject.html(items);
+	cboObject.val("0").trigger("change");
+}
+
+
+/*function fnEditDetail(detailGridTableId,formID,tabUlID,strUrl)
+{	
+    $("#"+detailGridTableId).delegate('a.edit', 'click', function (e) {
+        e.preventDefault();		
+		strActionModeFamilyDetail = 'EDIT';
+		$('#'+formID).bootstrapValidator("resetForm",true);    
+        iActiveDetailID = $(this).attr("row-id");
+        clearForm(formID);
+		$('#'+tabUlID+' a:first').tab('show').trigger('click');
+        populateEditEntriesDetail(iActiveDetailID,formID,strUrl);
+		$('ul#'+tabUlID+' li').each(function(){
+		   $(this).find('i').removeClass('fa-check').removeClass('fa-times');
+		});
+		
+    });
+
+}*/
+function populateEditEntriesDetail(iID,formID,strURL) {
+    //iActiveDetailID = iID;
+
+    var arrForms=[]; // Keep Form Values
+    var strElementType; // Keep element type
+
+    var objFormData =
+    {
+        pAction: 'GETREC',
+        KEY_ID : iID
+    };
+	hideShowLoaderActive(true);
+    var objMyPost = AJAX_Post(strURL, objFormData);
+    if (objMyPost.ERR_NO === 0) {
+        if (objMyPost.DATA.DBStatus === 'OK') {
+            strActionMode = 'EDIT';
+			//$("#filediv").html('');
+            arrForms=objMyPost.DATA.data[0];
+			var gender="";
+			var additional_image = 1;
+			
+            $.each( arrForms, function( key, value ) {	
+		   
+				var count = 0;
+
+				/*if(key == "additional_images")
+				{
+					$("#additionalimageshidden").val(value);
+					
+					if(value != "")
+					{
+					$("#additional_img_main_wrap").html("");
+					var img = value.split(',');
+					var imgData = '';
+					$.each(img, function(index, val) {
+						count++;
+						
+						imgData += '<div  style="float:left;margin-right:20px; margin-top:10px;"><img id="allimg" src="public/uploads/'+val+'" height="100px" width="130px"/> <img src="public/img/x.png" height="20px" width="20px" class="cimgclick" row-id="'+val+'" onClick="deleteImageEditMode(\''+val+'\',iActiveID,this)" /></div>';
+						
+					});
+					
+					$('#filedivedit').html(imgData);
+					
+					}	         
+				}*/
+                if ($("#"+formID).find("#"+key).length > 0) {  // check if exists or not
+					
+                    strElementType= $("#"+formID).find("#"+key).attr("type");
+
+                    if(strElementType == "text") {  // if textbox
+                        $("#"+formID).find("#" + key).val(value);
+                    }
+					if(strElementType == "number") {  // if number
+                        $("#"+formID).find("#" + key).val(value);
+                    }					
+					else if(strElementType == "email") {  // if email
+                        $("#"+formID).find("#" + key).val(value);
+                    }
+					
+					else if(strElementType == "password") {  // if password
+                        $("#"+formID).find("#" + key).val(value);
+                    }
+					else if($("#"+formID).find("#"+key).attr("name") == "map_location"){
+								$("#"+formID).find("#" + key).val(value);
+						}				 
+					else if(strElementType == "select") {  // if Select Box
+						
+                        //$("#" + key).select2("val",value);
+						$("#"+formID).find("#" + key).val(value); // Select the option with a value of 'US'
+						$("#"+formID).find("#" + key).trigger('change'); // Notify any JS components that the value changed 
+						
+						
+                    }					
+				  	else if($("#"+formID).find("#"+key).attr("name") == "image") {  // if textbox   
+						$("#"+formID).find("#display_img").attr("src", "public/uploads/localeicons/"+value);	
+                    }					
+                    else if(strElementType == "multiselect") {  // if Select Box with multi select
+                        var arrValues = $.parseJSON(stripslashes(value));
+                        $("#"+formID).find("#" + key).select2("val", arrValues);
+                    }					
+                    else if(strElementType == "image") {  // if Image
+                        $("#"+formID).find("#" + key).attr("src",value);
+                    }					
+					else if(strElementType == "textarea") { 
+                       $("#"+formID).find("#" + key).html(value);
+                    }					
+					else if(strElementType == "checkbox"){	
+						if(value=="1" || value == "Yes")
+							$("#"+formID).find("#" + key).prop("checked", true);							
+					}
+					else if($("#"+key).attr("name") == "gender"){	
+													
+							if(value=="Male")
+								$("#"+formID).find("#gender1").prop("checked", true);
+							else if(value=="Female")
+                            	$("#"+formID).find("#gender2").prop("checked", true);
+                   }
+				    
+					else {
+					  	$("#"+formID).find("#" + key).val(value);	
+					}
+                }
+            });			
+			
+        }
+    }
+    else {
+        mySmallAlert('Error...!', 'There was an error', 0);
+    }
+	
+	hideShowLoaderActive(false);
+}
+
+//Function Used for Delete
+function fnDeleteDetail(detailGridTableId,type,strUrl)
+{
+
+    $("#"+detailGridTableId).delegate('a.delete', 'click', function (e) {
+        e.preventDefault();
+        intID=$(this).attr("row-id");
+        var url = "pAction=DELETE&ID=" + intID;
+        $.SmartMessageBox({
+            title  : "Alert!",
+            content: "Are you sure you want to delete?",
+            buttons: '[Yes][No]'
+        }, function (ButtonPressed) {
+            if (ButtonPressed === "Yes") {
+                var objFormData =
+                {
+                    pAction: 'DELETE',
+                    KEY_ID : intID
+                };
+				hideShowLoaderActive(true);
+                var objMyPost = AJAX_Post(strUrl, objFormData);
+                if (objMyPost.ERR_NO === 0) {
+                    if (objMyPost.DATA.DBStatus === 'OK') {   
+						reloadGridByType(type);						
+						hideShowLoaderActive(false);
+                        mySmallAlert('Success', 'Record  Deleted successfully', 1);
+                    }
+                    else {						
+						hideShowLoaderActive(false);
+                        mySmallAlert('Error...!', 'There was an error', 0);
+                    }
+                }
+            }
+            if (ButtonPressed === "No") {
+            }
+        });
+    });
+
+}
+function reloadGridByType(type)
+{
+	switch(type)
+	{
+		case 'family_detail' :
+			fetch_grid_data_familyDetail();
+			break;
+		case 'family_extra_detail' :
+			fetch_grid_data_familyExtraDetail();
+			break;
+		case 'income_detail' :
+			fetch_grid_data_incomeDetail();
+			break;
+		case 'spending_detail' :
+			fetch_grid_data_spendingDetail();
+			break;
+		case 'all_owned_assets' :
+			fetch_grid_data_allOwnedDetail();
+			break;
+		case 'all_required_assets' :
+			fetch_grid_data_allRequiredAssets();
+			break;
+		case 'disabled_detail' :
+			fetch_grid_data_disabledDetail();
+			break;
+		case 'medical_condition' :
+			fetch_grid_data_medicalCondition();
+			break;
+		case 'medical_extra_detail' :
+			fetch_grid_data_medicalExtraDetail();
+			break;
+		case 'education_detail' :
+			fetch_grid_data_educationDetail();
+			break;
+		default :
+			return;
+	}
 }

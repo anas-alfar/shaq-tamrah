@@ -60,13 +60,13 @@
 										<section class="col-md-6">
 											<div class="form-group">
 												<label class="control-label">Population Count<span>*</span></label>
-												<input type="number" class="form-control" name="population_count" id="population_count"/> 
+												<input type="number" class="form-control" name="population_count" id="population_count" min="0"/> 
 											</div>
 										</section>
 										<section class="col-md-6">
 											<div class="form-group">
 												<label class="control-label">Houses Count<span>*</span></label>
-												<input type="number" class="form-control" name="houses_count" id="houses_count"/> 
+												<input type="number" class="form-control" name="houses_count" id="houses_count" min="0"/> 
 											</div>
 										</section>
 									</div>
@@ -74,7 +74,7 @@
 										<section class="col-md-6">
 											<div class="form-group">
 												<label class="control-label">Distance To Capital<span>*</span></label>
-												<input type="number" class="form-control" name="distance_to_capital" id="distance_to_capital"/> 
+												<input type="number" class="form-control" name="distance_to_capital" id="distance_to_capital" min="0"/> 
 											</div>
 										</section>
 										<section class="col-md-6">

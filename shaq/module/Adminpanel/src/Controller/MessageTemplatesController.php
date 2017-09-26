@@ -178,7 +178,7 @@ class MessageTemplatesController extends AbstractActionController
 			$resultSet 			= new ResultSet; 			   
 			$resultSet->initialize($resultData);        
 			$rowset 			= $resultSet->toArray();
-			$csvData .= "#ID,Message Type,Message For,From Mobile Number,From Email,To Mobile Number,To Email,Published,";
+			$csvData .= "#ID,Message Type,Message For(Organization|Donor|Beneficiary),From Mobile Number,From Email,To Mobile Number,To Email,Published(Yes|No),";
 			foreach($activeLocalesArray as $locale)
 			{
 				$csvData .= "From Name(".$locale['name']."),";
@@ -278,6 +278,11 @@ class MessageTemplatesController extends AbstractActionController
 								$detailData['to_name'] 		= $data[$column_index++];
 								$detailData['subject'] 		= $data[$column_index++];
 								
+								$existRecordID = $this->AdminfunctionsPlugin()->validateduplicateCSV('view_message_template',$detailData['from_name'],'from_name',$this->dbAdapter,$data[0]);	
+								if($existRecordID > 0)
+								{
+									continue;
+								}
 								$existRecordID = $data[0]; 
 								if($existRecordID > 0)
 								{
@@ -289,11 +294,7 @@ class MessageTemplatesController extends AbstractActionController
 								}
 								else
 								{
-									$existRecordID = $this->AdminfunctionsPlugin()->validateduplicateCSV('view_message_template',$detailData['from_name'],'from_name',$this->dbAdapter);	
-									if($existRecordID > 0)
-									{
-										continue;
-									}
+									
 									$saveDataArray['organization_id'] = self::$Aula_OrgID;
 									$saveDataArray['owner_organization_id'] = self::$Aula_OwnerOrgID;
 									$saveDataArray['owner_organization_user_id'] = self::$Aula_OwnerOrgUserID;								
@@ -365,7 +366,7 @@ class MessageTemplatesController extends AbstractActionController
 		$activeLocalesArray = $this->AdminfunctionsPlugin()->getActiveLocales($this->dbAdapter);
 		$csvData = '';		
 		
-		$csvData .= "#ID,Message Type,Message For,From Mobile Number,From Email,To Mobile Number,To Email,Published,";
+		$csvData .= "#ID,Message Type,Message For(Organization|Donor|Beneficiary),From Mobile Number,From Email,To Mobile Number,To Email,Published(Yes|No),";
 		foreach($activeLocalesArray as $locale)
 		{
 			$csvData .= "From Name(".$locale['name']."),";
@@ -568,9 +569,23 @@ class MessageTemplatesController extends AbstractActionController
 					$detailData['description'] 	= $aData['description_'.$locale['id']];
 					$detailData['to_name'] 		= $aData['to_name_'.$locale['id']];
 					$detailData['subject'] 		= $aData['subject_'.$locale['id']];
-					$detailData['date_updated'] = date('Y-m-d H:i:s');
 					
-					$projectTableLocale->update($detailData,array("message_template_id=".$iMasterID,"locale_id=".$locale['id']));
+					$rowset = $projectTableLocale->select(array("message_template_id=".$iMasterID,"locale_id=".$locale['id']));
+					$rowset = $rowset->toArray();
+					if(isset($rowset[0]['id']) && $rowset[0]['id'] > 0 ) 
+					{					
+						$detailData['date_updated'] = date('Y-m-d H:i:s');
+						$projectTableLocale->update($detailData,array("id=".$rowset[0]['id']));						
+					} 
+					else 
+					{
+						$detailData['locale_id'] 	= $locale['id'];
+						$detailData['message_template_id'] = $iMasterID;
+						$detailData['owner_organization_id'] = self::$Aula_OwnerOrgID;
+						$detailData['owner_organization_user_id'] = self::$Aula_OwnerOrgUserID;
+						$projectTableLocale->insert($detailData);	
+					}
+					
 				}									
 				$result['DBStatus'] = 'OK';
 			}

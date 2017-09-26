@@ -28,7 +28,7 @@
 <!-- END #MAIN CONTENT -->
 <script type="text/javascript">
 			
-		var gridData;
+		var gridData = [];
 		function fetch_grid_data(objFormData)
 		{
 			hideShowLoader(true);
@@ -54,11 +54,16 @@
 			 if(strActionMode=="ADD") {
 			 	iActiveID = 0
 			 }
-			 					
+			 
+			 var objFormData =
+			{
+				name				: $("#name_<?php echo $this->global_locale_id; ?>").val(),
+				country_id			: $("#country_id").val(),
+			};					
 			//Validate  duplicate
-			var isDuplicate = fn_validate_duplicate($("#name_<?php echo $this->global_locale_id; ?>").val(), 'beneficiary_relation_locale', "name", "<?php echo $this->url('adminpanel/beneficiary-relations', array('action'=>'validateduplicate'));?>",iActiveID);
+			var isDuplicate = fn_validate_duplicate_multiple('view_beneficiary_relation',"<?php echo $this->url('adminpanel/beneficiary-relations', array('action'=>'validateduplicate'));?>",iActiveID,objFormData);
 			if (isDuplicate) {
-				mySmallAlert('Duplicate Error...!', 'Duplicate Found. Name is Already exists !', 0);
+				mySmallAlert('Duplicate Error...!', 'Duplicate Found. Beneficiary Relation for Selected Country Already exists !', 0);
 				return false;
 			}
 			
@@ -134,22 +139,24 @@
 					responsiveHelper_tblMasterList.createExpandIcon(nRow);
 				},
 				"drawCallback" : function(oSettings) {
+					grid_tooltip();
 					responsiveHelper_tblMasterList.respond();
 				},	
 				"aaData": gridData,
                 "aoColumns": [
                     { "bSearchable": false, "bVisible": false },                  
                     null,
+					null,
                     
 					
 					{ "bSearchable": true, "bSortable": true,
                         "mRender" : function (data, type, full) {							
-							return grid_switch(full[0],'allow_recurrence',full[2],'Yes');							
+							return grid_switch(full[0],'allow_recurrence',full[3],'Yes');							
 						}
 					},
 					{ "bSearchable": true, "bSortable": true,
                         "mRender" : function (data, type, full) {							
-							return grid_switch(full[0],'published',full[3],'Yes');							
+							return grid_switch(full[0],'published',full[4],'Yes');							
 						}
 					},
                     {"bSearchable": false, "bSortable": false,
@@ -160,7 +167,7 @@
                 ],
                 "columnDefs": [
                     { className: "hidden", "targets": [ 0 ] },
-					{ "type": "html-input", "targets": [2,3] }
+					{ "type": "html-input", "targets": [3,4] }
                 ]	
 			});			
 			$("#tblMasterList thead th input[type=text]").on( 'keyup change', function () {	    	
@@ -287,6 +294,6 @@
 <?php include($this->admin_layout_dir_path."global_include.php");?>
 <script language="javascript">
 
-
+populateOptionValues("country_id","<?php echo $this->url('adminpanel/countries', array('action'=>'getcountry'));?>","Select Country");
 
 </script>

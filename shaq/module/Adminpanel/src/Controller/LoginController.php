@@ -50,6 +50,12 @@ class LoginController extends AbstractActionController
 					$this->sessionContainer->Aula_OrgID = $rowset[0]['id'];
 					$this->sessionContainer->Aula_OwnerOrgID = $rowset[0]['id'];
 					$this->sessionContainer->Aula_OwnerOrgUserID = $rowset[0]['id'];
+								
+								$masterData = array();
+								$masterData['last_login_date'] 	= date('Y-m-d H:i:s');
+								$masterData['last_login_ip'] 	= $_SERVER['REMOTE_ADDR'];
+								$projectTable->update($masterData,array("id=".$this->sessionContainer->Aula_UID));
+										
 					$returnResult['DBStatus'] = 'OK';
 				}
 				else

@@ -28,7 +28,7 @@
 <!-- END #MAIN CONTENT -->
 <script type="text/javascript">
 			
-		var gridData;
+		var gridData = [];
 		function fetch_grid_data(objFormData)
 		{
 			hideShowLoader(true);
@@ -134,6 +134,7 @@
 					responsiveHelper_tblMasterList.createExpandIcon(nRow);
 				},
 				"drawCallback" : function(oSettings) {
+					grid_tooltip();
 					responsiveHelper_tblMasterList.respond();
 				},	
 				"aaData": gridData,
@@ -194,24 +195,33 @@
                         }
                     }
                 },
-				population_count : {
-					validators : {
-						notEmpty : {
-							message : 'Please enter population count'						
-						}
-					}
-				},
 				houses_count : {
 					validators : {
 						notEmpty : {
-							message : 'Please enter houses count'						
+							message : 'Please enter House Count'						
+						},
+						digits : {
+							message : 'The House Count is not valid'
 						}
 					}
 				},
 				distance_to_capital : {
 					validators : {
 						notEmpty : {
-							message : 'Please enter distance to capital'						
+							message : 'Please enter Distance To Capital'						
+						},
+						digits : {
+							message : 'The Distance To Capital is not valid'
+						}
+					}
+				},
+				population_count : {
+					validators : {
+						notEmpty : {
+							message : 'Please enter Population Count'						
+						},
+						digits : {
+							message : 'The Population Count is not valid'
 						}
 					}
 				},

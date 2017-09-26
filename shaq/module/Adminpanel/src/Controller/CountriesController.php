@@ -178,7 +178,7 @@ class CountriesController extends AbstractActionController
 			$resultSet 			= new ResultSet; 			   
 			$resultSet->initialize($resultData);        
 			$rowset 			= $resultSet->toArray();
-			$csvData .= "#ID,Iso Code 2,Iso Code 2,Default Currency,Published,";
+			$csvData .= "#ID,Iso Code 2,Iso Code 2,Default Currency,Published(Yes|No),";
 			foreach($activeLocalesArray as $locale)
 			{
 				$csvData .= "Name(".$locale['name']."),";
@@ -263,7 +263,11 @@ class CountriesController extends AbstractActionController
 								$detailData = array();
 								$detailData['name'] = $data[$column_index++];
 								
-								
+								$existRecordID = $this->AdminfunctionsPlugin()->validateduplicateCSV('view_country',$detailData['name'],'name',$this->dbAdapter,$data[0]);	
+									if($existRecordID > 0)
+									{
+										continue;
+									}
 								$existRecordID = $data[0]; 
 								if($existRecordID > 0)
 								{
@@ -275,11 +279,7 @@ class CountriesController extends AbstractActionController
 								}
 								else
 								{
-									$existRecordID = $this->AdminfunctionsPlugin()->validateduplicateCSV('view_country',$detailData['name'],'name',$this->dbAdapter);	
-									if($existRecordID > 0)
-									{
-										continue;
-									}
+									
 									
 									$saveDataArray['owner_organization_id'] = self::$Aula_OwnerOrgID;
 									$saveDataArray['owner_organization_user_id'] = self::$Aula_OwnerOrgUserID;								
@@ -350,7 +350,7 @@ class CountriesController extends AbstractActionController
 		$activeLocalesArray = $this->AdminfunctionsPlugin()->getActiveLocales($this->dbAdapter);
 		$csvData = '';		
 		
-		$csvData .= "#ID,Iso Code 2,Iso Code 2,Default Currency,Published,";
+		$csvData .= "#ID,Iso Code 2,Iso Code 2,Default Currency,Published(Yes|No),";
 		foreach($activeLocalesArray as $locale)
 		{
 			$csvData .= "Name(".$locale['name']."),";
@@ -476,7 +476,7 @@ class CountriesController extends AbstractActionController
         exit;
 	}
 
-    public function saveAction()
+	 public function saveAction()
     { 
 		$activeLocalesArray = $this->AdminfunctionsPlugin()->getActiveLocales($this->dbAdapter);       
 		$tableName = 'country';
@@ -494,9 +494,9 @@ class CountriesController extends AbstractActionController
 			if ($this->request->getPost("pAction") == "ADD")
 			{
 				$masterData = array();
-				$masterData['published'] 	= $aData['published'];
-				$masterData['iso_code_2'] 		= $aData['iso_code_2'];
-				$masterData['iso_code_3'] 	= $aData['iso_code_3'];
+				$masterData['published'] 			= $aData['published'];
+				$masterData['iso_code_2'] 	= $aData['iso_code_2'];
+				$masterData['iso_code_3'] 		= $aData['iso_code_3'];
 				$masterData['default_currency'] 	= $aData['default_currency'];
 				
 				$masterData['owner_organization_id'] = self::$Aula_OwnerOrgID;
@@ -524,8 +524,8 @@ class CountriesController extends AbstractActionController
 				
 				$masterData = array();
 				$masterData['published'] 			= $aData['published'];
-				$masterData['iso_code_2'] 			= $aData['iso_code_2'];
-				$masterData['iso_code_3'] 			= $aData['iso_code_3'];
+				$masterData['iso_code_2'] 	= $aData['iso_code_2'];
+				$masterData['iso_code_3'] 		= $aData['iso_code_3'];
 				$masterData['default_currency'] 	= $aData['default_currency'];
 				$masterData['date_updated'] 		= date('Y-m-d H:i:s');
 				
@@ -533,10 +533,23 @@ class CountriesController extends AbstractActionController
 				foreach($activeLocalesArray as $locale)
 				{
 					$detailData = array();
-					$detailData['name'] = $aData['name_'.$locale['id']];
-					$detailData['date_updated'] = date('Y-m-d H:i:s');
+					$detailData['name'] = $aData['name_'.$locale['id']];					
 					
-					$projectTableLocale->update($detailData,array("country_id=".$iMasterID,"locale_id=".$locale['id']));
+					$rowset = $projectTableLocale->select(array("country_id=".$iMasterID,"locale_id=".$locale['id']));
+					$rowset = $rowset->toArray();
+					if(isset($rowset[0]['id']) && $rowset[0]['id'] > 0 ) 
+					{					
+						$detailData['date_updated'] = date('Y-m-d H:i:s');
+						$projectTableLocale->update($detailData,array("id=".$rowset[0]['id']));						
+					} 
+					else 
+					{
+						$detailData['locale_id'] = $locale['id'];
+						$detailData['country_id'] = $iMasterID;						
+						$detailData['owner_organization_id'] = self::$Aula_OwnerOrgID;
+						$detailData['owner_organization_user_id'] = self::$Aula_OwnerOrgUserID;
+						$projectTableLocale->insert($detailData);	
+					}
 				}									
 				$result['DBStatus'] = 'OK';
 			}
@@ -551,7 +564,6 @@ class CountriesController extends AbstractActionController
         echo $result;
         exit;
     }
-	
 	public function getcountryAction() 
 	  {                
 		$sql="select country_id as id,name as name from country_locale where locale_id = '".$this->global_locale_id."' ";		        

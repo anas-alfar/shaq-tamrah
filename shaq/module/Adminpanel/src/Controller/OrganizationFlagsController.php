@@ -176,10 +176,10 @@ class OrganizationFlagsController extends AbstractActionController
 			$resultSet 			= new ResultSet; 			   
 			$resultSet->initialize($resultData);        
 			$rowset 			= $resultSet->toArray();
-			$csvData .= "#ID,Country,Published,";
+			$csvData .= "#ID,Country,Published(Yes|No),";
 			foreach($activeLocalesArray as $locale)
 			{
-				$csvData .= "flag_name(".$locale['flag_name']."),";
+				$csvData .= "Flag Name(".$locale['name']."),";
 				
 				
 			}
@@ -226,7 +226,7 @@ class OrganizationFlagsController extends AbstractActionController
 		if ($this->request->isPost()) {
 
             $file = $_FILES['importfile'];
-            $filename = $_FILES['importfile']['flag_name'];
+            $filename = $_FILES['importfile']['name'];
             $ext = pathinfo($filename, PATHINFO_EXTENSION);
 			if($ext == "csv")
 			{            
@@ -244,20 +244,27 @@ class OrganizationFlagsController extends AbstractActionController
 					{
 						fgetcsv($handle);   
 					   	while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
-							if($data[1] != "" && $data[2] != "" && $data[3] != "" )
+							if($data[1] != "" && $data[2] != "" && $data[3] != "" && $data[4] != "" && $data[5] != "" )
 							{
 								$saveDataArray = array();
 								$column_index = 1;
-							 	$getCountryID = $this->AdminfunctionsPlugin()->validateduplicateLocaleCSV('country_locale',$this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]),'flag_name','country_id',$this->dbAdapter,$this->config['global_locale_id'],'locale_id');
-								
-								
+							 	$getCountryID = $this->AdminfunctionsPlugin()->validateduplicateLocaleCSV('country_locale',$this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]),'name','country_id',$this->dbAdapter,$this->config['global_locale_id'],'locale_id');
 								$saveDataArray['country_id']= $getCountryID;
+								
 								$saveDataArray['published'] 	= $this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]);
 								
 								$detailData = array();
 								$detailData['flag_name'] = $data[$column_index++];
 								
+								$fnameValPair = array();
+								$fnameValPair['flag_name ']=$detailData['flag_name'];
+								$fnameValPair['country_id ']=$saveDataArray['country_id'];
 								
+								$existRecordID = $this->AdminfunctionsPlugin()->validateduplicatemultipleCSV('view_organization_flag',$data[0],$fnameValPair,$this->dbAdapter);	
+								if($existRecordID > 0)
+								{
+									continue;
+								}
 								$existRecordID = $data[0]; 
 								if($existRecordID > 0)
 								{
@@ -269,11 +276,7 @@ class OrganizationFlagsController extends AbstractActionController
 								}
 								else
 								{
-									$existRecordID = $this->AdminfunctionsPlugin()->validateduplicateCSV('view_organization_flag',$detailData['flag_name'],'flag_name',$this->dbAdapter);	
-									if($existRecordID > 0)
-									{
-										continue;
-									}
+									
 									$saveDataArray['owner_organization_id'] = self::$Aula_OwnerOrgID;
 									$saveDataArray['owner_organization_user_id'] = self::$Aula_OwnerOrgUserID;								
 									$projectTable->insert($saveDataArray);	
@@ -343,16 +346,16 @@ class OrganizationFlagsController extends AbstractActionController
 		$activeLocalesArray = $this->AdminfunctionsPlugin()->getActiveLocales($this->dbAdapter);
 		$csvData = '';		
 		
-		$csvData .= "#ID,Country,Published,";
+		$csvData .= "#ID,Country,Published(Yes|No),";
 		foreach($activeLocalesArray as $locale)
 		{
-			$csvData .= "flag_name(".$locale['flag_name']."),";
+			$csvData .= "Flag Name(".$locale['name']."),";
 			
 			
 		}
 		$csvData .= "\n";
 		header('Content-Type: text/csv; charset=utf-8');
-		header("Content-Disposition: attachment; filename=disabled-types.csv");
+		header("Content-Disposition: attachment; filename=organization-flags.csv");
 		echo $csvData;
 		exit;
 	}
@@ -360,12 +363,10 @@ class OrganizationFlagsController extends AbstractActionController
     {
         if ($this->request->isPost()) {
             $tableName = $this->request->getPost('tableName');
-            $ID = $this->request->getPost('KEY_ID');
 			$EDIT_ID = $this->request->getPost('iActiveID');
-            $fieldName = $this->request->getPost('fieldName'); 
+			$fnameValPair = $this->request->getPost('fnameValPair');			
 			
-			
-			$this->AdminfunctionsPlugin()->validateduplicatelocale($tableName,$ID,$fieldName,$EDIT_ID,'organization_flag_id',$this->dbAdapter,$this->config);           
+			$this->AdminfunctionsPlugin()->validateduplicatemultiple($tableName,$EDIT_ID,$fnameValPair,$this->dbAdapter);           
         }
 		else {
 			$result1['DBStatus'] = 'ERR';
@@ -488,7 +489,7 @@ class OrganizationFlagsController extends AbstractActionController
 			if ($this->request->getPost("pAction") == "ADD")
 			{
 				$masterData = array();
-				$masterData['published'] 	= $aData['published'];
+				$masterData['published'] 		= $aData['published'];
 				$masterData['country_id'] 		= $aData['country_id'];
 				
 				$masterData['owner_organization_id'] = self::$Aula_OwnerOrgID;
@@ -526,9 +527,22 @@ class OrganizationFlagsController extends AbstractActionController
 					$detailData = array();
 					$detailData['flag_name'] = $aData['flag_name_'.$locale['id']];
 					
-					$detailData['date_updated'] = date('Y-m-d H:i:s');
+					$rowset = $projectTableLocale->select(array("organization_flag_id=".$iMasterID,"locale_id=".$locale['id']));
+					$rowset = $rowset->toArray();
+					if(isset($rowset[0]['id']) && $rowset[0]['id'] > 0 ) 
+					{					
+						$detailData['date_updated'] = date('Y-m-d H:i:s');
+						$projectTableLocale->update($detailData,array("id=".$rowset[0]['id']));						
+					} 
+					else 
+					{
+						$detailData['locale_id'] = $locale['id'];
+						$detailData['organization_flag_id'] = $iMasterID;
+						$detailData['owner_organization_id'] = self::$Aula_OwnerOrgID;
+						$detailData['owner_organization_user_id'] = self::$Aula_OwnerOrgUserID;
+						$projectTableLocale->insert($detailData);	
+					}
 					
-					$projectTableLocale->update($detailData,array("organization_flag_id=".$iMasterID,"locale_id=".$locale['id']));
 				}									
 				$result['DBStatus'] = 'OK';
 			}

@@ -17,6 +17,8 @@ class MenuCategoriesController extends AbstractActionController
 	private $config;
 	private $redisCache;
 	private $memCached;
+	private $global_locale_id;
+
 	
 	protected static $Aula_UID;
 	protected static $Aula_OrgID;
@@ -31,6 +33,7 @@ class MenuCategoriesController extends AbstractActionController
 		$this->config = $config;
 		$this->redisCache = $redis;
 		$this->memCached = $memcached;
+		$this->global_locale_id = $config['global_locale_id'];
 				
 		self::$Aula_UID = $this->sessionContainer->Aula_UID;
 		self::$Aula_OrgID = $this->sessionContainer->Aula_OrgID;
@@ -62,7 +65,7 @@ class MenuCategoriesController extends AbstractActionController
 	public function fnGrid()
 	{
 		$activeLocalesArray = $this->AdminfunctionsPlugin()->getActiveLocales($this->dbAdapter);
-		$aColumns = array( '`id`','`name`','`status`','`published`');
+		$aColumns = array( '`id`','`id`','`name`','`status`','`published`');
 		if(!($this->memCached->hasItem('aula_menucategory_data')) || !is_array($this->memCached->getItem('aula_menucategory_data')))
 		{	
 			$sTable = 'view_menu_category';
@@ -79,8 +82,8 @@ class MenuCategoriesController extends AbstractActionController
 				FROM   $sTable
 				$sWhere
 				$sOrder
-			"; 	 
-			
+			"; 	
+						
 			    
 			$optionalParameters	= array();        
 			$statement 			= $this->dbAdapter->createStatement($sQuery, $optionalParameters);        
@@ -143,9 +146,109 @@ class MenuCategoriesController extends AbstractActionController
 		echo json_encode( $output ); 
 	
 	}
+	public function getgriddetailslistAction()
+	{
+		
+		$iID = $this->request->getPost("KEY_ID");
+		$menu = $this->AdminfunctionsPlugin()->getSingleRecord2('menu_category_id',$iID,'view_menu',$this->dbAdapter);	
+		
+			$grid_list = '';
+			$grid_list .= '<h5 class="gridDetailSectionHeading">Menu:</h5>';
+			$grid_list .= '<table cellpadding="5" cellspacing="0" border="0" class="table table-hover table-condensed gridDetailTable" id="menu_category_detail_tbl">';
+			if(count($menu) > 0)
+			{	
+				foreach($menu as $menudata)
+				{
+					$grid_list .= '<tr >
+										<td>'.$menudata['name'].'</td>
+									</tr>';
+				}
+			}
+			else
+			{
+				$grid_list .= '<tr >
+									<td class="datafound">No Data Found</td>
+							</tr>';
+			}	
+			$grid_list .= '</table>';
+			
+		/** Output **/
+		$output = array(
+			"status" => 'OK',
+			"grid_list" => $grid_list
+		);
+		echo json_encode( $output ); 
+		die();
 	
-	
-	
+	}
+
+	public function getorderlistAction()
+	{
+		$sTable = 'view_menu_category';
+		$sIndexColumn = "id";  
+		
+		$sWhere = " WHERE 1=1";
+		$sOrder = " ORDER BY sequence ASC ";		
+		
+		/** SQL queries ** Get data to display **/ 
+		$sQuery = "
+			SELECT *
+			FROM   $sTable
+			$sWhere
+			$sOrder
+		"; 	
+		$optionalParameters	= array();        
+		$statement 			= $this->dbAdapter->createStatement($sQuery, $optionalParameters);        
+		$resultData			= $statement->execute();        
+		$resultSet 			= new ResultSet; 			   
+		$resultSet->initialize($resultData);        
+		$rowset 			= $resultSet->toArray();	
+		$draggable_list = '';
+		$rowsetCache = array();
+		foreach($rowset as $aRow)
+		{			
+			$draggable_list .= '<li class="list-group-item" id="'.$aRow['id'].'" draggable="true" role="option" aria-grabbed="false">
+											
+																								
+													 <em class="fa fa-reorder fa-fw text-muted mr-lg"></em>		'.$aRow['name'].'						
+											';
+			$draggable_list .= '</li>';
+		}
+		/** Output **/
+		$output = array(
+			"status" => 'OK',
+			"draggable_list" => $draggable_list
+		);
+		echo json_encode( $output ); 
+		die();
+	}
+	public function saveorderAction()
+	{	
+		$projectTable = new TableGateway('menu_category',$this->dbAdapter);	 
+        if ($this->request->isPost()) {		
+			$aData =$this->request->getPost("dragorder");
+			$orderRecordsArray =  explode(",",$aData);
+			$sequence =0;	
+			foreach($orderRecordsArray as $OrderID)
+			{
+				$sequence++;
+				$updateData = array();
+				$updateData['sequence'] = $sequence;
+				$projectTable->update($updateData,array("id=".$OrderID));				
+			}
+			$this->memCached->setItem('aula_menucategory_data','');
+			$result['DBStatus'] = 'OK';
+		}
+		else
+        {
+            $result['DBStatus'] = 'ERR';
+        }	
+        $output = array(
+			"DBStatus" => 'OK'
+		);
+		echo json_encode( $output ); 
+		die();
+	}
 	public function exportcsvAction()
 	{
 		if ($this->request->isPost()) 
@@ -176,7 +279,7 @@ class MenuCategoriesController extends AbstractActionController
 			$resultSet 			= new ResultSet; 			   
 			$resultSet->initialize($resultData);        
 			$rowset 			= $resultSet->toArray();
-			$csvData .= "#ID,Status(Draft|Pending|Active|Blocked|Deleted),Sequence,Published,";
+			$csvData .= "#ID,Status(Draft|Pending|Active|Blocked|Deleted),Sequence,Published(Yes|No),";
 			foreach($activeLocalesArray as $locale)
 			{
 				$csvData .= "Name(".$locale['name']."),";
@@ -260,6 +363,11 @@ class MenuCategoriesController extends AbstractActionController
 								$detailData['name'] = $data[$column_index++];
 								$detailData['description'] = $data[$column_index++];
 								
+								$existRecordID = $this->AdminfunctionsPlugin()->validateduplicateCSV('view_menu_category',$detailData['name'],'name',$this->dbAdapter,$data[0]);	
+								if($existRecordID > 0)
+								{
+									continue;
+								}
 								$existRecordID = $data[0]; 
 								if($existRecordID > 0)
 								{
@@ -271,11 +379,7 @@ class MenuCategoriesController extends AbstractActionController
 								}
 								else
 								{
-									$existRecordID = $this->AdminfunctionsPlugin()->validateduplicateCSV('view_menu_category',$detailData['name'],'name',$this->dbAdapter);	
-									if($existRecordID > 0)
-									{
-										continue;
-									}
+									
 									
 									$saveDataArray['owner_organization_id'] = self::$Aula_OwnerOrgID;
 									$saveDataArray['owner_organization_user_id'] = self::$Aula_OwnerOrgUserID;								
@@ -347,7 +451,7 @@ class MenuCategoriesController extends AbstractActionController
 		$activeLocalesArray = $this->AdminfunctionsPlugin()->getActiveLocales($this->dbAdapter);
 		$csvData = '';		
 		
-		$csvData .= "#ID,Status(Draft|Pending|Active|Blocked|Deleted),Sequence,Published,";
+		$csvData .= "#ID,Status(Draft|Pending|Active|Blocked|Deleted),Sequence,Published(Yes|No),";
 		foreach($activeLocalesArray as $locale)
 		{
 			$csvData .= "Name(".$locale['name']."),";
@@ -491,10 +595,19 @@ class MenuCategoriesController extends AbstractActionController
 
 			if ($this->request->getPost("pAction") == "ADD")
 			{
+				$sql="select sequence from menu_category order by sequence DESC LIMIT 1 ";
+				
+				$optionalParameters	= array();        
+				$statement 			= $this->dbAdapter->createStatement($sql, $optionalParameters);        
+				$resultData			= $statement->execute();        
+				$resultSet 			= new ResultSet; 			   
+				$resultSet->initialize($resultData);        
+				$rowset 			= $resultSet->toArray();
+				
 				$masterData = array();
 				$masterData['published'] 	= $aData['published'];
 				$masterData['status'] 		= $aData['status'];
-				$masterData['sequence'] 	= $aData['sequence'];
+				$masterData['sequence'] 		= $rowset[0]['sequence']+1;
 				
 				$masterData['owner_organization_id'] = self::$Aula_OwnerOrgID;
 				$masterData['owner_organization_user_id'] = self::$Aula_OwnerOrgUserID;
@@ -523,7 +636,6 @@ class MenuCategoriesController extends AbstractActionController
 				$masterData = array();
 				$masterData['published'] 	= $aData['published'];
 				$masterData['status'] 		= $aData['status'];
-				$masterData['sequence'] 	= $aData['sequence'];
 				$masterData['date_updated'] = date('Y-m-d H:i:s');
 				
 				$projectTable->update($masterData,array("id=".$iMasterID));
@@ -532,9 +644,21 @@ class MenuCategoriesController extends AbstractActionController
 					$detailData = array();
 					$detailData['name'] = $aData['name_'.$locale['id']];
 					$detailData['description'] = $aData['description_'.$locale['id']];
-					$detailData['date_updated'] = date('Y-m-d H:i:s');
-					
-					$projectTableLocale->update($detailData,array("menu_category_id=".$iMasterID,"locale_id=".$locale['id']));
+					$rowset = $projectTableLocale->select(array("menu_category_id=".$iMasterID,"locale_id=".$locale['id']));
+					$rowset = $rowset->toArray();
+					if(isset($rowset[0]['id']) && $rowset[0]['id'] > 0 ) 
+					{					
+						$detailData['date_updated'] = date('Y-m-d H:i:s');
+						$projectTableLocale->update($detailData,array("id=".$rowset[0]['id']));						
+					} 
+					else 
+					{
+						$detailData['locale_id'] = $locale['id'];
+						$detailData['menu_category_id'] = $iMasterID;					
+						$detailData['owner_organization_id'] = self::$Aula_OwnerOrgID;
+						$detailData['owner_organization_user_id'] = self::$Aula_OwnerOrgUserID;
+						$projectTableLocale->insert($detailData);	
+					}
 				}									
 				$result['DBStatus'] = 'OK';
 			}
@@ -549,4 +673,20 @@ class MenuCategoriesController extends AbstractActionController
         echo $result;
         exit;
     }
+	public function getmenucategoryAction() 
+	  {                
+		$sql="select menu_category_id as id,name as name from menu_category_locale where locale_id = '".$this->global_locale_id."' ";		        
+		$optionalParameters=array();        
+		$statement 		   = $this->dbAdapter->createStatement($sql, $optionalParameters);       
+	    $result = $statement->execute();        
+		$resultSet = new ResultSet;        
+		$resultSet->initialize($result);        
+		$rowset=$resultSet->toArray();        
+		$result1['DBData'] = $rowset;        
+		$result1['recordsTotal'] = count($rowset);        
+		$result1['DBStatus'] = 'OK';        
+		$result = json_encode($result1);       
+		echo $result;        
+		exit;    
+	 }
 }

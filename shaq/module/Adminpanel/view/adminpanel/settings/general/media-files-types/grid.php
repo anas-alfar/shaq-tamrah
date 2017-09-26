@@ -80,6 +80,7 @@
 						</table>
 						</form>	
 					</div>
+					
 					<!-- end widget content -->
 				</div>
 				<!-- end widget div -->

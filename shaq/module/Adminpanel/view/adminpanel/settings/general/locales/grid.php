@@ -22,6 +22,8 @@
 					<h2>Locales Listing</h2>
 							
 						<div class="widget-toolbar">
+							<button class="btn btnExport" id="btnReorder" >Reorder 
+							</button>
 							<a href="<?php echo $this->url('adminpanel/locales', array('action'=>'downloadtemplate'));?>" target="_blank">
 							<button class="btn btnDownload" id="btnDownloadTemplate">Download Template
 							</button>

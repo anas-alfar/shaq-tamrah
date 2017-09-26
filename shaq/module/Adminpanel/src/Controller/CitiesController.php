@@ -17,6 +17,7 @@ class CitiesController extends AbstractActionController
 	private $config;
 	private $redisCache;
 	private $memCached;
+	private $global_locale_id;
 	
 	protected static $Aula_UID;
 	protected static $Aula_OrgID;
@@ -31,6 +32,7 @@ class CitiesController extends AbstractActionController
 		$this->config = $config;
 		$this->redisCache = $redis;
 		$this->memCached = $memcached;
+		$this->global_locale_id = $config['global_locale_id'];
 				
 		self::$Aula_UID = $this->sessionContainer->Aula_UID;
 		self::$Aula_OrgID = $this->sessionContainer->Aula_OrgID;
@@ -175,7 +177,7 @@ class CitiesController extends AbstractActionController
 			$resultSet 			= new ResultSet; 			   
 			$resultSet->initialize($resultData);        
 			$rowset 			= $resultSet->toArray();
-			$csvData .= "#ID,Country,Population Count,Houses Count,Distance To Capital,Published,";
+			$csvData .= "#ID,Country,Population Count,Houses Count,Distance To Capital,Published(Yes|No),";
 			foreach($activeLocalesArray as $locale)
 			{
 				$csvData .= "Name(".$locale['name']."),";
@@ -260,6 +262,11 @@ class CitiesController extends AbstractActionController
 								$detailData = array();
 								$detailData['name'] = $data[$column_index++];
 								
+								$existRecordID = $this->AdminfunctionsPlugin()->validateduplicateCSV('view_city',$detailData['name'],'name',$this->dbAdapter,$data[0]);	
+								if($existRecordID > 0)
+								{
+									continue;
+								}
 								$existRecordID = $data[0]; 
 								if($existRecordID > 0)
 								{
@@ -271,11 +278,7 @@ class CitiesController extends AbstractActionController
 								}
 								else
 								{
-									$existRecordID = $this->AdminfunctionsPlugin()->validateduplicateCSV('view_city',$detailData['name'],'name',$this->dbAdapter);	
-									if($existRecordID > 0)
-									{
-										continue;
-									}
+									
 									$saveDataArray['owner_organization_id'] = self::$Aula_OwnerOrgID;
 									$saveDataArray['owner_organization_user_id'] = self::$Aula_OwnerOrgUserID;								
 									$projectTable->insert($saveDataArray);	
@@ -344,7 +347,7 @@ class CitiesController extends AbstractActionController
 		$activeLocalesArray = $this->AdminfunctionsPlugin()->getActiveLocales($this->dbAdapter);
 		$csvData = '';		
 		
-		$csvData .= "#ID,Country,Population Count,Houses Count,Distance To Capital,Published,";
+		$csvData .= "#ID,Country,Population Count,Houses Count,Distance To Capital,Published(Yes|No),";
 		foreach($activeLocalesArray as $locale)
 		{
 			$csvData .= "Name(".$locale['name']."),";
@@ -530,9 +533,22 @@ class CitiesController extends AbstractActionController
 				{
 					$detailData = array();
 					$detailData['name'] = $aData['name_'.$locale['id']];
-					$detailData['date_updated'] = date('Y-m-d H:i:s');
 					
-					$projectTableLocale->update($detailData,array("city_id=".$iMasterID,"locale_id=".$locale['id']));
+					$rowset = $projectTableLocale->select(array("city_id=".$iMasterID,"locale_id=".$locale['id']));
+					$rowset = $rowset->toArray();
+					if(isset($rowset[0]['id']) && $rowset[0]['id'] > 0 ) 
+					{				
+						$detailData['date_updated'] = date('Y-m-d H:i:s');
+						$projectTableLocale->update($detailData,array("id=".$rowset[0]['id']));						
+					} 
+					else 
+					{
+						$detailData['locale_id'] = $locale['id'];
+						$detailData['city_id'] = $iMasterID;						
+						$detailData['owner_organization_id'] = self::$Aula_OwnerOrgID;
+						$detailData['owner_organization_user_id'] = self::$Aula_OwnerOrgUserID;
+						$projectTableLocale->insert($detailData);	
+					}
 				}									
 				$result['DBStatus'] = 'OK';
 			}
@@ -547,4 +563,41 @@ class CitiesController extends AbstractActionController
         echo $result;
         exit;
     }
+	/*public function getcityAction() 
+	  {                
+		$sql="select city_id as id,name as name from city_locale where locale_id = '".$this->global_locale_id."' ";	
+		if ($this->request->getPost("country") !='' &&$this->request->getPost("country") >= 0) 
+		$sql .= " AND country = '".$this->request->getPost("country")."' ";		        
+		$optionalParameters=array();        
+		$statement 		   = $this->dbAdapter->createStatement($sql, $optionalParameters);       
+	    $result = $statement->execute();        
+		$resultSet = new ResultSet;        
+		$resultSet->initialize($result);        
+		$rowset=$resultSet->toArray();        
+		$result1['DBData'] = $rowset;        
+		$result1['recordsTotal'] = count($rowset);        
+		$result1['DBStatus'] = 'OK';        
+		$result = json_encode($result1);       
+		echo $result;        
+		exit;    
+	 }*/
+	 public function getcityAction() 
+	  {                
+		$sql="select id as id,name as name,published from view_city where published='Yes' ";	
+		if ($this->request->getPost("country_id") !='' &&$this->request->getPost("country_id") >= 0) 
+		$sql .= " AND country_id = '".$this->request->getPost("country_id")."' ";		        
+		$optionalParameters=array();        
+		$statement 		   = $this->dbAdapter->createStatement($sql, $optionalParameters);       
+	    $result = $statement->execute();        
+		$resultSet = new ResultSet;        
+		$resultSet->initialize($result);        
+		$rowset=$resultSet->toArray();        
+		$result1['DBData'] = $rowset;        
+		$result1['recordsTotal'] = count($rowset);        
+		$result1['DBStatus'] = 'OK';        
+		$result = json_encode($result1);       
+		echo $result;        
+		exit;    
+	 }
+
 }

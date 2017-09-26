@@ -17,6 +17,7 @@ class ConfigurationsController extends AbstractActionController
 	private $config;
 	private $redisCache;
 	private $memCached;
+	private $global_locale_id;
 	
 	protected static $Aula_UID;
 	protected static $Aula_OrgID;
@@ -31,6 +32,7 @@ class ConfigurationsController extends AbstractActionController
 		$this->config = $config;
 		$this->redisCache = $redis;
 		$this->memCached = $memcached;
+		$this->global_locale_id = $config['global_locale_id'];
 				
 		self::$Aula_UID = $this->sessionContainer->Aula_UID;
 		self::$Aula_OrgID = $this->sessionContainer->Aula_OrgID;
@@ -144,9 +146,7 @@ class ConfigurationsController extends AbstractActionController
 		echo json_encode( $output ); 
 	
 	}
-	
-	
-	
+
 	public function exportcsvAction()
 	{
 		if ($this->request->isPost()) 
@@ -176,11 +176,11 @@ class ConfigurationsController extends AbstractActionController
 			$resultSet->initialize($resultData);        
 			$rowset 			= $resultSet->toArray();	
 			
-			$csvData .= "Name,Description,Config Key,Config Value,Config Type(System|Website|Organization|Beneficiary|Donor|Payment|Agent|Project|Post),Environment(DEV|STG|LIVE),Allow Override,Force,Published";
+			$csvData .= "#ID,Name,Description,Config Key,Config Value,Config Type(System|Website|Organization|Beneficiary|Donor|Payment|Agent|Project|Post),Environment(DEV|STG|LIVE),Allow Override(Yes|No),Force(Yes|No),Published(Yes|No)";
 			$csvData .= "\n";
 			foreach($rowset as $row)
 			{
-				
+				$csvData .= $row['id'].",";
 				$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['name']).",";
 				$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['description']).",";
 				$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['config_key']).",";
@@ -227,21 +227,27 @@ class ConfigurationsController extends AbstractActionController
 					{
 						fgetcsv($handle);   
 					   	while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
-							if($data[0] != "" && $data[2] != "" && $data[3] != "" && $data[4] != "" && $data[5] != "" && $data[6] != "" && $data[6] != "" && $data[7] != "" && $data[8] != "")
+							if($data[1] != "" && $data[2] != "" && $data[3] != "" && $data[4] != "" && $data[5] != "" && $data[6] != "" && $data[7] != "" && $data[8] != ""&&$data[9] != "")
 							{
 							 
 								$saveDataArray = array();
-								$saveDataArray['name'] 			= $this->AdminfunctionsPlugin()->importDataValidate($data[0]);
-								$saveDataArray['description'] 	= $this->AdminfunctionsPlugin()->importDataValidate($data[1]);
-								$saveDataArray['config_key'] 	= $this->AdminfunctionsPlugin()->importDataValidate($data[2]);
-								$saveDataArray['config_value'] 	= $this->AdminfunctionsPlugin()->importDataValidate($data[3]);
-								$saveDataArray['config_type'] 	= $this->AdminfunctionsPlugin()->importDataValidate($data[4]);
-								$saveDataArray['environment'] 	= $this->AdminfunctionsPlugin()->importDataValidate($data[5]);
-								$saveDataArray['allow_override']= $this->AdminfunctionsPlugin()->importDataValidate($data[6]);
-								$saveDataArray['force'] 		= $this->AdminfunctionsPlugin()->importDataValidate($data[7]);
-								$saveDataArray['published'] 	= $this->AdminfunctionsPlugin()->importDataValidate($data[8]);
+								$column_index = 1;
+								$saveDataArray['name'] 			= $this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]);
+								$saveDataArray['description'] 	= $this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]);
+								$saveDataArray['config_key'] 	= $this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]);
+								$saveDataArray['config_value'] 	= $this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]);
+								$saveDataArray['config_type'] 	= $this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]);
+								$saveDataArray['environment'] 	= $this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]);
+								$saveDataArray['allow_override']= $this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]);
+								$saveDataArray['force'] 		= $this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]);
+								$saveDataArray['published'] 	= $this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]);
 								
-								$existRecordID = $this->AdminfunctionsPlugin()->validateduplicateCSV('configuration',$saveDataArray['config_key'],'config_key',$this->dbAdapter); 
+								$existRecordID = $this->AdminfunctionsPlugin()->validateduplicateCSV('configuration',$saveDataArray['config_key'],'config_key',$this->dbAdapter,$data[0]); 
+								if($existRecordID > 0)
+									{
+										continue;
+									}
+								$existRecordID = $data[0];
 								if($existRecordID > 0)
 								{
 									$saveDataArray['date_updated'] = date('Y-m-d H:i:s');		
@@ -283,7 +289,7 @@ class ConfigurationsController extends AbstractActionController
 	public function downloadtemplateAction()
 	{
 		$csvData = '';		
-		$csvData .= "Name,Description,Config Key,Config Value,Config Type(System|Website|Organization|Beneficiary|Donor|Payment|Agent|Project|Post),Environment(DEV|STG|LIVE),Allow Override,Force,Published";
+		$csvData .= "#ID,Name,Description,Config Key,Config Value,Config Type(System|Website|Organization|Beneficiary|Donor|Payment|Agent|Project|Post),Environment(DEV|STG|LIVE),Allow Override(Yes|No),Force(Yes|No),Published(Yes|No)";
 		$csvData .= "\n";
 		header('Content-Type: text/csv; charset=utf-8');
 		header("Content-Disposition: attachment; filename=configurations.csv");
@@ -427,12 +433,13 @@ class ConfigurationsController extends AbstractActionController
 				$result['DBStatus'] = 'OK';
 			}
 			else  if($this->request->getPost("pAction") == "EDIT")
-			{
+			{	
 				$iMasterID=$aData['MASTER_KEY_ID'];
 				unset($aData['MASTER_KEY_ID']);
 				$aData['date_updated'] = date('Y-m-d H:i:s');
-		
+				
 				$projectTable->update($aData,array("id=".$iMasterID));
+				
 				$result['DBStatus'] = 'OK';
 			}
 			$this->redisCache->setItem('aula_configuration_data','');
@@ -446,4 +453,5 @@ class ConfigurationsController extends AbstractActionController
         echo $result;
         exit;
     }
+	
 }

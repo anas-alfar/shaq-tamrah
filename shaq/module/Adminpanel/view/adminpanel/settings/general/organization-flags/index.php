@@ -28,7 +28,7 @@
 <!-- END #MAIN CONTENT -->
 <script type="text/javascript">
 			
-		var gridData;
+		var gridData = [];
 		function fetch_grid_data(objFormData)
 		{
 			hideShowLoader(true);
@@ -56,9 +56,14 @@
 			 }
 			 					
 			//Validate  duplicate
-			var isDuplicate = fn_validate_duplicate($("#name_<?php echo $this->global_locale_id; ?>").val(), 'beneficiary_profile_spending_type_locale', "name", "<?php echo $this->url('adminpanel/organization-flags', array('action'=>'validateduplicate'));?>",iActiveID);
+			var objFormData =
+			{
+				flag_name				: $("#flag_name_<?php echo $this->global_locale_id; ?>").val(),
+				country_id				: $("#country_id").val(),
+			};
+			var isDuplicate = fn_validate_duplicate_multiple('view_organization_flag',"<?php echo $this->url('adminpanel/organization-flags', array('action'=>'validateduplicate'));?>",iActiveID,objFormData);
 			if (isDuplicate) {
-				mySmallAlert('Duplicate Error...!', 'Duplicate Found. Name is Already exists !', 0);
+				mySmallAlert('Duplicate Error...!', 'Duplicate Found. Organization Flags for Selected Country Already exists !', 0);
 				return false;
 			}
 			
@@ -84,7 +89,7 @@
 					strActionMode = "EDIT";
 					hideShowLoader(false);							
 					fullscreenModeChange('btnSave');
-					mySmallAlert('Save Record', 'Spending Types Entry Saved successfully', 1);
+					mySmallAlert('Save Record', 'Organization Flags Entry Saved successfully', 1);
 					iActiveID = objMyPost.DATA.MY_ID;
 					visibleControl('widForm', false);
 					visibleControl('widGrid', true);
@@ -134,6 +139,7 @@
 					responsiveHelper_tblMasterList.createExpandIcon(nRow);
 				},
 				"drawCallback" : function(oSettings) {
+					grid_tooltip();
 					responsiveHelper_tblMasterList.respond();
 				},	
 				"aaData": gridData,
@@ -195,10 +201,10 @@
 					foreach($this->activeLocalesArray as $locale)
 					{
 						?>
-						name_<?php echo $locale['id']?> : {
+						flag_name_<?php echo $locale['id']?> : {
 							validators : {
 								notEmpty : {
-									message : 'Please enter name'						
+									message : 'Please enter flag_name'						
 								}
 							}
 						},
@@ -267,7 +273,7 @@
       <div class="modal-content">
          <div class="modal-header">
               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-              <h4 class="modal-title" id="ns_name_popup"><strong>Import Spending Types</strong></h4>
+              <h4 class="modal-title" id="ns_name_popup"><strong>Import Organization Flag</strong></h4>
          </div>
 		 <form action="" class="smart-form" enctype="multipart/form-data" name="importcsvform" id="importcsvform">
 			<fieldset>

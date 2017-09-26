@@ -28,7 +28,7 @@
 <!-- END #MAIN CONTENT -->
 <script type="text/javascript">
 			
-		var gridData;
+		var gridData = [];
 		function fetch_grid_data(objFormData)
 		{
 			hideShowLoader(true);
@@ -56,9 +56,15 @@
 			 }
 			 					
 			//Validate  duplicate
-			var isDuplicate = fn_validate_duplicate($("#name_<?php echo $this->global_locale_id; ?>").val(), 'beneficiary_profile_locale', "name", "<?php echo $this->url('adminpanel/beneficiary-profile', array('action'=>'validateduplicate'));?>",iActiveID);
+			var objFormData =
+			{
+				name    			: $("#name_<?php echo $this->global_locale_id; ?>").val(),
+				country_id			: $("#country_id").val()
+
+			};
+			var isDuplicate = fn_validate_duplicate_multiple('view_beneficiary_profile',"<?php echo $this->url('adminpanel/beneficiary-profile', array('action'=>'validateduplicate'));?>",iActiveID,objFormData);
 			if (isDuplicate) {
-				mySmallAlert('Duplicate Error...!', 'Duplicate Found.Family Name is Already exists !', 0);
+				mySmallAlert('Duplicate Error...!', 'Duplicate Found.Profile Name for Selected Country is Already exists !', 0);
 				return false;
 			}
 			
@@ -134,6 +140,7 @@
 					responsiveHelper_tblMasterList.createExpandIcon(nRow);
 				},
 				"drawCallback" : function(oSettings) {
+					grid_tooltip();
 					responsiveHelper_tblMasterList.respond();
 				},	
 				"aaData": gridData,
@@ -305,7 +312,7 @@
 
 	$(document).ready(function () {			
 		populateOptionValues("country_id","<?php echo $this->url('adminpanel/countries', array('action'=>'getcountry'));?>","Select Country");
-		populateBeneficiaryOptionValues("beneficiary_id","<?php echo $this->url('adminpanel/beneficiary', array('action'=>'getbeneficiary'));?>","Select Beneficiary");
+		populateOptionValues("beneficiary_id","<?php echo $this->url('adminpanel/beneficiary', array('action'=>'getbeneficiary'));?>","Select Beneficiary");
 		
 	});
 

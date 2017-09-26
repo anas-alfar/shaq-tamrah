@@ -17,6 +17,7 @@ class MediaFilesTypesController extends AbstractActionController
 	private $config;
 	private $redisCache;
 	private $memCached;
+	private $global_locale_id;
 	
 	protected static $Aula_UID;
 	protected static $Aula_OrgID;
@@ -31,6 +32,7 @@ class MediaFilesTypesController extends AbstractActionController
 		$this->config = $config;
 		$this->redisCache = $redis;
 		$this->memCached = $memcached;
+		$this->global_locale_id = $config['global_locale_id'];
 				
 		self::$Aula_UID = $this->sessionContainer->Aula_UID;
 		self::$Aula_OrgID = $this->sessionContainer->Aula_OrgID;
@@ -176,7 +178,7 @@ class MediaFilesTypesController extends AbstractActionController
 			$resultSet 			= new ResultSet; 			   
 			$resultSet->initialize($resultData);        
 			$rowset 			= $resultSet->toArray();
-			$csvData .= "#ID,Published,";
+			$csvData .= "#ID,Published(Yes|No),";
 			foreach($activeLocalesArray as $locale)
 			{
 				$csvData .= "Name(".$locale['name']."),";
@@ -256,6 +258,11 @@ class MediaFilesTypesController extends AbstractActionController
 								$detailData['name'] = $data[$column_index++];
 								$detailData['description'] = $data[$column_index++];
 								
+								$existRecordID = $this->AdminfunctionsPlugin()->validateduplicateCSV('view_media_filetype',$detailData['name'],'name',$this->dbAdapter,$data[0]);	
+								if($existRecordID > 0)
+								{
+									continue;
+								}
 								$existRecordID = $data[0]; 
 								if($existRecordID > 0)
 								{
@@ -268,11 +275,7 @@ class MediaFilesTypesController extends AbstractActionController
 								else
 								{
 								
-									$existRecordID = $this->AdminfunctionsPlugin()->validateduplicateCSV('view_media_filetype',$detailData['name'],'name',$this->dbAdapter);	
-									if($existRecordID > 0)
-									{
-										continue;
-									}
+									
 									$saveDataArray['owner_organization_id'] = self::$Aula_OwnerOrgID;
 									$saveDataArray['owner_organization_user_id'] = self::$Aula_OwnerOrgUserID;								
 									$projectTable->insert($saveDataArray);	
@@ -342,7 +345,7 @@ class MediaFilesTypesController extends AbstractActionController
 		$activeLocalesArray = $this->AdminfunctionsPlugin()->getActiveLocales($this->dbAdapter);
 		$csvData = '';		
 		
-		$csvData .= "#ID,Published,";
+		$csvData .= "#ID,Published(Yes|No),";
 		foreach($activeLocalesArray as $locale)
 		{
 			$csvData .= "Name(".$locale['name']."),";
@@ -523,9 +526,23 @@ class MediaFilesTypesController extends AbstractActionController
 					$detailData = array();
 					$detailData['name'] = $aData['name_'.$locale['id']];
 					$detailData['description'] = $aData['description_'.$locale['id']];
-					$detailData['date_updated'] = date('Y-m-d H:i:s');
 					
-					$projectTableLocale->update($detailData,array("media_filetype_id=".$iMasterID,"locale_id=".$locale['id']));
+					$rowset = $projectTableLocale->select(array("media_filetype_id=".$iMasterID,"locale_id=".$locale['id']));
+					$rowset = $rowset->toArray();
+					if(isset($rowset[0]['id']) && $rowset[0]['id'] > 0 ) 
+					{					
+						$detailData['date_updated'] = date('Y-m-d H:i:s');
+						$projectTableLocale->update($detailData,array("id=".$rowset[0]['id']));						
+					} 
+					else 
+					{
+						$detailData['locale_id'] = $locale['id'];
+						$detailData['media_filetype_id'] = $iMasterID;
+						$detailData['owner_organization_id'] = self::$Aula_OwnerOrgID;
+						$detailData['owner_organization_user_id'] = self::$Aula_OwnerOrgUserID;
+						$projectTableLocale->insert($detailData);	
+					}
+					
 				}									
 				$result['DBStatus'] = 'OK';
 			}
@@ -540,4 +557,21 @@ class MediaFilesTypesController extends AbstractActionController
         echo $result;
         exit;
     }
+	public function getmediafiletypeAction() 
+	  {                
+		$sql="select id as id,name as name,published from view_media_filetype where published='Yes' ";   
+		$optionalParameters=array();        
+		$statement 		   = $this->dbAdapter->createStatement($sql, $optionalParameters);       
+	    $result = $statement->execute();        
+		$resultSet = new ResultSet;        
+		$resultSet->initialize($result);        
+		$rowset=$resultSet->toArray();        
+		$result1['DBData'] = $rowset;        
+		$result1['recordsTotal'] = count($rowset);        
+		$result1['DBStatus'] = 'OK';        
+		$result = json_encode($result1);       
+		echo $result;        
+		exit;    
+	 }
+
 }

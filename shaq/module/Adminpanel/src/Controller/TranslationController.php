@@ -139,7 +139,7 @@ class TranslationController extends AbstractActionController
 		if ($this->request->isPost()) 
 		{
 			$csvData = '';
-			$sql = "SELECT * FROM translation WHERE 1 = 1";	
+			$sql = "SELECT * FROM view_translation WHERE 1 = 1";	
 			if($this->request->getPost("export_data") != "ALL")
 				{
 					$aData = json_decode($this->request->getPost("FORM_DATA"));
@@ -162,13 +162,14 @@ class TranslationController extends AbstractActionController
 				$resultSet->initialize($resultData);        
 				$rowset 			= $resultSet->toArray();	
 				
-				$csvData .= "Label,Translation,Locale Id";
+				$csvData .= "#ID,Label,Translation,Locale";
 				$csvData .= "\n";
 				foreach($rowset as $row)
 				{
+					$csvData .= $row['id'].",";
 					$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['label']).",";
 					$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['translation']).",";
-					$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['locale_id']).",";
+					$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['locale']).",";
 					$csvData .= "\n";		
 				}
 				$this->AdminfunctionsPlugin()->exportCsvData($csvData,$this->request->getPost("exportfilename"),$this->config);
@@ -206,16 +207,24 @@ class TranslationController extends AbstractActionController
 					{
 						fgetcsv($handle);   
 					   	while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
-							if($data[0] != "" && $data[1] != "" && $data[2] != "" )
+							if($data[1] != "" && $data[2] != "" && $data[3] != "" )
 							{
 							 
 								$saveDataArray = array();
-								$saveDataArray['label'] 		= $this->AdminfunctionsPlugin()->importDataValidate($data[0]);
-								$saveDataArray['translation'] 	= $this->AdminfunctionsPlugin()->importDataValidate($data[1]);
-								$saveDataArray['locale_id'] 	= $this->AdminfunctionsPlugin()->importDataValidate($data[2]);
+								$column_index = 1;
+								$saveDataArray['label'] 		= $this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]);
+								$saveDataArray['translation'] 	= $this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]);
+								
+								$getLocaleID = $this->AdminfunctionsPlugin()->validateduplicateLocaleCSV('locale',$this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]),'locale','id',$this->dbAdapter,$this->config['global_locale_id']);
+								$saveDataArray['locale_id'] 	= $getLocaleID;
 								
 								
-								$existRecordID = $this->AdminfunctionsPlugin()->validateduplicateCSV('translation',$saveDataArray['label'],'label',$this->dbAdapter); 
+								$existRecordID = $this->AdminfunctionsPlugin()->validateduplicateCSV('translation',$saveDataArray['label'],'label',$this->dbAdapter,$data[0]); 
+								if($existRecordID > 0)
+									{
+										continue;
+									}
+								$existRecordID = $data[0];
 								if($existRecordID > 0)
 								{
 									$saveDataArray['date_updated'] = date('Y-m-d H:i:s');		
@@ -257,7 +266,7 @@ class TranslationController extends AbstractActionController
 	public function downloadtemplateAction()
 	{
 		$csvData = '';		
-		$csvData .= "Label,Translation,Locale Id";
+		$csvData .= "#ID,Label,Translation,Locale Id";
 		$csvData .= "\n";
 		header('Content-Type: text/csv; charset=utf-8');
 		header("Content-Disposition: attachment; filename=translation.csv");

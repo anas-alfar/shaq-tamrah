@@ -4,7 +4,7 @@
 		     <div class="jarviswidget infocolor" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-deletebutton="false" data-widget-sortable="false">  
 				<header>
 				    <span class="widget-icon"> <i class="fa fa-table"></i> </span>
-					<h2>Organization Flag Info </h2>
+					<h2>Organization Flags Info </h2>
 					<div class="widget-toolbar">
 								
 								<button id="btnBack" type="submit" class="right btn btnBack  addEventBtn ">
@@ -43,8 +43,8 @@
 									<div class="row">
 										<section class="col-md-6">
 											<div class="form-group">
-												<label class="control-label">Name<span>*</span></label>
-												<input type="text" class="form-control" name="name_<?php echo $this->global_locale_id; ?>" id="name_<?php echo $this->global_locale_id; ?>"/>
+												<label class="control-label">Flag Name<span>*</span></label>
+												<input type="text" class="form-control" name="flag_name_<?php echo $this->global_locale_id; ?>" id="flag_name_<?php echo $this->global_locale_id; ?>"/>
 											</div>
 										</section>
 										<section class="col-md-6">
@@ -57,12 +57,7 @@
 										</section>
 									</div>
 									<div class="row">								
-										<section class="col-md-6">
-											<div class="form-group">
-												<label class="control-label textarea textarea-resizable">Description</label>
-												<textarea type="text" id="description_<?php echo $this->global_locale_id; ?>" name="description_<?php echo $this->global_locale_id; ?>" class="description form-control"  placeholder=""></textarea>
-											</div>
-										</section>
+										
 										<section class="col-md-6">
 											<div class="form-group">
 												<label>&nbsp;</label>
@@ -90,16 +85,11 @@
 											<div class="row">
 												<section class="col-md-6">
 													<div class="form-group">
-														<label class="control-label">Name<span>*</span></label>
-														<input type="text" class="form-control" name="name_<?php echo $locale['id']; ?>" id="name_<?php echo $locale['id']; ?>"/>
+														<label class="control-label">Flag Name<span>*</span></label>
+														<input type="text" class="form-control" name="flag_name_<?php echo $locale['id']; ?>" id="flag_name_<?php echo $locale['id']; ?>"/>
 													</div>
 												</section>
-												<section class="col-md-6">
-													<div class="form-group">
-														<label class="control-label textarea textarea-resizable">Description</label>
-														<textarea type="text" id="description_<?php echo $locale['id']; ?>" name="description_<?php echo $locale['id']; ?>" class="description form-control"  placeholder=""></textarea>
-													</div>
-												</section>
+												
 											</div>
 										</div>
 										<?php 

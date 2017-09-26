@@ -21,13 +21,14 @@
 			<article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">	
 				<?php include("grid.php");?> 
 				<?php include("form.php");?> 
+				<?php include("reorder.php");?> 
 			</article>
 		</div>
 	</section>
 </div>					
 <!-- END #MAIN CONTENT -->
 <script type="text/javascript">
-		var gridData;
+		var gridData = [];
 		function fetch_grid_data(objFormData)
 		{
 			hideShowLoader(true);
@@ -48,7 +49,30 @@
 			});
 			
 		}
-
+		function fetch_grid_data_draggable(objFormData)
+		{
+			
+			$("#draggable-output").val('');
+			hideShowLoader(true);
+			$.ajax({
+			  type: "POST",
+			  url: "<?php echo $this->url('adminpanel/locales', array('action'=>'getorderlist'));?>",
+			  data: objFormData,
+			  dataType: "json",
+			  success: function(data){
+			  		hideShowLoader(false);
+					$('#draggableListId').html(data.draggable_list);
+					$('#draggableListId').sortable({
+					   update: function(event, ui) {
+						  var draggableOrder = $(this).sortable('toArray').toString();
+						  $("#draggable-output").val(draggableOrder);
+					   }
+					});									
+			  }
+			});
+			
+		}
+		
 		function savefrmFormData()  {
 		
 
@@ -118,6 +142,38 @@
 				mySmallAlert('Error...!', 'There was an error', 0);
 			}
 
+		}	
+		
+		function saveorderData()  {
+			var dragorder=$("#draggable-output").val();
+			
+			if(dragorder=='')
+			{
+				mySmallAlert('Error...!', 'You did not change anything', 0);
+			}
+			hideShowLoader(true);
+			var $form = $('#reorderGrid');
+			var objMasterData = $form.serializeObject();
+			var objFormData =
+			{
+				
+				dragorder: dragorder
+
+			};
+			hideShowLoader(true);
+			var objMyPost = AJAX_Post("<?php echo $this->url('adminpanel/locales', array('action'=>'saveorder'));?>", objFormData);
+			if (objMyPost.ERR_NO === 0) {
+				if (objMyPost.DATA.DBStatus === 'OK') {
+					mySmallAlert('Save Record', 'Locales Order Saved successfully', 1);
+					iActiveID = objMyPost.DATA.MY_ID;
+					fetch_grid_data_draggable();
+				}
+			}
+			else {
+				hideShowLoader(false);
+				mySmallAlert('Error...!', 'There was an error', 0);
+			}
+
 		}		
 		
 		var pagefunction = function() { 
@@ -154,6 +210,7 @@
 					responsiveHelper_tblMasterList.createExpandIcon(nRow);
 				},
 				"drawCallback" : function(oSettings) {
+					grid_tooltip();
 					responsiveHelper_tblMasterList.respond();
 				},	
 				"aaData": gridData,
@@ -259,10 +316,13 @@
 				sequence : {
 					validators : {
 						notEmpty : {
-							message : 'Please enter sequence'
+							message : 'Please enter sequence'						
+						},
+						digits : {
+							message : 'The sequence is not valid'
 						}
 					}
-				}
+				},
 			}
 		})        
 		.on('success.form.bv', function(e) {
@@ -270,9 +330,12 @@
             e.preventDefault();
 			savefrmFormData();
 		});
-			 $("#image").change(function () {
+		
+		
+ /*$("#image").change(function () {
   if (this.files && this.files[0]) {
    var reader = new FileReader();
+   reader.onload = imageIsLoadedLogo;
    reader.readAsDataURL(this.files[0]);
 
    //Save img
@@ -292,7 +355,7 @@
    var deferred;
    deferred = $.ajax({
 
-    url: "<?php echo $this->url('adminpanel/locales', array('action'=>'uploadimage'));?>",
+    url: "",
     type: "POST",
     processData: false,
     contentType: false,
@@ -312,18 +375,20 @@
 	
    deferred.done(function (result) {
    
-	$("#iconhidden").val(result.image);
+	$("#photohidden").val(result.image);
 	$("#customfileupload").addClass('hide');
 	$("#btnSave").removeClass('hide');
-	$("#display_img").attr("src", "<?php echo $this->public_dir_url;?>uploads/localeicons/"+result.image);
-    mySmallAlert('Success!', 'Icon uploaded successfully.', 1);
+	$("#display_img").removeClass('hide');
+	$("#display_img").attr("src", "public/uploads/"+result.image);
+    alert("Product Image  successfully Uploaded.");
    }).fail(function (result) {
-    mySmallAlert('Error...!', 'There was an error', 0);
+    alert("There was an error");
    });
   }
 
- });
-			
+ });*/
+
+ 			
 		fnBulkSave("<?php echo $this->url('adminpanel/locales', array('action'=>'bulksave'));?>");
 		fnImport("<?php echo $this->url('adminpanel/locales', array('action'=>'importcsv'));?>");
 		fnExport("<?php echo $this->url('adminpanel/locales', array('action'=>'exportcsv'));?>");

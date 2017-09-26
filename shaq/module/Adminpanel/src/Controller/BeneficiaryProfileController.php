@@ -17,6 +17,7 @@ class BeneficiaryProfileController extends AbstractActionController
 	private $config;
 	private $redisCache;
 	private $memCached;
+	private $global_locale_id;
 	
 	
 	protected static $Aula_UID;
@@ -32,6 +33,7 @@ class BeneficiaryProfileController extends AbstractActionController
 		$this->config = $config;
 		$this->redisCache = $redis;
 		$this->memCached = $memcached;
+		$this->global_locale_id = $config['global_locale_id'];
 				
 		self::$Aula_UID = $this->sessionContainer->Aula_UID;
 		self::$Aula_OrgID = $this->sessionContainer->Aula_OrgID;
@@ -177,7 +179,7 @@ class BeneficiaryProfileController extends AbstractActionController
 			$resultSet 			= new ResultSet; 			   
 			$resultSet->initialize($resultData);        
 			$rowset 			= $resultSet->toArray();
-			$csvData .= "#ID,Details,Family,Family Flag,Income,Spending,Home,Asset,Asset Required,Education,Medical,Medical Examination,Disabled,Volunteer,Gallery,Research Notes,Published,Country,Beneficiary,";
+			$csvData .= "#ID,Details(Yes|No),Family(Yes|No),Family Flag(Yes|No),Income(Yes|No),Spending(Yes|No),Home(Yes|No),Asset(Yes|No),Asset Required(Yes|No),Education(Yes|No),Medical(Yes|No),Medical Examination(Yes|No),Disabled(Yes|No),Volunteer(Yes|No),Gallery(Yes|No),Research Notes(Yes|No),Published(Yes|No),Country,Beneficiary,";
 			foreach($activeLocalesArray as $locale)
 			{
 				$csvData .= "Family Name(".$locale['name']."),";
@@ -296,6 +298,14 @@ class BeneficiaryProfileController extends AbstractActionController
 								$detailData['name'] = $data[$column_index++];
 								$detailData['description'] = $data[$column_index++];
 								
+								$fnameValPair = array();
+								$fnameValPair['name ']=$detailData['name_'.$locale['id']];
+								$fnameValPair['country_id ']=$saveDataArray['country_id'];
+								$existRecordID = $this->AdminfunctionsPlugin()->validateduplicatemultipleCSV('view_beneficiary_profile',$data[0],$fnameValPair,$this->dbAdapter);	
+								if($existRecordID > 0)
+								{
+									continue;
+								}
 								$existRecordID = $data[0]; 
 								if($existRecordID > 0)
 								{
@@ -307,11 +317,7 @@ class BeneficiaryProfileController extends AbstractActionController
 								}
 								else
 								{
-									$existRecordID = $this->AdminfunctionsPlugin()->validateduplicateCSV('view_beneficiary_profile',$detailData['name'],'name',$this->dbAdapter);	
-									if($existRecordID > 0)
-									{
-										continue;
-									}
+									
 									$saveDataArray['owner_organization_id'] = self::$Aula_OwnerOrgID;
 									$saveDataArray['owner_organization_user_id'] = self::$Aula_OwnerOrgUserID;								
 									$projectTable->insert($saveDataArray);	
@@ -381,7 +387,7 @@ class BeneficiaryProfileController extends AbstractActionController
 		$activeLocalesArray = $this->AdminfunctionsPlugin()->getActiveLocales($this->dbAdapter);
 		$csvData = '';		
 		
-		$csvData .= "#ID,Details,Family,Family Flag,Income,Spending,Home,Asset,Asset Required,Education,Medical,Medical Examination,Disabled,Volunteer,Gallery,Research Notes,Published,Country,Beneficiary,";
+		$csvData .= "#ID,Details(Yes|No),Family(Yes|No),Family Flag(Yes|No),Income(Yes|No),Spending(Yes|No),Home(Yes|No),Asset(Yes|No),Asset Required(Yes|No),Education(Yes|No),Medical(Yes|No),Medical Examination(Yes|No),Disabled(Yes|No),Volunteer(Yes|No),Gallery(Yes|No),Research Notes(Yes|No),Published(Yes|No),Country,Beneficiary,";
 		foreach($activeLocalesArray as $locale)
 		{
 				$csvData .= "Name(".$locale['name']."),";
@@ -398,12 +404,11 @@ class BeneficiaryProfileController extends AbstractActionController
     {
         if ($this->request->isPost()) {
             $tableName = $this->request->getPost('tableName');
-            $ID = $this->request->getPost('KEY_ID');
 			$EDIT_ID = $this->request->getPost('iActiveID');
-            $fieldName = $this->request->getPost('fieldName'); 
+			$fnameValPair = $this->request->getPost('fnameValPair');	
 			
 			
-			$this->AdminfunctionsPlugin()->validateduplicatelocale($tableName,$ID,$fieldName,$EDIT_ID,'beneficiary_profile_id',$this->dbAdapter,$this->config);           
+			$this->AdminfunctionsPlugin()->validateduplicatemultiple($tableName,$EDIT_ID,$fnameValPair,$this->dbAdapter);            
         }
 		else {
 			$result1['DBStatus'] = 'ERR';
@@ -612,9 +617,23 @@ class BeneficiaryProfileController extends AbstractActionController
 					$detailData = array();
 					$detailData['name'] = $aData['name_'.$locale['id']];
 					$detailData['description'] = $aData['description_'.$locale['id']];
-					$detailData['date_updated'] = date('Y-m-d H:i:s');
 					
-					$projectTableLocale->update($detailData,array("beneficiary_profile_id=".$iMasterID,"locale_id=".$locale['id']));
+					$rowset = $projectTableLocale->select(array("beneficiary_profile_id=".$iMasterID,"locale_id=".$locale['id']));
+					$rowset = $rowset->toArray();
+					if(isset($rowset[0]['id']) && $rowset[0]['id'] > 0 ) 
+					{					
+						$detailData['date_updated'] = date('Y-m-d H:i:s');
+						$projectTableLocale->update($detailData,array("id=".$rowset[0]['id']));						
+					} 
+					else 
+					{
+						$detailData['locale_id'] = $locale['id'];
+						$detailData['beneficiary_profile_id'] = $iMasterID;
+						$detailData['owner_organization_id'] = self::$Aula_OwnerOrgID;
+						$detailData['owner_organization_user_id'] = self::$Aula_OwnerOrgUserID;
+						$projectTableLocale->insert($detailData);	
+					}
+					
 				}									
 				$result['DBStatus'] = 'OK';
 			}
@@ -629,4 +648,38 @@ class BeneficiaryProfileController extends AbstractActionController
         echo $result;
         exit;
     }
+	/*public function getprofilefamilyAction() 
+	  {                
+		$sql="select beneficiary_profile_id as id,name as name from beneficiary_profile_locale where locale_id = '".$this->global_locale_id."' ";      
+		$optionalParameters=array();        
+		$statement 		   = $this->dbAdapter->createStatement($sql, $optionalParameters);       
+	    $result = $statement->execute();        
+		$resultSet = new ResultSet;        
+		$resultSet->initialize($result);        
+		$rowset=$resultSet->toArray();        
+		$result1['DBData'] = $rowset;        
+		$result1['recordsTotal'] = count($rowset);        
+		$result1['DBStatus'] = 'OK';        
+		$result = json_encode($result1);       
+		echo $result;        
+		exit;    
+	 }*/
+	 public function getprofilefamilyAction() 
+	  {                
+		$sql="select id as id,name as name,published from view_beneficiary_profile where published='Yes' "; 
+		if ($this->request->getPost("country_id") !='' &&$this->request->getPost("country_id") >= 0) 
+		$sql .= " AND country_id = '".$this->request->getPost("country_id")."' ";		     
+		$optionalParameters=array();        
+		$statement 		   = $this->dbAdapter->createStatement($sql, $optionalParameters);       
+	    $result = $statement->execute();        
+		$resultSet = new ResultSet;        
+		$resultSet->initialize($result);        
+		$rowset=$resultSet->toArray();        
+		$result1['DBData'] = $rowset;        
+		$result1['recordsTotal'] = count($rowset);        
+		$result1['DBStatus'] = 'OK';        
+		$result = json_encode($result1);       
+		echo $result;        
+		exit;    
+	 }
 }

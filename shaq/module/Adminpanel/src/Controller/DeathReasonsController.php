@@ -176,7 +176,7 @@ class DeathReasonsController extends AbstractActionController
 			$resultSet 			= new ResultSet; 			   
 			$resultSet->initialize($resultData);        
 			$rowset 			= $resultSet->toArray();
-			$csvData .= "#ID,Country,Published,";
+			$csvData .= "#ID,Country,Published(Yes|No),";
 			foreach($activeLocalesArray as $locale)
 			{
 				$csvData .= "Name(".$locale['name']."),";
@@ -259,6 +259,15 @@ class DeathReasonsController extends AbstractActionController
 								$detailData['name'] = $data[$column_index++];
 								$detailData['description'] = $data[$column_index++];
 								
+								$fnameValPair = array();
+								$fnameValPair['name ']=$detailData['name'];
+								$fnameValPair['country_id ']=$saveDataArray['country_id'];
+								
+								$existRecordID = $this->AdminfunctionsPlugin()->validateduplicatemultipleCSV('view_death_reason',$data[0],$fnameValPair,$this->dbAdapter);	
+								if($existRecordID > 0)
+								{
+									continue;
+								}
 								$existRecordID = $data[0]; 
 								if($existRecordID > 0)
 								{
@@ -270,13 +279,6 @@ class DeathReasonsController extends AbstractActionController
 								}
 								else
 								{
-								
-									$existRecordID = $this->AdminfunctionsPlugin()->validateduplicateCSV('view_death_reason',$detailData['name'],'name',$this->dbAdapter);	
-									if($existRecordID > 0)
-									{
-										continue;
-									}
-									
 									$saveDataArray['owner_organization_id'] = self::$Aula_OwnerOrgID;
 									$saveDataArray['owner_organization_user_id'] = self::$Aula_OwnerOrgUserID;								
 									$projectTable->insert($saveDataArray);	
@@ -346,7 +348,7 @@ class DeathReasonsController extends AbstractActionController
 		$activeLocalesArray = $this->AdminfunctionsPlugin()->getActiveLocales($this->dbAdapter);
 		$csvData = '';		
 		
-		$csvData .= "#ID,Country,Published,";
+		$csvData .= "#ID,Country,Published(Yes|No),";
 		foreach($activeLocalesArray as $locale)
 		{
 			$csvData .= "Name(".$locale['name']."),";
@@ -361,14 +363,12 @@ class DeathReasonsController extends AbstractActionController
 	}
 	public function validateduplicateAction()
     {
-        if ($this->request->isPost()) {
+         if ($this->request->isPost()) {
             $tableName = $this->request->getPost('tableName');
-            $ID = $this->request->getPost('KEY_ID');
 			$EDIT_ID = $this->request->getPost('iActiveID');
-            $fieldName = $this->request->getPost('fieldName'); 
+			$fnameValPair = $this->request->getPost('fnameValPair');			
 			
-			
-			$this->AdminfunctionsPlugin()->validateduplicatelocale($tableName,$ID,$fieldName,$EDIT_ID,'death_reason_id',$this->dbAdapter,$this->config);          
+			$this->AdminfunctionsPlugin()->validateduplicatemultiple($tableName,$EDIT_ID,$fnameValPair,$this->dbAdapter);           
         }
 		else {
 			$result1['DBStatus'] = 'ERR';
@@ -529,7 +529,22 @@ class DeathReasonsController extends AbstractActionController
 					$detailData = array();
 					$detailData['name'] = $aData['name_'.$locale['id']];
 					$detailData['description'] = $aData['description_'.$locale['id']];
-					$detailData['date_updated'] = date('Y-m-d H:i:s');
+					
+					$rowset = $projectTableLocale->select(array("death_reason_id=".$iMasterID,"locale_id=".$locale['id']));
+					$rowset = $rowset->toArray();
+					if(isset($rowset[0]['id']) && $rowset[0]['id'] > 0 ) 
+					{					
+						$detailData['date_updated'] = date('Y-m-d H:i:s');
+						$projectTableLocale->update($detailData,array("id=".$rowset[0]['id']));						
+					} 
+					else 
+					{
+						$detailData['locale_id'] = $locale['id'];
+						$detailData['death_reason_id'] = $iMasterID;
+						$detailData['owner_organization_id'] = self::$Aula_OwnerOrgID;
+						$detailData['owner_organization_user_id'] = self::$Aula_OwnerOrgUserID;
+						$projectTableLocale->insert($detailData);	
+					}
 					
 					$projectTableLocale->update($detailData,array("death_reason_id=".$iMasterID,"locale_id=".$locale['id']));
 				}									

@@ -19,6 +19,7 @@
 					<div class="jarviswidget-editbox"></div>
 						<div class="widget-body no-padding"> 
 							<form id="frmForm">
+						
 							<!--<input type="hidden" name="iconhidden" id="iconhidden" value="" />-->
 							<fieldset>
 								<div class="panel panel-hovered panel-stacked mb30">

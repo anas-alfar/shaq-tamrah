@@ -68,12 +68,7 @@
 												<textarea type="text" id="description_<?php echo $this->global_locale_id; ?>" name="description_<?php echo $this->global_locale_id; ?>" class="description form-control"></textarea>
 											</div>
 										</section>
-										<section class="col-md-6">
-											<div class="form-group">
-												<label class="control-label">Sequence<span>*</span></label>
-												<input type="number" class="form-control" name="sequence" id="sequence"/>
-											</div>
-										</section>
+										
 										<section class="col-md-6">
 											<div class="form-group">
 												<label>&nbsp;</label>
@@ -120,10 +115,15 @@
 						</div>
 					  </div>	
 					</form>
+					
 				   </div>
 				</div>
 			 </div>
 		</div>
 	</div>
 </section>	
+<script>
+
+
+</script>
 								
