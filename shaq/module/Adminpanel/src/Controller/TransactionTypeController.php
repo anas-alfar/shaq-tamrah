@@ -17,6 +17,7 @@ class TransactionTypeController extends AbstractActionController
 	private $config;
 	private $redisCache;
 	private $memCached;
+	private $global_locale_id;
 	
 	protected static $Aula_UID;
 	protected static $Aula_OrgID;
@@ -31,6 +32,7 @@ class TransactionTypeController extends AbstractActionController
 		$this->config = $config;
 		$this->redisCache = $redis;
 		$this->memCached = $memcached;
+		$this->global_locale_id = $config['global_locale_id'];
 				
 		self::$Aula_UID = $this->sessionContainer->Aula_UID;
 		self::$Aula_OrgID = $this->sessionContainer->Aula_OrgID;
@@ -41,28 +43,15 @@ class TransactionTypeController extends AbstractActionController
     }
     public function indexAction()
     {	
-		/*if ($this->redisCache->hasItem ( 'custom_key' )) {
-			echo $this->redisCache->getItem('custom_key'); 
-			echo "in if"; die();
-		}else{
-			$this->redisCache->setItem('custom_key', 'Custom Value');
-			echo $this->redisCache->getItem('custom_key');
-			echo "in else"; die();
-		}*/
-		
-		/*if ($this->memCached->hasItem ( 'custom_key1' )) {
-			echo $this->memCached->getItem('custom_key1'); 
-			echo "in if"; die();
-		}else{
-			$this->memCached->setItem('custom_key1', 'Custom Value');
-			echo $this->memCached->getItem('custom_key1');
-			echo "in else"; die();
-		}*/		
-		
+		$activeLocalesArray = $this->AdminfunctionsPlugin()->getActiveLocales($this->dbAdapter);
+		$globalLocalName = $this->AdminfunctionsPlugin()->getLocalNameById($this->dbAdapter,$this->config['global_locale_id']);
 		return new ViewModel([
 			'admin_layout_dir_path' => $this->config['site_dir_path']['admin_layout_dir_path'],
 			'public_dir_path' => $this->config['site_dir_path']['public_dir_path'],
 			'public_dir_url' => $this->config['site_dir_path']['public_dir_url'],
+			'activeLocalesArray' => $activeLocalesArray,
+			'global_locale_id' => $this->config['global_locale_id'],
+			'globalLocalName' => $globalLocalName,
 		]);
     }
 	public function listAction()
@@ -432,4 +421,20 @@ class TransactionTypeController extends AbstractActionController
         echo $result;
         exit;
     }
+	public function gettransactiontypeAction() 
+	  {                
+		$sql="select id as id,transaction_type_name as name from transaction_type where 1=1";		        
+		$optionalParameters=array();        
+		$statement 		   = $this->dbAdapter->createStatement($sql, $optionalParameters);       
+	    $result = $statement->execute();        
+		$resultSet = new ResultSet;        
+		$resultSet->initialize($result);        
+		$rowset=$resultSet->toArray();        
+		$result1['DBData'] = $rowset;        
+		$result1['recordsTotal'] = count($rowset);        
+		$result1['DBStatus'] = 'OK';        
+		$result = json_encode($result1);       
+		echo $result;        
+		exit;    
+	 }
 }

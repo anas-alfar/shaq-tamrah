@@ -72,7 +72,8 @@ table thead th.action.sorting_disabled{width:130px !IMPORTANT;}
 .has-success .select2-container .has-success .select2-choice, .has-success .select2-selection{border-color:#468847;}
 #importFileLabel.has-error input{ border-color:#b94a48; }
 .page-footer {position:fixed !important}
-
+span.select2.select2-container.select2-container--default.select2-container--below.select2-container--open.select2-container--focus{width: auto!important;
+    min-width: 100%!important;}
 .fa-check:before {
     color: #468847;}
 .fa-close:before, .fa-remove:before, .fa-times:before {
@@ -84,6 +85,23 @@ table thead th.action.sorting_disabled{width:130px !IMPORTANT;}
 .listing>header{border-color: gray!important;
     background: gray;
     color: #fff;
+}
+.thumb64 {
+    width: 64px!important;
+    height: 64px!important;
+}
+.panel1.panel-default1 {
+    border-top-width: 3px!important;
+}
+.panel-default1 {
+    border-color: #cfdbe2!important;
+}
+.panel1 {
+    margin-bottom: 21px;
+    background-color: #fff;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    box-shadow: 0 1px 1px rgba(0,0,0,.05);
 }
 .btnDownload{background-color: #a90329; border-color: #900323;color: #fff;}
 .btnExport{background-color: #57889c; border-color: #4e7a8c;color: #fff;}

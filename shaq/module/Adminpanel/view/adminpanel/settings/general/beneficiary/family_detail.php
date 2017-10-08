@@ -315,6 +315,7 @@
 				}
 			},				
 			"createdRow": function( nRow, data, dataIndex ) {
+				$( nRow ).find('td:eq(5)').attr('data-search', data[6]);
 			},
 			"rowCallback" : function(nRow) {
 				responsiveHelper_tblMasterListFamilyDetail.createExpandIcon(nRow);
@@ -324,8 +325,15 @@
 			},	
 			"aaData": gridDataFamilyDetail,
 			"aoColumns": [
-				{ "bSearchable": false, "bVisible": false },                  
-				null,
+				{ "bSearchable": false, "bVisible": false },
+				{
+					"bSortable": 	false, 
+					"data": 		null,  
+					"bSearchable": 	false,
+					"render" : function ( url, type, full) {
+						return '<img height="75px" width="75px" src="../public/uploads/localeicons/'+full[1]+'" />';
+					}	
+				},
 				null,
 				null,
 				null,
@@ -587,7 +595,8 @@
 			mySmallAlert('Error...!', 'There was an error', 0);
 		}
 	}
-  $("#avatar").change(function () {
+	
+  $("#frmFamilyDetail").find("#avatar").change(function () {
   if (this.files && this.files[0]) {
   var reader = new FileReader();
    // reader.onload = imageIsLoadedLogo;

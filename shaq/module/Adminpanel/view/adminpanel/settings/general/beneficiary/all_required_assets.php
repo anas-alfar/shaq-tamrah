@@ -293,20 +293,31 @@
 		});
 		
 		var asset_type=$("#frmAllRequiredAssets").find("#asset_type_id");
-		var asset_type_array=[asset_type];	
+		var asset_type1=$("#frmFormDonation").find("#asset_type_id");
+		var asset_type2=$("#frmFormManageAsset").find("#asset_type_id");
+		var asset_type3=$("#frmAllOwnedAssets").find("#asset_type_id");
+		var asset_type_array=[asset_type,asset_type1,asset_type2,asset_type3];	
 		populateOptionValuesBulk(asset_type_array,"<?php echo $this->url('adminpanel/asset-type', array('action'=>'getassettype'));?>","Select Asset Type");
 		
 		var asset=$("#frmAllRequiredAssets").find("#asset_id");
-		var asset_array=[asset];
+		var asset1=$("#frmFormDonation").find("#asset_id");
+		var asset2=$("#frmFormManageAsset").find("#asset_id");
+		var asset3=$("#frmAllOwnedAssets").find("#asset_id");
+		var asset_array=[asset,asset1,asset2,asset3];
 		populateOptionValuesBulk(asset_array,"<?php echo $this->url('adminpanel/asset', array('action'=>'getasset'));?>","Select Asset");
 		
 		var asset_condition=$("#frmAllRequiredAssets").find("#asset_condition_id");
-		var asset_condition_array=[asset_condition];
+		var asset_condition1=$("#frmAllOwnedAssets").find("#asset_condition_id");
+		var asset_condition2=$("#frmFormDonation").find("#asset_condition_id");
+		var asset_condition3=$("#frmFormManageAsset").find("#asset_condition_id");
+		var asset_condition_array=[asset_condition,asset_condition1,asset_condition2,asset_condition3];
 		populateOptionValuesBulk(asset_condition_array,"<?php echo $this->url('adminpanel/asset-conditions', array('action'=>'getcondition'));?>","Select Asset Condition");	
 		
 		$("#beneficiary_profile_asset_received_date").datepicker();
 		var asset_unit=$("#frmAllRequiredAssets").find("#asset_unit_id");
-		var asset_unit_array=[asset_unit];
+		var asset_unit1=$("#frmFormDonation").find("#asset_unit_id");
+		var asset_unit2=$("#frmFormManageAsset").find("#asset_unit_id");
+		var asset_unit_array=[asset_unit,asset_unit1,asset_unit2];
 		populateOptionValuesBulk(asset_unit_array,"<?php echo $this->url('adminpanel/asset-unit-types', array('action'=>'getassetunit'));?>","Select Asset Unit");
 
 	}	

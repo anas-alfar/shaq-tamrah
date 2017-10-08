@@ -204,7 +204,6 @@
 					null,
 					null,
 					null,
-					null,
 					{"bSearchable": false, "bSortable": false,
                         "mRender" : function (data, type, full) {
 							return grid_buttons(full[0]);

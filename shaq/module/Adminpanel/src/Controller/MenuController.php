@@ -71,7 +71,7 @@ class MenuController extends AbstractActionController
 	public function fnGrid()
 	{
 		
-		$aColumns = array( '`id`','`name`','`status`','`sequence`','`menu_category`','`country`','`organization_branch_name`','`published`');
+		$aColumns = array( '`id`','`name`','`status`','`menu_category`','`country`','`organization_branch_name`','`published`');
 		if(!($this->memCached->hasItem('aula_menu_data')) || !is_array($this->memCached->getItem('aula_menu_data')))
 		{	
 			$sTable = 'view_menu';
@@ -244,7 +244,7 @@ class MenuController extends AbstractActionController
 	{
 		$menu_id = $this->request->getPost("menu_id");
 		$activeLocalesArray = $this->AdminfunctionsPlugin()->getActiveLocales($this->dbAdapter);
-		$aColumns = array( '`id`','`name`','`link`','`menu`','`parent`','`published`','`sequence`');
+		$aColumns = array( '`id`','`name`','`link`','`menu`','`parent`','`published`');
 		if(!($this->memCached->hasItem('aula_menuitem_data')) || !is_array($this->memCached->getItem('aula_menuitem_data')))
 		{	
 			$sTable = 'view_menu_item';
@@ -360,14 +360,13 @@ class MenuController extends AbstractActionController
 			$resultSet->initialize($resultData);        
 			$rowset 			= $resultSet->toArray();	
 			
-			$csvData .= "#ID,Name,Status,Sequence,Menu Category,Country,Organization Branch Name,Published(Yes|No)";
+			$csvData .= "#ID,Name,Status,Menu Category,Country,Organization Branch Name,Published(Yes|No)";
 			$csvData .= "\n";
 			foreach($rowset as $row)
 			{
 				$csvData .= $row['id'].",";
 				$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['name']).",";
 				$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['status']).",";
-				$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['sequence']).",";
 				$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['menu_category']).",";
 				$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['country']).",";
 				$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['organization_branch_name']).",";
@@ -418,7 +417,7 @@ class MenuController extends AbstractActionController
 			$resultSet 			= new ResultSet; 			   
 			$resultSet->initialize($resultData);        
 			$rowset 			= $resultSet->toArray();
-			$csvData .= "#ID,Parent,Published(Yes|No),Sequence,";
+			$csvData .= "#ID,Parent,Published(Yes|No),";
 			foreach($activeLocalesArray as $locale)
 			{
 				$csvData .= "Name(".$locale['name']."),";
@@ -434,7 +433,6 @@ class MenuController extends AbstractActionController
 				$csvData .= $row['id'].",";
 				$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['parent']).",";
 				$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['published']).",";
-				$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['sequence']).",";
 				foreach($activeLocalesArray as $locale)
 					{
 						$sQuery_locale1 		= "SELECT name,link FROM menu_item_locale WHERE locale_id = '".$locale['id']."' AND menu_item_id = '".$row['id']."' ";
@@ -486,27 +484,25 @@ class MenuController extends AbstractActionController
 					{
 						fgetcsv($handle);   
 					   	while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
-							if($data[1] != "" && $data[2] != "" && $data[3] != ""&& $data[4] != ""&& $data[5] != "")
+							if($data[1] != "" && $data[2] != "" && $data[3] != ""&& $data[4] != ""&& $data[5] != ""&& $data[6] != "")
 							{
 							 
 								$saveDataArray = array();
 								$column_index = 1;
 								$saveDataArray['name'] 	= $this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]);
+								
 								$saveDataArray['status'] 	= $this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]);
-								$saveDataArray['sequence'] 	= $this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]);
+								
 								$getMenucategoryID = $this->AdminfunctionsPlugin()->validateduplicateLocaleCSV('menu_category_locale',$this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]),'name','menu_category_id',$this->dbAdapter,$this->config['global_locale_id'],'locale_id');
 								$saveDataArray['menu_category_id']= $getMenucategoryID;
 								
 								$getCountryID = $this->AdminfunctionsPlugin()->validateduplicateLocaleCSV('country_locale',$this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]),'name','country_id',$this->dbAdapter,$this->config['global_locale_id'],'locale_id');
 								$saveDataArray['country_id']= $getCountryID;
 								
-								
-								
 								$getBranchID = $this->AdminfunctionsPlugin()->validateduplicateLocaleCSV('organization_branch_locale',$this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]),'name','organization_branch_id',$this->dbAdapter,$this->config['global_locale_id'],'locale_id');
 								$saveDataArray['organization_branch_id']= $getBranchID;
 								
 								$saveDataArray['published'] 	= $this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]);
-								
 								
 								$fnameValPair = array();
 								$fnameValPair['menu_category_id ']=$saveDataArray['menu_category_id'];
@@ -531,7 +527,8 @@ class MenuController extends AbstractActionController
 									$saveDataArray['organization_id'] 	= self::$Aula_OrgID;;
 									$saveDataArray['organization_branch_id']= $getBranchID;
 									$saveDataArray['owner_organization_id'] = self::$Aula_OwnerOrgID;
-									$saveDataArray['owner_organization_user_id'] = self::$Aula_OwnerOrgUserID;								
+									$saveDataArray['owner_organization_user_id'] = self::$Aula_OwnerOrgUserID;
+									$saveDataArray['sequence'] = $this->AdminfunctionsPlugin()->getSequence("select sequence from menu order by sequence DESC LIMIT 1 ",$this->dbAdapter);								
 									$projectTable->insert($saveDataArray);	
 								}
 							}
@@ -596,7 +593,6 @@ class MenuController extends AbstractActionController
 								
 								$saveDataArray['parent_id']= $getParentID;
 								$saveDataArray['published'] 	= $this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]);
-								$saveDataArray['sequence'] 	= $this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]);
 								
 								$detailData = array();
 								$detailData['name'] = $data[$column_index++];
@@ -620,7 +616,8 @@ class MenuController extends AbstractActionController
 								{
 									
 									$saveDataArray['owner_organization_id'] = self::$Aula_OwnerOrgID;
-									$saveDataArray['owner_organization_user_id'] = self::$Aula_OwnerOrgUserID;								
+									$saveDataArray['owner_organization_user_id'] = self::$Aula_OwnerOrgUserID;	
+									$saveDataArray['sequence'] = $this->AdminfunctionsPlugin()->getSequence("select sequence from menu_item where menu_id='".$saveDataArray['menu_id']."' and parent_id='".$saveDataArray['parent_id']."' order by sequence DESC LIMIT 1",$this->dbAdapter);							
 									$projectTable->insert($saveDataArray);	
 									$existRecordID = $projectTable->lastInsertValue;	
 									
@@ -686,7 +683,7 @@ class MenuController extends AbstractActionController
 	public function downloadtemplateAction()
 	{
 		$csvData = '';		
-		$csvData .= "#ID,Name,Status,Sequence,Menu Category,Country,Organization Branch Name,Published(Yes|No)";
+		$csvData .= "#ID,Name,Status,Menu Category,Country,Organization Branch Name,Published(Yes|No)";
 		$csvData .= "\n";
 		header('Content-Type: text/csv; charset=utf-8');
 		header("Content-Disposition: attachment; filename=menu.csv");
@@ -698,7 +695,7 @@ class MenuController extends AbstractActionController
 		$activeLocalesArray = $this->AdminfunctionsPlugin()->getActiveLocales($this->dbAdapter);
 		$csvData = '';		
 		
-		$csvData .= "#ID,Parent,Published(Yes|No),Sequence,";
+		$csvData .= "#ID,Parent,Published(Yes|No),";
 		foreach($activeLocalesArray as $locale)
 		{
 			$csvData .= "Name(".$locale['name']."),";
@@ -954,7 +951,16 @@ class MenuController extends AbstractActionController
 			if ($this->request->getPost("pAction") == "ADD")
 			{	
 				unset($aData['MASTER_KEY_ID']);	
+				$sql="select sequence from menu order by sequence DESC LIMIT 1 ";
+				
+				$optionalParameters	= array();        
+				$statement 			= $this->dbAdapter->createStatement($sql, $optionalParameters);        
+				$resultData			= $statement->execute();        
+				$resultSet 			= new ResultSet; 			   
+				$resultSet->initialize($resultData);        
+				$rowset 			= $resultSet->toArray();
 						
+				$aData['sequence']									 = $rowset[0]['sequence']+1;		
 				$aData['owner_organization_id']									 = self::$Aula_OwnerOrgID;
 				$aData['organization_id']									 = self::$Aula_OrgID;
 				$aData['owner_organization_user_id']							 = self::$Aula_OwnerOrgUserID;
@@ -997,7 +1003,7 @@ class MenuController extends AbstractActionController
 
 			if ($this->request->getPost("pAction") == "ADD1")
 			{
-				$sql="select sequence from menu_category order by sequence DESC LIMIT 1 ";
+				$sql="select sequence from menu_item where menu_id='".$aData['menu_id']."' and parent_id='".$aData['parent_id']."' order by sequence DESC LIMIT 1 ";
 				
 				$optionalParameters	= array();        
 				$statement 			= $this->dbAdapter->createStatement($sql, $optionalParameters);        

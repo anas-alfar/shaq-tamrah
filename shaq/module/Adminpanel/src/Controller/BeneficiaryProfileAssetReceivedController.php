@@ -17,6 +17,7 @@ class BeneficiaryProfileAssetReceivedController extends AbstractActionController
 	private $config;
 	private $redisCache;
 	private $memCached;
+	private $global_locale_id;
 	
 	protected static $Aula_UID;
 	protected static $Aula_OrgID;
@@ -31,6 +32,7 @@ class BeneficiaryProfileAssetReceivedController extends AbstractActionController
 		$this->config = $config;
 		$this->redisCache = $redis;
 		$this->memCached = $memcached;
+		$this->global_locale_id = $config['global_locale_id'];
 				
 		self::$Aula_UID = $this->sessionContainer->Aula_UID;
 		self::$Aula_OrgID = $this->sessionContainer->Aula_OrgID;
@@ -404,9 +406,14 @@ class BeneficiaryProfileAssetReceivedController extends AbstractActionController
         echo $result;
         exit;
     }
-	public function getgroupAction() 
+	
+	public function getassetreceivedAction() 
 	  {                
-		$sql="select id as id,name as name from beneficiary_group";		        
+		$sql="select id as id,asset as name from view_beneficiary_profile_asset_received  where 1=1";
+		
+		if ($this->request->getPost("beneficiary_id") !='' &&$this->request->getPost("beneficiary_id") >= 0) 
+		$sql .= " AND beneficiary_id = '".$this->request->getPost("beneficiary_id")."' ";		  
+		      
 		$optionalParameters=array();        
 		$statement 		   = $this->dbAdapter->createStatement($sql, $optionalParameters);       
 	    $result = $statement->execute();        

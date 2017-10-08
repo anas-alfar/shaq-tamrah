@@ -199,7 +199,7 @@ var gridData = [];
 					
 					{ "bSearchable": true, "bSortable": true,
                         "mRender" : function (data, type, full) {							
-							return grid_switch(full[0],'published',full[3],'Yes');							
+							return grid_switch(full[0],'published',full[4],'Yes');							
 						}
 					},
                     {"bSearchable": false, "bSortable": false,
@@ -210,7 +210,7 @@ var gridData = [];
                 ],
                 "columnDefs": [
                     { className: "hidden", "targets": [ 0 ] },
-					{ "type": "html-input", "targets": [3] }
+					{ "type": "html-input", "targets": [4] }
                 ]	
 			});	
 			$('#tblMasterList tbody').on('click', 'td.details-control', function () {

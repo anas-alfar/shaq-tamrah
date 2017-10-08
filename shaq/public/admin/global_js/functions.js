@@ -165,23 +165,23 @@ function grid_buttons(id)
 			strAction += '<a href="#" title="View" rel="tooltip" data-placement="bottom" data-original-title ="View" class="btn btn-primary fa fa-eye btn-sm view" row-id="' + id + '">';
 			strAction += '</a>';
 		}
-    
-        strAction += '<a href="#" title="Edit" rel="tooltip" data-placement="bottom" data-original-title ="Edit" class="btn btn-success fa fa-pencil-square-o btn-sm edit" row-id="' + id + '">';
-        strAction += '</a>';
-    
-        strAction += '<a href="#" title="Delete" rel="tooltip" data-placement="bottom" data-original-title ="Delete" class="btn btn-info fa fa-trash-o btn-sm delete" row-id="' + id + '" >';
-        strAction += '</a>';
-    
+			strAction += '<a href="#" title="Edit" rel="tooltip" data-placement="bottom" data-original-title ="Edit" class="btn btn-success fa fa-pencil-square-o btn-sm edit" row-id="' + id + '">';
+			strAction += '</a>';
+			
+			strAction += '<a href="#" title="Delete" rel="tooltip" data-placement="bottom" data-original-title ="Delete" class="btn btn-info fa fa-trash-o btn-sm delete" row-id="' + id + '" >';
+			strAction += '</a>';
+		
     strAction += '</div>';
 
     return strAction;
 
 }
-function grid_buttons_beneficiary(id)
+
+function grid_buttons_gallery(id,published)
 {
     var strAction = "";
 	strAction += '<input type="hidden" name="gridHiddenIdArray[]" value="'+id+'" />';
-    strAction += '<div class="btn-group" style="width:236px;" >';
+    strAction += '<div class="btn-group" style="width:140px;" >';
    		if(acl_VIEW == 1) {
 			strAction += '<a href="#" title="View" rel="tooltip" data-placement="bottom" data-original-title ="View" class="btn btn-primary fa fa-eye btn-sm view" row-id="' + id + '">';
 			strAction += '</a>';
@@ -192,16 +192,105 @@ function grid_buttons_beneficiary(id)
     
         strAction += '<a href="#" title="Delete" rel="tooltip" data-placement="bottom" data-original-title ="Delete" class="btn btn-info fa fa-trash-o btn-sm delete" row-id="' + id + '" >';
         strAction += '</a>';
-		
-		 strAction += '<a href="#" title="New Donation" rel="tooltip" data-placement="bottom" data-original-title ="New Donation" class="btn btn-warning fa fa-gift btn-sm newdonation" row-id="' + id + '" >';
+	  if(published == 'No') {
+		strAction += '<a href="#" title="Published" rel="tooltip" data-placement="bottom" data-original-title ="Published" class="btn btn-warning fa fa-calendar btn-sm published" row-id="' + id + '" >';
         strAction += '</a>';
-		
-		strAction += '<a href="#" title="Sponsorship" rel="tooltip" data-placement="bottom" data-original-title ="Sponsorship" class="btn btn-danger fa fa-thumbs-o-up btn-sm sponsorship" row-id="' + id + '" >';
+	  }
+    strAction += '</div>';
+
+    return strAction;
+
+}
+function grid_viewedit_buttons(id)
+{
+    var strAction = "";
+	strAction += '<input type="hidden" name="gridHiddenIdArray[]" value="'+id+'" />';
+    strAction += '<div class="btn-group" style="width:140px;" >';
+   		if(acl_VIEW == 1) {
+			strAction += '<a href="#" title="View" rel="tooltip" data-placement="bottom" data-original-title ="View" class="btn btn-primary fa fa-eye btn-sm view" row-id="' + id + '">';
+			strAction += '</a>';
+		}
+    
+        strAction += '<a href="#" title="Edit" rel="tooltip" data-placement="bottom" data-original-title ="Edit" class="btn btn-success fa fa-pencil-square-o btn-sm edit" row-id="' + id + '">';
         strAction += '</a>';
-		
-		strAction += '<a href="#" title="Manage Groups" rel="tooltip" data-placement="bottom" data-original-title ="Manage Groups" class="btn btn-primary fa fa-users btn-sm manage_groups" row-id="' + id + '" >';
+    strAction += '</div>';
+
+    return strAction;
+
+}
+function grid_buttons_donation(id)
+{
+    var strAction = "";
+	strAction += '<input type="hidden" name="gridHiddenIdArray[]" value="'+id+'" />';
+    strAction += '<div class="btn-group" style="width:140px;" >';
+   		if(acl_VIEW == 1) {
+			strAction += '<a href="#" title="View" rel="tooltip" data-placement="bottom" data-original-title ="View" class="btn btn-primary fa fa-eye btn-sm view" row-id="' + id + '">';
+			strAction += '</a>';
+		}
+    
+        /*strAction += '<a href="#" title="Edit" rel="tooltip" data-placement="bottom" data-original-title ="Edit" class="btn btn-success fa fa-pencil-square-o btn-sm edit" row-id="' + id + '">';
+        strAction += '</a>';*/
+    
+        strAction += '<a href="#" title="Delete" rel="tooltip" data-placement="bottom" data-original-title ="Delete" class="btn btn-info fa fa-trash-o btn-sm delete" row-id="' + id + '" >';
         strAction += '</a>';
     
+    strAction += '</div>';
+
+    return strAction;
+
+}
+
+function grid_buttons_group(id)
+{
+    var strAction = "";
+	strAction += '<input type="hidden" name="gridHiddenIdArray[]" value="'+id+'" />';
+    strAction += '<div class="btn-group" style="width:140px;" >';
+   		if(acl_VIEW == 1) {
+			strAction += '<a href="#" title="View" rel="tooltip" data-placement="bottom" data-original-title ="View" class="btn btn-primary fa fa-eye btn-sm view" row-id="' + id + '">';
+			strAction += '</a>';
+		}
+    
+        strAction += '<a href="#" title="Edit" rel="tooltip" data-placement="bottom" data-original-title ="Edit" class="btn btn-success fa fa-pencil-square-o btn-sm edit" row-id="' + id + '">';
+        strAction += '</a>';
+		
+		strAction += '<a href="#" title="View Group" rel="tooltip" data-placement="bottom" data-original-title ="View Group" class="btn btn-warning fa fa-users btn-sm view_group" row-id="' + id + '">';
+        strAction += '</a>';
+		
+    strAction += '</div>';
+
+    return strAction;
+
+}
+function grid_buttons_beneficiary(id,name)
+{
+    var strAction = "";
+	strAction += '<input type="hidden" name="gridHiddenIdArray[]" value="'+id+'" />';
+    strAction += '<div class="btn-group" style="width:279px;" >';
+   		if(acl_VIEW == 1) {
+			strAction += '<a href="#" title="View" rel="tooltip" data-placement="bottom" data-original-title ="View" class="btn btn-primary fa fa-eye btn-sm viewbeneficiary" row-id="' + id + '">';
+			strAction += '</a>';
+		}
+    
+        strAction += '<a href="#" title="Edit" rel="tooltip" data-placement="bottom" data-original-title ="Edit" class="btn btn-success fa fa-pencil-square-o btn-sm edit" row-id="' + id + '">';
+        strAction += '</a>';
+    
+        strAction += '<a href="#" title="Delete" rel="tooltip" data-placement="bottom" data-original-title ="Delete" class="btn btn-info fa fa-trash-o btn-sm delete" row-id="' + id + '" >';
+        strAction += '</a>';
+		
+		 strAction += '<a href="#" title="New Donation" rel="tooltip" data-placement="bottom" data-original-title ="New Donation" class="btn btn-warning fa fa-gift btn-sm newdonation" row-id="' + id + '" row-name="' + name + '" >';
+        strAction += '</a>';
+		
+		strAction += '<a href="#" title="Sponsorship" rel="tooltip" data-placement="bottom" data-original-title ="Sponsorship" class="btn btn-danger fa fa-thumbs-o-up btn-sm sponsorship" row-id="' + id + '" row-name="' + name + '">';
+        strAction += '</a>';
+		
+		strAction += '<a href="#" title="Manage Groups" rel="tooltip" data-placement="bottom" data-original-title ="Manage Groups" class="btn btn-primary fa fa-users btn-sm manage_groups" row-id="' + id + '" row-name="' + name + '">';
+        strAction += '</a>';
+		
+		strAction += '<a href="#" title="Manage Assets" rel="tooltip" data-placement="bottom" data-original-title ="Manage Assets" class="btn btn-success fa fa-font btn-sm manage_asset" row-id="' + id + '" row-name="' + name + '">';
+        strAction += '</a>';
+		
+		strAction += '<a href="#" title="Change Organization" rel="tooltip" data-placement="bottom" data-original-title ="Change Organization" class="btn btn-warning fa fa-sitemap btn-sm change_organization" row-id="' + id + '" row-name="' + name + '">';
+        strAction += '</a>';
     strAction += '</div>';
     return strAction;
 
@@ -447,9 +536,7 @@ function populateEditEntries(iID,strURL) {
 							$("#frmForm").find("#"+key).prop("checked", false);
                    }
                 if ($("#"+key).length > 0 || key == ckeditorvar || key == "hobby" ) {  // check if exists or not
-					
                     strElementType= $("#"+key).attr("type");
-
                     if(strElementType == "text") {  // if textbox
                         $("#" + key).val(value);
                     }
@@ -478,15 +565,27 @@ function populateEditEntries(iID,strURL) {
 						
                     }					
 				  	else if($("#"+key).attr("name") == "image") {  // if textbox   
-						$("#display_img").attr("src", "public/uploads/localeicons/"+value);	
-                    }					
+						$("#display_img").attr("src", "../public/uploads/localeicons/"+value);	
+                    }
+					else if($("#"+key).attr("name") == "avatar") {  // if textbox   
+						$('#browseicon').val(value);
+						$("#display_img").attr("src", "../public/uploads/localeicons/"+value);
+						
+                    }
+					else if($("#"+key).attr("name") == "path") {  // if textbox
+						$('#browseicon').val(value);
+						$('#pathhidden').val(value);
+						$("#display_img").attr("src", "../public/uploads/localeicons/"+value);	
+                    }
                     else if(strElementType == "multiselect") {  // if Select Box with multi select
                         var arrValues = $.parseJSON(stripslashes(value));
                         $("#" + key).select2("val", arrValues);
                     }					
                     else if(strElementType == "image") {  // if Image
                         $("#" + key).attr("src",value);
-                    }					
+                    }	
+					
+						
 					else if(strElementType == "textarea") { 
                        $("#" + key).html(value);
                     }					
@@ -644,6 +743,8 @@ function fnEdit(strUrl)
 		$("#type_id").removeClass('hide');
 		$("#sh").removeClass('hide');
 		$('#langFormTabs a:first').tab('show').trigger('click');
+		$("#youtube_form").addClass('hide');
+		$("#sms_form").addClass('hide');
         populateEditEntries(iActiveID, strUrl);
         glbControlEnable(true);
 		$('ul#langFormTabs li').each(function(){
@@ -653,6 +754,7 @@ function fnEdit(strUrl)
     });
 
 }
+
 function fnImport(strUrl)
 {	
 	$("#btnImport").click(function(){
@@ -738,6 +840,8 @@ function fnView(strUrl)
 		$("#display_img").removeClass('hide');
 		$('#langFormTabs a:first').tab('show').trigger('click');
 		$("#langFormTabs").find('i.fa-times').hide()
+		$("#youtube_form").addClass('hide');
+		$("#sms_form").addClass('hide');
         populateEditEntries(iActiveID,strUrl);
         glbControlEnable(false);
     });
@@ -1003,17 +1107,41 @@ function fnDonation()
 	$("#tblMasterList").delegate('a.newdonation', 'click', function (e) {
         e.preventDefault();
 		var intID=$(this).attr("row-id");
+		var ben_name=$(this).attr("row-name");
 		$("#frmFormDonation").find('#beneficiary_id').val(intID);
-		$('#DonationModal').modal('show');	
+		$('#DonationModal').modal('show');
+		clearForm('frmFormDonation');
+		$('#frmFormDonation').bootstrapValidator("resetForm",true);
+		$("#beneficiary_name").html(ben_name);
 		return false; 										 
 	});
 
 }
+function fnViewBeneficiary()
+{	
+    $("#"+gridTableId).delegate('a.viewbeneficiary', 'click', function (e) {
+        e.preventDefault();	
+		visibleControl("widForm", false);
+        visibleControl("widGrid", false);
+		visibleControl("widViewBeneficiary", true);
+		iActiveID = $(this).attr("row-id");
+		var objFormData = {
+			beneficiaryID    : iActiveID
+		}
+		fetch_beneficiary_profile_family(objFormData);
+		$('#langBeneficiaryFormTabs a:first').tab('show').trigger('click');
+    });
+
+}
+
 function fnSponsorship(strUrl)
 {	 
 	$("#tblMasterList").delegate('a.sponsorship', 'click', function (e) {
         e.preventDefault();
 		var intID=$(this).attr("row-id");
+		var ben_name=$(this).attr("row-name");
+		$("#btnNewDonation").attr("row-id",intID,ben_name);
+		$("#btnNewDonation").attr("row-name",ben_name);
 		var beneficiary_profile_family=$("#frmFormSponsorship").find("#beneficiary_profile_family_id");
 		var beneficiary_profile_family_array=[beneficiary_profile_family];
 		var objFormData = {
@@ -1022,20 +1150,143 @@ function fnSponsorship(strUrl)
 				
 				populateDependentOptionValuesObjectBulk(beneficiary_profile_family_array,strUrl,"Select Beneficiary Profile Family",objFormData);
 		$("#frmFormSponsorship").find('#beneficiary_id').val(intID);		
-		$('#SponsorshipModal').modal('show');	
+		$('#SponsorshipModal').modal('show');
+		$("#beneficiary_spon").html(ben_name);
+		clearForm('frmFormSponsorship');
+		$('#frmFormSponsorship').bootstrapValidator("resetForm",true);
 		return false; 										 
 	});
 
 }
-function fnManageGroups()
+function fnManageGroups(strUrl)
 {	 
+	
 	$("#tblMasterList").delegate('a.manage_groups', 'click', function (e) {
         e.preventDefault();
 		var intID=$(this).attr("row-id");
+		var ben_name=$(this).attr("row-name");
 		$("#frmFormManageGroups").find('#beneficiary_id').val(intID);
+		var objFormData = {
+			beneficiaryID    : intID
+		}
+		var objMyPost = AJAX_Post(strUrl, objFormData);
+		if (objMyPost.ERR_NO === 0) {
+			if (objMyPost.DATA.DBStatus === 'OK') {   
+				$("#frmFormGroupMember").find("#beneficiary_group_id").val(objMyPost.DATA.beneficiary_group_id).trigger('change');
+			}
+			else {
+				mySmallAlert('Error...!', 'There was an error', 0);
+			}
+		}
 		$('#ManageGroupsModal').modal('show');	
+		$("#beneficiary_manage").html(ben_name);
+		clearForm('frmFormManageGroups');
+		$('#frmFormManageGroups').bootstrapValidator("resetForm",true);
 		return false; 										 
 	});
+
+}
+
+function fnManageAsset(strUrl)
+{	 
+	$("#tblMasterList").delegate('a.manage_asset', 'click', function (e) {
+        e.preventDefault();
+		var intID=$(this).attr("row-id");
+		var ben_name=$(this).attr("row-name");
+		var beneficiary_profile_asset_received=$("#frmFormManageAsset").find("#beneficiary_profile_asset_received_id");
+		var beneficiary_profile_asset_received_array=[beneficiary_profile_asset_received];
+		var objFormData = {
+			beneficiary_id    : intID
+		}
+				
+				populateDependentOptionValuesObjectBulk(beneficiary_profile_asset_received_array,strUrl,"Select Beneficiary Profile Asset Received",objFormData);
+		$("#frmFormManageAsset").find('#beneficiary_id').val(intID);
+		$('#ManageAssetModal').modal('show');	
+		$("#beneficiary_asset").html(ben_name);
+		clearForm('frmFormManageAsset');
+		$('#frmFormManageAsset').bootstrapValidator("resetForm",true);
+		return false; 										 
+	});
+
+}
+
+function fnChangeOrganization()
+{	 
+	$("#tblMasterList").delegate('a.change_organization', 'click', function (e) {
+        e.preventDefault();
+		var intID=$(this).attr("row-id");
+		var ben_name=$(this).attr("row-name");
+		$("#frmFormChangeOrganization").find('#beneficiary_id').val(intID);
+		$('#ChangeOrganizationModal').modal('show');	
+		$("#beneficiary_organization").html(ben_name);
+		clearForm('frmFormChangeOrganization');
+		$('#frmFormChangeOrganization').bootstrapValidator("resetForm",true);
+		return false; 										 
+	});
+
+}
+function fnGroupMember(strUrl)
+{	 
+	$("#tblMasterList").delegate('a.view_group', 'click', function (e) {
+        e.preventDefault();
+		var intID=$(this).attr("row-id");
+		var beneficiary_id=$("#frmFormGroupMember").find("#beneficiary_id");
+		var beneficiary_id_array=[beneficiary_id];
+		var objFormData = {
+			beneficiary_group_id    : intID
+		}
+		populateDependentOptionValuesObjectBulk(beneficiary_id_array,strUrl,"Select Beneficiary",objFormData);
+		
+		
+        visibleControl("widGroupMemberGrid", true);
+		visibleControl("widGrid", false);
+		$("#frmFormGroupMember").find('#beneficiary_group_id').val(intID);
+		clearForm('frmFormGroupMember');
+		$('#frmFormGroupMember').bootstrapValidator("resetForm",true);
+		fetch_grid_data_group_member();
+		return false; 										 
+	});
+
+}
+
+function fnGalleryPublished(strUrl)
+{
+
+   $("#tblMasterList").delegate('a.published', 'click', function (e) {
+        e.preventDefault();       
+       var intID=$(this).attr("row-id");
+        $.SmartMessageBox({
+            title  : "Alert!",
+            content: "Are you sure you want to published?",
+            buttons: '[Yes][No]'
+        }, function (ButtonPressed) {
+            if (ButtonPressed === "Yes") {
+               	var $form = $('#bulkSaveForm');
+				var published='Yes';
+					var objFormData =
+					{
+						published: published,
+						gridID:intID
+					};
+					hideShowLoader(true);
+					var objMyPost = AJAX_Post(strUrl, objFormData);
+					if (objMyPost.ERR_NO === 0) {
+						if (objMyPost.DATA.DBStatus === 'OK') {   
+							fetch_grid_data();							
+							hideShowLoader(false);
+							mySmallAlert('Success', 'Record updated successfully', 1);
+						}
+						else {
+							mySmallAlert('Error...!', 'There was an error', 0);
+						}
+					}
+				
+            }
+            if (ButtonPressed === "No") {
+				
+            }
+        });
+    });
 
 }
 
@@ -1589,9 +1840,53 @@ function populateOptionValues2(cboObject,Url,Select_heading) {
     cboObject.html(items);
 	cboObject.val("0").trigger("change");
 }
+function populateDonor(strObjectName,Url,Select_heading) {
+
+    var cboObject = $('#' + strObjectName);
+    var objGet = AJAX_Get(Url);
+    var items = "";
+    var iVal = "";		
+    if (objGet.DATA.DBStatus === 'OK') {
+        var arrMyData = objGet.DATA.DBData;
+        items += "<option value='0'><column>"+Select_heading+"</column></option>";
+        $.each(arrMyData, function (index, item) {
+            items += "<option value='" + item.id + "'><column>" + item.name + "</column></option>";
+        });
+    }
+    cboObject.html(items);
+    cboObject.select2({
+
+   		 minimumInputLength: 3
+
+	});
 
 
+}
+function populateOptionValuesDonorBulk(strObjectName,Url,Select_heading) {
+	var objectcount=strObjectName.length;
+    var objGet = AJAX_Get(Url);
+    var items = "";
+    var iVal = "";		
+    if (objGet.DATA.DBStatus === 'OK') {
+        var arrMyData = objGet.DATA.DBData;
+        items += "<option value='0'><column>"+Select_heading+"</column></option>";
+        $.each(arrMyData, function (index, item) {
+            items += "<option value='" + item.id + "'><column>" + item.name + "</column></option>";
+        });
+    }
+    for(var i=0 ; i<objectcount ;i++)
+	{
+		var cboObject = strObjectName[i];
+	
+		cboObject.html(items);
+	
+		cboObject.select2({
 
+			 minimumInputLength: 3
+	
+		});
+	}
+}
 
 function populateMultiSelectOptionValues(strObjectName,Url) {
 
@@ -1703,7 +1998,7 @@ function populateOptionValuesSortable(strObjectName,Url,Select_heading) {
 }*/
 function populateEditEntriesDetail(iID,formID,strURL) {
     //iActiveDetailID = iID;
-
+	
     var arrForms=[]; // Keep Form Values
     var strElementType; // Keep element type
 
@@ -1723,9 +2018,7 @@ function populateEditEntriesDetail(iID,formID,strURL) {
 			var additional_image = 1;
 			
             $.each( arrForms, function( key, value ) {	
-		   
 				var count = 0;
-
 				/*if(key == "additional_images")
 				{
 					$("#additionalimageshidden").val(value);
@@ -1776,7 +2069,12 @@ function populateEditEntriesDetail(iID,formID,strURL) {
                     }					
 				  	else if($("#"+formID).find("#"+key).attr("name") == "image") {  // if textbox   
 						$("#"+formID).find("#display_img").attr("src", "public/uploads/localeicons/"+value);	
-                    }					
+                    }
+					else if($("#"+formID).find("#"+key).attr("name") == "path") {  // if textbox   
+						$("#"+formID).find("#display_path").attr("src", "../public/uploads/localeicons/"+value);
+						$("#"+formID).find('#browseicon').val(value);
+						$("#"+formID).find('#pathhidden').val(value);
+                    }
                     else if(strElementType == "multiselect") {  // if Select Box with multi select
                         var arrValues = $.parseJSON(stripslashes(value));
                         $("#"+formID).find("#" + key).select2("val", arrValues);
@@ -1887,7 +2185,77 @@ function reloadGridByType(type)
 		case 'education_detail' :
 			fetch_grid_data_educationDetail();
 			break;
+		case 'media_gallery' :
+			fetch_grid_data_mediaGallery();
+			break;
+		case 'media_youtube_gallery' :
+			fetch_grid_data_mediaYoutubeGallery();
+			break;	
 		default :
 			return;
 	}
+}
+
+
+//------------------- populate edit entries-----------------------------------------------------------------------------
+function setStepFormData(formID,strURL) {
+   
+	var objFormData = { beneficiaryID : beneficiaryID };
+
+    var arrForms=[]; // Keep Form Values
+    var strElementType; // Keep element type
+	
+	hideShowLoader(true);
+    var objMyPost = AJAX_Post(strURL, objFormData);
+	hideShowLoader(false);
+    if (objMyPost.ERR_NO === 0) {
+        if (objMyPost.DATA.DBStatus === 'OK') {
+			
+			arrForms=objMyPost.DATA.data[0];			
+			if(arrForms!=null)
+			{
+            	$.each( arrForms, function( key, value ) {			
+		   
+				var count = 0;
+				
+                if ($("#"+formID).find("#"+key).length > 0) {  // check if exists or not
+                    strElementType= $("#"+formID).find("#"+key).attr("type");
+                    if(strElementType == "text") {  // if textbox
+                        $("#"+formID).find("#" + key).val(value);
+                    }
+					if(strElementType == "number") {  // if number
+                        $("#"+formID).find("#" + key).val(value);
+                    }					
+					else if(strElementType == "email") {  // if email
+                        $("#"+formID).find("#" + key).val(value);
+                    }		 
+					else if(strElementType == "select") {  // if Select Box
+						$("#"+formID).find("#" + key).val(value); // Select the option with a value of 'US'
+						$("#"+formID).find("#" + key).trigger('change'); // Notify any JS components that the value changed 
+                    }	
+                    else if(strElementType == "multiselect") {  // if Select Box with multi select
+                        var arrValues = $.parseJSON(stripslashes(value));
+                        $("#"+formID).find("#" + key).select2("val", arrValues);
+                    }					
+                    else if(strElementType == "image") {  // if Image
+                        $("#"+formID).find("#" + key).attr("src",value);
+                    }	
+					else if(strElementType == "textarea") { 
+                       $("#"+formID).find("#" + key).html(value);
+                    }					
+					else if(strElementType == "checkbox"){	
+						if(value=="1" || value == "Yes")
+							$("#"+formID).find("#" + key).prop("checked", true);							
+					}				    
+					else {
+					  	$("#"+formID).find("#" + key).val(value);	
+					}
+                }
+            });
+			}
+        }
+    }
+    else {
+        mySmallAlert('Error...!', 'There was an error', 0);
+    }
 }

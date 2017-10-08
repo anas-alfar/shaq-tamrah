@@ -90,7 +90,7 @@
 									</section>
 									<section class="col-md-6">
 										<div class="form-group">
-											<label class="control-label">Beneficiary Profile Asset Received<span>*</span></label>
+											<label class="control-label">Beneficiary Profile Asset Received<span></span></label>
 												<select class="select2" id="beneficiary_profile_asset_received_id" name="beneficiary_profile_asset_received_id" type="select">														
 													<option value="0">Select Beneficiary Profile Asset Received</option>
 												</select> 

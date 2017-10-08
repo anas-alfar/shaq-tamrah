@@ -77,9 +77,6 @@
 												<option value="<!--No-->">No</option>
 										   </select>   
 									</th>
-									<th class="hasinput">
-										<input type="text" class="form-control" placeholder="Sequence" >
-									</th>
 								</tr>
 					            <tr>
 									<th>Id</th>
@@ -87,7 +84,6 @@
 				                    <th>Name</th>
 				                    <th data-hide="phone,tablet">Currency Title</th>
 									<th data-hide="phone,tablet">Published</th>
-									<th data-hide="phone,tablet">Sequence</th>
 									<th data-hide="phone" class="action">Action</th>
 					            </tr>
 					        </thead>							

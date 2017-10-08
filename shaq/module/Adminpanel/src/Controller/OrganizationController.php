@@ -565,7 +565,7 @@ class OrganizationController extends AbstractActionController
     }
 	public function getorganizationAction() 
 	  {                
-		$sql="select organization_id as id,name as name from organization_locale where locale_id = '".$this->global_locale_id."' ";		        
+		$sql="select id as id,name as name,status from view_organization where status='Approved'";		        
 		$optionalParameters=array();        
 		$statement 		   = $this->dbAdapter->createStatement($sql, $optionalParameters);       
 	    $result = $statement->execute();        

@@ -357,7 +357,12 @@ class CurrencyExchangeRateController extends AbstractActionController
             $projectTable = new TableGateway($tableName,$this->dbAdapter);
 			
 			$aData = json_decode($this->request->getPost("FORM_DATA"));
-			$aData = (array)$aData;			
+			$aData = (array)$aData;
+			
+				$currency=array();
+				$currency['status']	= 	"Inactive";
+				$projectTable->update($currency,array('status'=>'Active',"from_currency"=>$aData['from_currency'],"to_currency"=>$aData['to_currency']));
+			
 			if ($this->request->getPost("pAction") == "ADD")
 			{	
 				unset($aData['MASTER_KEY_ID']);			

@@ -559,7 +559,7 @@ class MessageTypesController extends AbstractActionController
     }
 	public function getmessageAction() 
 	  {                
-		$sql="select message_type_id as id,name as name from message_type_locale where locale_id = '".$this->global_locale_id."' ";		        
+		$sql="select id as id,name as name from view_message_type where published='Yes' ";		        
 		$optionalParameters=array();        
 		$statement 		   = $this->dbAdapter->createStatement($sql, $optionalParameters);       
 	    $result = $statement->execute();        

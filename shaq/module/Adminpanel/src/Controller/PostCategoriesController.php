@@ -64,7 +64,7 @@ class PostCategoriesController extends AbstractActionController
 	public function fnGrid()
 	{
 		$activeLocalesArray = $this->AdminfunctionsPlugin()->getActiveLocales($this->dbAdapter);
-		$aColumns = array( '`id`','`id`','`name`','`status`','`sequence`','`published`');
+		$aColumns = array( '`id`','`id`','`name`','`status`','`published`');
 		if(!($this->memCached->hasItem('aula_categories_data')) || !is_array($this->memCached->getItem('aula_categories_data')))
 		{	
 			$sTable = 'view_post_category';
@@ -282,7 +282,7 @@ class PostCategoriesController extends AbstractActionController
 			$resultSet 			= new ResultSet; 			   
 			$resultSet->initialize($resultData);        
 			$rowset 			= $resultSet->toArray();
-			$csvData .= "#ID,Status(Draft|Pending|Active|Blocked|Deleted),Sequence,Published(Yes|No),";
+			$csvData .= "#ID,Status(Draft|Pending|Active|Blocked|Deleted),Published(Yes|No),";
 			foreach($activeLocalesArray as $locale)
 			{
 				$csvData .= "Name(".$locale['name']."),";
@@ -297,7 +297,6 @@ class PostCategoriesController extends AbstractActionController
 				
 				$csvData .= $row['id'].",";
 				$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['status']).",";
-				$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['sequence']).",";
 				$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['published']).",";
 				foreach($activeLocalesArray as $locale)
 					{
@@ -352,13 +351,12 @@ class PostCategoriesController extends AbstractActionController
 					{
 						fgetcsv($handle);   
 					   	while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
-							if($data[1] != "" && $data[2] != "" && $data[3] != "" )
+							if($data[1] != "" && $data[2] != "" && $data[3] != ""&& $data[4] != "" )
 							{
 								$saveDataArray = array();
 								$column_index = 1;
 							 									
 								$saveDataArray['status'] 	= $this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]);
-								$saveDataArray['sequence'] 	= $this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]);
 								$saveDataArray['published'] 	= $this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]);
 								
 								$detailData = array();
@@ -383,7 +381,8 @@ class PostCategoriesController extends AbstractActionController
 								{
 									
 									$saveDataArray['owner_organization_id'] = self::$Aula_OwnerOrgID;
-									$saveDataArray['owner_organization_user_id'] = self::$Aula_OwnerOrgUserID;								
+									$saveDataArray['owner_organization_user_id'] = self::$Aula_OwnerOrgUserID;	
+									$saveDataArray['sequence'] = $this->AdminfunctionsPlugin()->getSequence("select sequence from post_category order by sequence DESC LIMIT 1 ",$this->dbAdapter);							
 									$projectTable->insert($saveDataArray);	
 									$existRecordID = $projectTable->lastInsertValue;	
 									
@@ -490,7 +489,7 @@ class PostCategoriesController extends AbstractActionController
 		$activeLocalesArray = $this->AdminfunctionsPlugin()->getActiveLocales($this->dbAdapter);
 		$csvData = '';		
 		
-		$csvData .= "#ID,Status(Draft|Pending|Active|Blocked|Deleted),Sequence,Published(Yes|No),";
+		$csvData .= "#ID,Status(Draft|Pending|Active|Blocked|Deleted),Published(Yes|No),";
 		foreach($activeLocalesArray as $locale)
 		{
 			$csvData .= "Name(".$locale['name']."),";

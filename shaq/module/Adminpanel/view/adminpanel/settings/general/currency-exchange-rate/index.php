@@ -57,7 +57,7 @@
 			 }
 			 					
 			//Validate  duplicate
-			var objFormData =
+			<?php /*?>var objFormData =
 			{
 				from_currency			: $("#from_currency").val(),
 				to_currency				: $("#to_currency").val(),
@@ -68,7 +68,7 @@
 			if (isDuplicate) {
 				mySmallAlert('Duplicate Error...!', 'Duplicate Found. Currency Rate for Selected Currency is Already exists !', 0);
 				return false;
-			}
+			}<?php */?>
 			
 			var $form = $('#frmForm');
 			var objMasterData = $form.serializeObject();
@@ -185,6 +185,9 @@
 			fields : {
 				exchange_rate : {
 					 validators: {
+					 		notEmpty : {
+								message : 'Please enter exchange rate min value must be 0.1'						
+							},
 							greaterThan: {
 								value: 0.1,
 								message: 'The exchange rate min value must be 0.1'

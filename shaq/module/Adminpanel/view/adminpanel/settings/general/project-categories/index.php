@@ -192,10 +192,9 @@
                 "aoColumns": [
                     { "bSearchable": false, "bVisible": false },                  
                     null,
-                    null,
 					{ "bSearchable": true, "bSortable": true,
                         "mRender" : function (data, type, full) {							
-							return grid_switch(full[0],'published',full[3],'Yes');							
+							return grid_switch(full[0],'published',full[2],'Yes');							
 						}
 					},
 					{"bSearchable": false, "bSortable": false,
@@ -206,7 +205,7 @@
                 ],
                 "columnDefs": [
                     { className: "hidden", "targets": [ 0 ] },
-					{ "type": "html-input", "targets": [3]}
+					{ "type": "html-input", "targets": [2]}
                 ]	
 			});			
 			$("#tblMasterList thead th input[type=text]").on( 'keyup change', function () {	    	

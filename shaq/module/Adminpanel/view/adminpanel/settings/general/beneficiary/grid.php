@@ -63,9 +63,6 @@
 										<input type="text" class="form-control" placeholder="Filter Family Name" />
 									</th>
 									<th class="hasinput">
-										<input type="text" class="form-control" placeholder="Filter Sequence" >
-									</th>
-									<th class="hasinput">
 										<input type="text" class="form-control" placeholder="Filter Family Book Number" >
 									</th>
 									<th class="hasinput">
@@ -90,8 +87,7 @@
 									<th>Id</th>
 									<th></th>
 				                    <th data-class="expand">Family Name</th>
-				                    <th>Sequence</th>
-									<th data-hide="phone,tablet">Family Book Number</th>
+									<th >Family Book Number</th>
 									<th data-hide="phone,tablet">Status</th>
 									<th data-hide="phone,tablet">Country</th>
 									<th data-hide="phone,tablet">Visibility</th>

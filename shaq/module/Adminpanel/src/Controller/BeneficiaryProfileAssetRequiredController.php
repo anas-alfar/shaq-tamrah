@@ -160,23 +160,27 @@ class BeneficiaryProfileAssetRequiredController extends AbstractActionController
 			$resultSet->initialize($resultData);        
 			$rowset 			= $resultSet->toArray();	
 			
-			$csvData .= "#ID,Beneficiary,Asset,Asset Type,Asset Unit,Asset Quantity,Asset Condition,Asset Value,Receipt Number,Status(Pending|Out For Delivery|Received),Donor";
+			$csvData .= "#ID,Beneficiary,Asset,Asset Type,Asset Unit,Asset Quantity,Asset Condition,Status(Pending|Approved|Rejected|Out of Stock|Received),Beneficiary Profile Asset Received,Beneficiary Profile Asset Received Date(MM/DD/YYYY)";
 			$csvData .= "\n";
 			foreach($rowset as $row)
 			{
 				
 				$csvData .= $row['id'].",";
 				$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['beneficiary']).",";
-				$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['asset']).",";
+				$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['asset_name']).",";
 				$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['asset_type']).",";
-				$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['asset_unit']).",";
+				$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['asset_unit_type']).",";
 				$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['asset_quantity']).",";
 				$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['asset_condition']).",";
-				$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['asset_value']).",";
-				$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['receipt_number']).",";
 				$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['status']).",";
-				$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['donor_id']).",";
-				$csvData .= "\n";		
+				$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['asset_received']).",";
+				
+				$date_ar1 = explode(" ",$row['beneficiary_profile_asset_received_date']);           	
+			   	$date_ar = explode("-",$date_ar1[0]);
+				$row['beneficiary_profile_asset_received_date'] = $date_ar[1].'/'.$date_ar[2].'/'.$date_ar[0];	
+				$beneficiary_profile_asset_received_date = $row['beneficiary_profile_asset_received_date'];
+				$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($beneficiary_profile_asset_received_date).",";	
+				$csvData .= "\n";	
 			}
 			$this->AdminfunctionsPlugin()->exportCsvData($csvData,$this->request->getPost("exportfilename"),$this->config);
 		}
@@ -213,7 +217,7 @@ class BeneficiaryProfileAssetRequiredController extends AbstractActionController
 					{
 						fgetcsv($handle);   
 					   	while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
-							if($data[1] != "" && $data[2] != ""&& $data[3] != ""&& $data[4] != ""&& $data[5] != ""&& $data[6] != ""&& $data[7] != ""&& $data[8] != ""&& $data[9] != "")
+							if($data[1] != "" && $data[2] != ""&& $data[3] != ""&& $data[4] != ""&& $data[5] != ""&& $data[6] != ""&& $data[7] != "")
 							{
 								
 							 	
@@ -239,11 +243,20 @@ class BeneficiaryProfileAssetRequiredController extends AbstractActionController
 								$getAssetconditionID = $this->AdminfunctionsPlugin()->validateduplicateLocaleCSV('asset_condition_locale',$this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]),'name','asset_condition_id',$this->dbAdapter,$this->config['global_locale_id'],'locale_id');
 								$saveDataArray['asset_condition_id']			= $getAssetconditionID;	
 												
-								$saveDataArray['asset_value'] 				= $this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]);
-								$saveDataArray['receipt_number'] 				= $this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]);
+								
 								$saveDataArray['status'] 				= $this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]);
-								$saveDataArray['donor_id'] 				= $this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]);
-												
+								
+								$getAssetReceivedID = $this->AdminfunctionsPlugin()->validateduplicateLocaleCSV('view_beneficiary_profile_asset_received',$this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]),'asset','id',$this->dbAdapter,'','');
+								$saveDataArray['beneficiary_profile_asset_received_id']			= $getAssetReceivedID;
+								
+								
+								$saveDataArray['beneficiary_profile_asset_received_date']	=	$this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]);
+								
+								if($saveDataArray['beneficiary_profile_asset_received_date'] != '') {
+									$beneficiary_profile_asset_received_date_ar = explode("/",$saveDataArray['beneficiary_profile_asset_received_date']);
+									$beneficiary_profile_asset_received_date = $beneficiary_profile_asset_received_date_ar[2].'-'.$beneficiary_profile_asset_received_date_ar[0].'-'.$beneficiary_profile_asset_received_date_ar[1];
+									$saveDataArray['beneficiary_profile_asset_received_date'] = $beneficiary_profile_asset_received_date;
+								}
 								
 								$existRecordID = $data[0];
 								
@@ -288,10 +301,10 @@ class BeneficiaryProfileAssetRequiredController extends AbstractActionController
 	public function downloadtemplateAction()
 	{
 		$csvData = '';		
-		$csvData .= "#ID,Beneficiary,Asset,Asset Type,Asset Unit,Asset Quantity,Asset Condition,Asset Value,Receipt Number,Status(Pending|Out For Delivery|Received),Donor";
+		$csvData .= "#ID,Beneficiary,Asset,Asset Type,Asset Unit,Asset Quantity,Asset Condition,Status(Pending|Approved|Rejected|Out of Stock|Received),Beneficiary Profile Asset Received,Beneficiary Profile Asset Received Date(MM/DD/YYYY)";
 		$csvData .= "\n";
 		header('Content-Type: text/csv; charset=utf-8');
-		header("Content-Disposition: attachment; filename=beneficiary-profile-asset-received.csv");
+		header("Content-Disposition: attachment; filename=beneficiary-profile-asset-required.csv");
 		echo $csvData;
 		exit;
 	}
@@ -327,14 +340,22 @@ class BeneficiaryProfileAssetRequiredController extends AbstractActionController
 			}
 			else
 			{
-				$projectTable = new TableGateway('beneficiary_profile_asset_required', $this->dbAdapter);
+				$projectTable = new TableGateway('view_beneficiary_profile_asset_required', $this->dbAdapter);
 				$rowset = $projectTable->select(array('id' => $iID));
 				$rowset = $rowset->toArray();
 			}
 
             foreach ($rowset as $record)
-                $recs[] = $record;
-
+			{
+				$date_ar1 = explode(" ",$record['beneficiary_profile_asset_received_date']);           	
+			   	$date_ar = explode("-",$date_ar1[0]);
+				$record['beneficiary_profile_asset_received_date'] = $date_ar[1].'/'.$date_ar[2].'/'.$date_ar[0];		
+			    $recs[] = $record;
+				$beneficiary_profile_asset_received_id=$recs[0]['beneficiary_profile_asset_received_id'];
+				unset($recs[0]['beneficiary_profile_asset_received_id']);
+				$recs[0]['beneficiary_profile_asset_received_id']=$beneficiary_profile_asset_received_id;
+				
+			}	
             $result['data'] = $recs;
             $result['recordsTotal'] = count($recs);
             $result['DBStatus'] = 'OK';
@@ -409,6 +430,37 @@ class BeneficiaryProfileAssetRequiredController extends AbstractActionController
         echo $result;
         exit;
     }
+	public function savemanageassetAction()
+    {					
+		$tableName = 'beneficiary_profile_asset_required';
+        if ($this->request->isPost()) {
+
+            $projectTable = new TableGateway($tableName,$this->dbAdapter);
+			$aData = json_decode($this->request->getPost("FORM_DATA"));
+			$aData = (array)$aData;
+			if($aData['beneficiary_profile_asset_received_date'] != '') {
+				$beneficiary_profile_asset_received_date_ar = explode("/",$aData['beneficiary_profile_asset_received_date']);
+				$beneficiary_profile_asset_received_date = $beneficiary_profile_asset_received_date_ar[2].'-'.$beneficiary_profile_asset_received_date_ar[0].'-'.$beneficiary_profile_asset_received_date_ar[1];
+				$aData['beneficiary_profile_asset_received_date'] = $beneficiary_profile_asset_received_date;
+			}
+			unset($aData['MASTER_KEY_ID']);
+			$aData['owner_organization_id'] = self::$Aula_OwnerOrgID;
+			$aData['owner_organization_user_id'] = self::$Aula_OwnerOrgUserID;
+			$aData['beneficiary_profile_asset_received_date'] = $beneficiary_profile_asset_received_date;
+			$projectTable->insert($aData);											
+			$result['DBStatus'] = 'OK';
+			$this->memCached->setItem('aula_beneficiary_profile_asset_required_data','');
+			
+        }
+        else
+        {
+            $result['DBStatus'] = 'ERR';
+        }
+
+        $result = json_encode($result);
+        echo $result;
+        exit;
+	}
 	public function getgroupAction() 
 	  {                
 		$sql="select id as id,name as name from beneficiary_group";		        

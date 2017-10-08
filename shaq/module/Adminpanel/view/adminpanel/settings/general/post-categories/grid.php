@@ -66,9 +66,6 @@
 										<input type="text" class="form-control" placeholder="Filter Status	" />
 									</th>
 									<th class="hasinput">
-										<input type="text" class="form-control" placeholder="Filter Sequence" >
-									</th>
-									<th class="hasinput">
 											<select id="publishedfilter" name="publishedfilter"class="searchdrop">
 												<option value="">All</option>														
 												<option value="<!--Yes-->">Yes</option>
@@ -82,7 +79,6 @@
 									<th></th>
 				                    <th data-class="expand">Name</th>
 				                    <th>Status</th>
-									<th data-hide="phone,tablet">Sequence</th>
 									<th data-hide="phone,tablet">Published</th>
 									<th data-hide="phone" class="action">Action</th>
 					            </tr>

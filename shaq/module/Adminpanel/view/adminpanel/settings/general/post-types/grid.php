@@ -67,9 +67,6 @@
 										<input type="text" class="form-control" placeholder="Filter Post Categories" >
 									</th>
 									<th class="hasinput">
-										<input type="text" class="form-control" placeholder="Filter Sequence" >
-									</th>
-									<th class="hasinput">
 										<input type="text" class="form-control" placeholder="Filter Country" >
 									</th>
 																		
@@ -85,7 +82,6 @@
 									<th>Id</th>
 				                    <th data-class="expand">Name</th>
 				                    <th>Post Categories</th>
-									<th data-hide="phone,tablet">Sequence</th>
 									<th data-hide="phone,tablet">Country</th>
 									<th data-hide="phone,tablet">Published</th>
 									<th data-hide="phone" class="action">Action</th>

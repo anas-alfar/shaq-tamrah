@@ -29,6 +29,8 @@
 <script type="text/javascript">
 			
 		var gridData = [];
+		var gridGroupMemberData	=	[];
+		var oTablegroupmember;
 		function fetch_grid_data(objFormData)
 		{
 			hideShowLoader(true);
@@ -44,6 +46,32 @@
 					oTable.clear().draw();
 					oTable.rows.add(gridData); // Add new data
 					oTable.columns.adjust().draw(); // Redraw the DataTable
+					
+			  }
+			});
+			
+		}
+		
+		function fetch_grid_data_group_member()
+		{
+			var beneficiary_group_id = $("#beneficiary_group_id").val()
+			var objFormData =
+			{
+				beneficiary_group_id:beneficiary_group_id
+			};
+			hideShowLoader(true);
+			$.ajax({
+			  type: "POST",
+			  url: "<?php echo $this->url('adminpanel/group', array('action'=>'listgroupmember'));?>",
+			  data: objFormData,
+			  dataType: "json",
+			  success: function(data){
+			  		hideShowLoader(false);
+					gridGroupMemberData = data.aaData;
+					$("#tblMasterGroupMemberList").find("tbody").html("");
+					oTablegroupmember.clear().draw();
+					oTablegroupmember.rows.add(gridGroupMemberData); // Add new data
+					oTablegroupmember.columns.adjust().draw(); // Redraw the DataTable
 					
 			  }
 			});
@@ -96,11 +124,57 @@
 				mySmallAlert('Error...!', 'There was an error', 0);
 			}
 
+		}
+		function savefrmFormGroupMemberData()  {
+		
+			 					
+			//Validate  duplicate
+			<?php /*?>var isDuplicate = fn_validate_duplicate($("#name").val(), 'beneficiary_group', "name", "<?php echo $this->url('adminpanel/group', array('action'=>'validateduplicate'));?>",iActiveID);
+			if (isDuplicate) {
+				mySmallAlert('Duplicate Error...!', 'Duplicate Found. name is Already exists !', 0);
+				return false;
+			}<?php */?>
+			
+			var $form = $('#frmFormGroupMember');
+			var objMasterData = $form.serializeObject();
+				$.extend(objMasterData, { MASTER_KEY_ID: 0});
+			objMasterData = JSON.stringify(objMasterData);
+
+			var objFormData =
+			{
+				FORM_DATA: objMasterData
+
+			};
+			hideShowLoader(true);
+			var objMyPost = AJAX_Post("<?php echo $this->url('adminpanel/group', array('action'=>'savegroupmember'));?>", objFormData);
+			if (objMyPost.ERR_NO === 0) {
+				if (objMyPost.DATA.DBStatus === 'OK') {
+					mySmallAlert('Save Record', 'Group Member Entry Saved successfully', 1);
+					iActiveID = objMyPost.DATA.MY_ID;
+					visibleControl('widGroupMemberGrid', true);
+					var beneficiary_group_id = $("#beneficiary_group_id").val()
+					var objFormData1 =
+					{
+						beneficiary_group_id:beneficiary_group_id
+					};
+					
+					var beneficiary_id=$("#frmFormGroupMember").find("#beneficiary_id");
+					var beneficiary_id_array=[beneficiary_id];
+					populateDependentOptionValuesObjectBulk(beneficiary_id_array,"<?php echo $this->url('adminpanel/group', array('action'=>'getbeneficiary'));?>","Select Beneficiary",objFormData1);
+					fetch_grid_data_group_member();
+				}
+			}
+			else {
+				hideShowLoader(false);
+				mySmallAlert('Error...!', 'There was an error', 0);
+			}
+
 		}		
 		
 		var pagefunction = function() { 
 		$('#tabs').tabs();
-			var responsiveHelper_tblMasterList = undefined;			
+			var responsiveHelper_tblMasterList = undefined;
+			var responsiveHelper_tblMasterGroupMemberList = undefined;			
 			var breakpointDefinition = {
 				tablet : 1024,
 				phone : 480
@@ -140,7 +214,7 @@
 					null,
                     {"bSearchable": false, "bSortable": false,
                         "mRender" : function (data, type, full) {
-							return grid_buttons(full[0]);
+							return grid_buttons_group(full[0]);
                         }
                     }
                 ],
@@ -154,6 +228,62 @@
 			$("#tblMasterList thead th select").on( 'change', function () {				
 				var matchValue = this.value					    	    	
 				oTable
+					.column( $(this).parent().index()+':visible' )
+					.search(matchValue)
+					.draw();	            
+			} );
+			
+			oTablegroupmember = $('#tblMasterGroupMemberList').DataTable({
+				"bLengthChange": true,
+				"bAutoWidth": true,
+				"sDom": "<'dt-toolbar'<'col-xs-12 col-sm-6 hidden-xs'f><'col-sm-6 col-xs-12 hidden-xs'<'toolbar'>l>r>"+
+						"t"+
+						"<'dt-toolbar-footer'<'col-sm-6 col-xs-12 hidden-xs'i><'col-xs-12 col-sm-6'p>>",
+				"oLanguage": {
+					"sSearch": '<span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>'
+				},
+				"bProcessing": false,
+                "bServerSide": false,
+				"lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+                "autoWidth" : true,		
+				"autoWidth" : true,
+				"preDrawCallback" : function() {
+					if (!responsiveHelper_tblMasterGroupMemberList) {
+						responsiveHelper_tblMasterGroupMemberList = new ResponsiveDatatablesHelper($('#tblMasterGroupMemberList'), breakpointDefinition);
+						
+					}
+				},				
+				
+				"rowCallback" : function(nRow) {
+					responsiveHelper_tblMasterGroupMemberList.createExpandIcon(nRow);
+				},
+				"drawCallback" : function(oSettings) {
+					grid_tooltip();
+					responsiveHelper_tblMasterGroupMemberList.respond();
+				},	
+				"aaData": gridGroupMemberData,
+                "aoColumns": [
+                    { "bSearchable": false, "bVisible": false },                  
+                    null,
+					null,
+					null,
+                    {"bSearchable": false, "bSortable": false,
+                        "mRender" : function (data, type, full) {
+							return grid_buttons_groupmember(full[0]);
+							
+                        }
+                    }
+                ],
+			});			
+			$("#tblMasterGroupMemberList thead th input[type=text]").on( 'keyup change', function () {	    	
+				oTablegroupmember
+					.column( $(this).parent().index()+':visible' )
+					.search( this.value )
+					.draw();	            
+			} );
+			$("#tblMasterGroupMemberList thead th select").on( 'change', function () {				
+				var matchValue = this.value					    	    	
+				oTablegroupmember
 					.column( $(this).parent().index()+':visible' )
 					.search(matchValue)
 					.draw();	            
@@ -203,6 +333,32 @@
             e.preventDefault();
 			savefrmFormData();
 		});
+		$('#frmFormGroupMember').bootstrapValidator({
+			message: 'This value is not valid',
+			excluded: [':disabled'],
+			feedbackIcons : {
+				valid : 'glyphicon glyphicon-ok',
+				invalid : 'glyphicon glyphicon-remove',
+				validating : 'glyphicon glyphicon-refresh'
+			},
+			fields : {
+				beneficiary_id: {
+                    validators: {
+                       callback: {
+                            message: 'Please select beneficiary',
+                            callback: function (value, validator, $field) {
+                               return (value != 0 && value != null && value != '');
+                            }
+                        }
+                    }
+                }
+			}
+		})
+		.on('success.form.bv', function(e) {
+            // Prevent form submission
+            e.preventDefault();
+			savefrmFormGroupMemberData();
+		});
 		
 			
 		fnBulkSave("<?php echo $this->url('adminpanel/group', array('action'=>'bulksave'));?>");
@@ -211,9 +367,11 @@
 		fnEdit("<?php echo $this->url('adminpanel/group', array('action'=>'getrec'));?>");
 		fnView("<?php echo $this->url('adminpanel/group', array('action'=>'getrec'));?>");
 		fnDelete("<?php echo $this->url('adminpanel/group', array('action'=>'delete'));?>"); 
-			
-		fetch_grid_data();	
-			
+		 
+		fetch_grid_data();
+		fnGroupMember("<?php echo $this->url('adminpanel/group', array('action'=>'getbeneficiary'));?>");
+		fnGroupMemberDelete("<?php echo $this->url('adminpanel/group', array('action'=>'deletegroupmember'));?>");	
+		fetch_grid_data_group_member();	
 				
 		}
 		
@@ -258,6 +416,85 @@
    </div>
 </div>
 
+</div>
+
 <?php include($this->admin_layout_dir_path."global_include.php");?>
 <script language="javascript">
+	$("#btnBackGroupMember").click(function (e) {
+        e.stopPropagation();
+		fullscreenModeChange('btnBack');
+        visibleControl("widGrid", true);
+        visibleControl("widGroupMemberGrid", false);
+
+    });
+	$("#btnSaveGroupMember").click(function(){
+		$("#frmFormGroupMember").submit();
+	});
+	function grid_buttons_groupmember(id)
+	{
+		var strAction = "";
+		strAction += '<input type="hidden" name="gridHiddenIdArray[]" value="'+id+'" />';
+		strAction += '<div class="btn-group" style="width:140px;" >';
+		
+		
+			
+			strAction += '<a href="#" title="Delete" rel="tooltip" data-placement="bottom" data-original-title ="Delete" class="btn btn-info fa fa-trash-o btn-sm delete_group" row-id="' + id + '" >';
+			strAction += '</a>';
+			
+			
+		strAction += '</div>';
+	
+		return strAction;
+	
+	}
+
+	function fnGroupMemberDelete(strUrl)
+	{
+	
+		$("#tblMasterGroupMemberList").delegate('a.delete_group', 'click', function (e) {
+			e.preventDefault();
+			intID=$(this).attr("row-id");
+			var url = "pAction=DELETE&ID=" + intID;
+			$.SmartMessageBox({
+				title  : "Alert!",
+				content: "Are you sure you want to delete?",
+				buttons: '[Yes][No]'
+			}, function (ButtonPressed) {
+				if (ButtonPressed === "Yes") {
+					var beneficiary_group_id=$("#beneficiary_group_id").val();
+					var objFormData =
+					{
+						pAction: 'DELETE',
+						KEY_ID : intID,
+						beneficiary_group_id:beneficiary_group_id
+					};
+					hideShowLoader(true);
+					var objMyPost = AJAX_Post(strUrl, objFormData);
+					if (objMyPost.ERR_NO === 0) {
+						if (objMyPost.DATA.DBStatus === 'OK') {   
+							if(is_single == false) {
+								fetch_grid_data_group_member();
+							}
+							else {
+								reorderTable.ajax.reload( null, false );    		
+							}
+							var beneficiary_id=$("#frmFormGroupMember").find("#beneficiary_id");
+							var beneficiary_id_array=[beneficiary_id];
+							populateDependentOptionValuesObjectBulk(beneficiary_id_array,"<?php echo $this->url('adminpanel/group', array('action'=>'getbeneficiary'));?>","Select Beneficiary",objFormData);							
+							hideShowLoader(false);
+							mySmallAlert('Success', 'Record  Deleted successfully', 1);
+						}
+						else {
+							mySmallAlert('Error...!', 'There was an error', 0);
+						}
+					}
+				}
+				if (ButtonPressed === "No") {
+				}
+			});
+		});
+	
+	}
+
+
 </script>

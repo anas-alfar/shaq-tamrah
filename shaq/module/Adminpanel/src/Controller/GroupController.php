@@ -131,6 +131,89 @@ class GroupController extends AbstractActionController
 		echo json_encode( $output ); 
 	
 	}
+	public function listgroupmemberAction()
+    {
+        echo $this->fnGroupMemberGrid();
+        exit;
+    }
+	
+	public function fnGroupMemberGrid()
+	{
+		$beneficiary_group_id=$this->request->getPost("beneficiary_group_id");
+		$recs=array();
+		$projectTable = new TableGateway('beneficiary_group_member', $this->dbAdapter);
+		$rowset = $projectTable->select(array('beneficiary_group_id' => $beneficiary_group_id));
+		$rowset = $rowset->toArray();
+		 foreach ($rowset as $record)
+         	$recs[] = $record['beneficiary_id'];
+		 $beneficiary_id= implode(',',$recs);
+		 if($beneficiary_id=="")
+		 {
+		 	$beneficiary_id=0;
+		 }
+		 
+		$aColumns = array('`id`','`family_name`','`family_book_number`','`status`');
+			
+			$sTable = 'view_beneficiary';
+		
+			/* Indexed column (used for fast and accurate table cardinality) */
+			$sIndexColumn = "id";  
+			
+			$sWhere = " WHERE 1=1 and id in($beneficiary_id)  ";
+			$sOrder = " ORDER BY $sIndexColumn DESC ";		
+			
+			/** SQL queries ** Get data to display **/ 
+			$sQuery = "
+				SELECT *
+				FROM   $sTable
+				$sWhere
+				$sOrder
+			"; 	 
+			
+			    
+			$optionalParameters	= array();        
+			$statement 			= $this->dbAdapter->createStatement($sQuery, $optionalParameters);        
+			$resultData			= $statement->execute();        
+			$resultSet 			= new ResultSet; 			   
+			$resultSet->initialize($resultData);        
+			$rowset 			= $resultSet->toArray();	
+			
+			
+			
+		$iTotal = count($rowset);
+		
+		
+		
+		/** Output **/
+		$output = array(
+			"sEcho" => intval(@$_GET['sEcho']),
+			"iTotalRecords" => $iTotal,
+			"aaData" => array()
+		);
+	
+		foreach($rowset as $aRow)
+		{
+			$row = array();
+			for ( $i=0 ; $i < count($aColumns); $i++ ) 
+			{
+				$aColumns[$i] = str_replace('`','',$aColumns[$i]);
+				switch($aColumns[$i]){
+					case 'version' :
+						$row[] = ($aRow[ $aColumns[$i] ]=="0") ? '-' : $aRow[ $aColumns[$i] ];
+						break;
+					case '' :
+						// do nothing
+						break;
+					default :
+						 $row[] = $aRow[ $aColumns[$i] ];
+				}
+			}
+			$output['aaData'][] = $row; 
+		}
+		
+		echo json_encode( $output ); 
+	
+	}
 	
 	
 	public function exportcsvAction()
@@ -289,6 +372,7 @@ class GroupController extends AbstractActionController
 		}
         exit;
     }
+	
 	public function getrecAction()
     {
         $recs=array();
@@ -342,6 +426,26 @@ class GroupController extends AbstractActionController
             }
         }
     }
+	public function  deletegroupmemberAction()
+    {
+        
+        if ($this->request->isPost()) {
+
+            $projectTable = new TableGateway('beneficiary_group_member', $this->dbAdapter);
+			
+            if ($this->request->getPost("pAction") == "DELETE") {
+                $iMasterID = $this->request->getPost("KEY_ID");
+				$beneficiary_group_id=	 $this->request->getPost("beneficiary_group_id");
+					$projectTable->delete(array("beneficiary_id=".$iMasterID,"beneficiary_group_id=".$beneficiary_group_id));
+					$result['DBStatus'] = 'OK';
+				
+                $result = json_encode($result);
+				
+                echo $result;
+                exit;
+            }
+        }
+    }
     public function saveAction()
     {        
 		$tableName = 'beneficiary_group';
@@ -381,9 +485,64 @@ class GroupController extends AbstractActionController
         echo $result;
         exit;
     }
+	
+	public function savegroupmemberAction()
+    {        
+		$tableName = 'beneficiary_group_member';
+        if ($this->request->isPost()) {
+            $projectTable = new TableGateway($tableName,$this->dbAdapter);
+			$aData = json_decode($this->request->getPost("FORM_DATA"));
+			$aData = (array)$aData;			
+			unset($aData['MASTER_KEY_ID']);			
+			$aData['organization_id'] = self::$Aula_OrgID;
+			$aData['owner_organization_id'] = self::$Aula_OwnerOrgID;
+			$aData['owner_organization_user_id'] = self::$Aula_OwnerOrgUserID;
+			$projectTable->insert($aData);											
+			$result['DBStatus'] = 'OK';
+        }
+        else
+        {
+            $result['DBStatus'] = 'ERR';
+        }
+        $result = json_encode($result);
+        echo $result;
+        exit;
+    }
+	/************* START BENEFICIARY MANAGE GROUP SAVE ************/
+	public function getmanagegroupAction()
+    {
+		$beneficiaryID=$this->request->getPost("beneficiaryID");
+		$projectTable = new TableGateway('beneficiary_group_member', $this->dbAdapter);
+		$rowset = $projectTable->select(array('beneficiary_id' => $beneficiaryID));
+		$rowset = $rowset->toArray();
+		$result['beneficiary_group_id'] = $rowset[0]['beneficiary_group_id'];
+		$result['DBStatus'] = 'OK';   
+		$result = json_encode($result);       
+		echo $result;        
+		exit;    
+	}
+	/************* END BENEFICIARY MANAGE GROUP SAVE ************/
 	public function getgroupAction() 
 	  {                
-		$sql="select id as id,name as name from beneficiary_group";		        
+		$sql="select id as id,name as name from beneficiary_group where 1=1";		        
+		$optionalParameters=array();        
+		$statement 		   = $this->dbAdapter->createStatement($sql, $optionalParameters);       
+	    $result = $statement->execute();        
+		$resultSet = new ResultSet;        
+		$resultSet->initialize($result);        
+		$rowset=$resultSet->toArray();        
+		$result1['DBData'] = $rowset;        
+		$result1['recordsTotal'] = count($rowset);        
+		$result1['DBStatus'] = 'OK';        
+		$result = json_encode($result1);       
+		echo $result;        
+		exit;    
+	 }
+	public function getbeneficiaryAction() 
+	 {              
+		$beneficiary_group_id=$this->request->getPost("beneficiary_group_id");  
+		$sql="select id as id,family_name as name from view_beneficiary where id Not in(select beneficiary_id from beneficiary_group_member where beneficiary_group_id='".$beneficiary_group_id."') ";	 	
+			        
 		$optionalParameters=array();        
 		$statement 		   = $this->dbAdapter->createStatement($sql, $optionalParameters);       
 	    $result = $statement->execute();        

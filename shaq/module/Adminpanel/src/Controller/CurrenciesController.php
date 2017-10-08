@@ -59,7 +59,7 @@ class CurrenciesController extends AbstractActionController
 	public function fnGrid()
 	{
 		
-		$aColumns = array( '`id`','`currency`','`name`','`currency_title`','`published`','`sequence`');
+		$aColumns = array( '`id`','`currency`','`name`','`currency_title`','`published`');
 		if(!($this->memCached->hasItem('aula_currencies_data')) || !is_array($this->memCached->getItem('aula_currencies_data')))
 		{	
 			$sTable = 'currency';
@@ -227,7 +227,7 @@ class CurrenciesController extends AbstractActionController
 			$resultSet->initialize($resultData);        
 			$rowset 			= $resultSet->toArray();	
 			
-			$csvData .= "#ID,Currency,Name,Currency Title,Published(Yes|No),Sequence";
+			$csvData .= "#ID,Currency,Name,Currency Title,Published(Yes|No)";
 			$csvData .= "\n";
 			foreach($rowset as $row)
 			{
@@ -236,7 +236,6 @@ class CurrenciesController extends AbstractActionController
 				$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['name']).",";
 				$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['currency_title']).",";
 				$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['published']).",";
-				$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['sequence']).",";
 				$csvData .= "\n";		
 			}
 			$this->AdminfunctionsPlugin()->exportCsvData($csvData,$this->request->getPost("exportfilename"),$this->config);
@@ -274,7 +273,7 @@ class CurrenciesController extends AbstractActionController
 					{
 						fgetcsv($handle);   
 					   	while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
-							if($data[1] != "" && $data[2] != "" && $data[3] != "" && $data[4] != "" && $data[5] != "")
+							if($data[1] != "" && $data[2] != "" && $data[3] != "" && $data[4] != "")
 							{
 							 
 								$saveDataArray = array();
@@ -283,7 +282,6 @@ class CurrenciesController extends AbstractActionController
 								$saveDataArray['name'] 			= $this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]);
 								$saveDataArray['currency_title']= $this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]);
 								$saveDataArray['published'] 	= $this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]);
-								$saveDataArray['sequence'] 		= $this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]);
 								
 								$existRecordID = $this->AdminfunctionsPlugin()->validateduplicateCSV('currency',$saveDataArray['currency'],'currency',$this->dbAdapter,$data[0]); 						
 								if($existRecordID > 0)
@@ -299,6 +297,7 @@ class CurrenciesController extends AbstractActionController
 								}
 								else
 								{
+									$saveDataArray['sequence'] = $this->AdminfunctionsPlugin()->getSequence("select sequence from currency order by sequence DESC LIMIT 1 ",$this->dbAdapter);
 									$saveDataArray['owner_organization_id'] = self::$Aula_OwnerOrgID;
 									$saveDataArray['owner_organization_user_id'] = self::$Aula_OwnerOrgUserID;								
 									$projectTable->insert($saveDataArray);	
@@ -332,7 +331,7 @@ class CurrenciesController extends AbstractActionController
 	public function downloadtemplateAction()
 	{
 		$csvData = '';		
-		$csvData .= "#ID,Currency,Name,Currency Title,Published(Yes|No),Sequence";
+		$csvData .= "#ID,Currency,Name,Currency Title,Published(Yes|No)";
 		$csvData .= "\n";
 		header('Content-Type: text/csv; charset=utf-8');
 		header("Content-Disposition: attachment; filename=currencies.csv");

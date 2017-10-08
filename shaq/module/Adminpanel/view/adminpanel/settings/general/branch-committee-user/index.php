@@ -120,7 +120,7 @@
 		 }
 			 					
 			//Validate  duplicate
-			var isDuplicate = fn_validate_duplicate($("#title_<?php echo $this->global_locale_id; ?>").val(), 'organization_user_position_locale', "title", "<?php echo $this->url('adminpanel/organization-user-position', array('action'=>'validateduplicate'));?>",iActiveID);
+			var isDuplicate = fn_validate_duplicate($("#title_<?php echo $this->global_locale_id; ?>").val(), 'organization_user_position_locale', "title", "<?php echo $this->url('adminpanel/organization-user-position', array('action'=>'validateduplicate'));?>",);
 			if (isDuplicate) {
 				mySmallAlert('Duplicate Error...!', 'Duplicate Found. Title is Already exists !', 0);
 				return false;

@@ -201,7 +201,6 @@
 							return grid_switch(full[0],'published',full[4],'Yes');							
 						}
 					},
-					null,
 					{"bSearchable": false, "bSortable": false,
                         "mRender" : function (data, type, full) {
 							return grid_buttons(full[0]);
@@ -242,16 +241,6 @@
 				validating : 'glyphicon glyphicon-refresh'
 			},
 			fields : {
-				sequence : {
-					validators : {
-						notEmpty : {
-							message : 'Please enter sequence'						
-						},
-						digits : {
-							message : 'The sequence is not valid'
-						}
-					}
-				},
 				currency : {
 					validators : {
 						notEmpty : {

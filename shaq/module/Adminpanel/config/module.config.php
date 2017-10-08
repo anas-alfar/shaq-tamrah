@@ -89,6 +89,12 @@ return [
 			Controller\GroupController::class => Controller\InitFactory::class,
 			Controller\BeneficiaryProfileAssetReceivedController::class => Controller\InitFactory::class,
 			Controller\BeneficiaryProfileAssetRequiredController::class => Controller\InitFactory::class,
+			Controller\DonationController::class => Controller\InitFactory::class,
+			Controller\GalleryController::class => Controller\InitFactory::class,
+			Controller\MessageController::class => Controller\InitFactory::class,
+			Controller\ResearchNotesController::class => Controller\InitFactory::class,
+			Controller\DonorController::class => Controller\InitFactory::class,
+			Controller\AdvanceSearchFormController::class => Controller\InitFactory::class,
 			
 			
         ],
@@ -1254,6 +1260,96 @@ return [
 						],
 						'may_terminate' => true,
 					],
+					'donation' => 	 [
+						'type'    => Segment::class,
+						'options' => [
+							'route'    => 'donation[/:action]',
+							 'constraints' => [
+								 'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+							 ],
+
+							'defaults' => [
+								'controller' => Controller\DonationController::class,
+								'action'     => 'index',
+							],
+						],
+						'may_terminate' => true,
+					],
+					'gallery' => 	 [
+						'type'    => Segment::class,
+						'options' => [
+							'route'    => 'gallery[/:action]',
+							 'constraints' => [
+								 'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+							 ],
+
+							'defaults' => [
+								'controller' => Controller\GalleryController::class,
+								'action'     => 'index',
+							],
+						],
+						'may_terminate' => true,
+					],
+					'message' => 	 [
+						'type'    => Segment::class,
+						'options' => [
+							'route'    => 'message[/:action]',
+							 'constraints' => [
+								 'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+							 ],
+
+							'defaults' => [
+								'controller' => Controller\MessageController::class,
+								'action'     => 'index',
+							],
+						],
+						'may_terminate' => true,
+					],
+					'research-notes' => 	 [
+						'type'    => Segment::class,
+						'options' => [
+							'route'    => 'research-notes[/:action]',
+							 'constraints' => [
+								 'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+							 ],
+
+							'defaults' => [
+								'controller' => Controller\ResearchNotesController::class,
+								'action'     => 'index',
+							],
+						],
+						'may_terminate' => true,
+					],
+					'donor' => 	 [
+						'type'    => Segment::class,
+						'options' => [
+							'route'    => 'donor[/:action]',
+							 'constraints' => [
+								 'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+							 ],
+
+							'defaults' => [
+								'controller' => Controller\DonorController::class,
+								'action'     => 'index',
+							],
+						],
+						'may_terminate' => true,
+					],
+					'advance-search-form' => 	 [
+						'type'    => Segment::class,
+						'options' => [
+							'route'    => 'advance-search-form[/:action]',
+							 'constraints' => [
+								 'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+							 ],
+
+							'defaults' => [
+								'controller' => Controller\AdvanceSearchFormController::class,
+								'action'     => 'index',
+							],
+						],
+						'may_terminate' => true,
+					],
 					
 					
 					'login' => [
@@ -1366,7 +1462,12 @@ return [
 			'aula_adminpanel/group/index' => __DIR__ .'/../view/adminpanel/settings/general/group/index.phtml',
 			'aula_adminpanel/beneficiary-profile-asset-received/index' => __DIR__ .'/../view/adminpanel/settings/general/beneficiary-profile-asset-received/index.phtml',
 			'aula_adminpanel/beneficiary-profile-asset-required/index' => __DIR__ .'/../view/adminpanel/settings/general/beneficiary-profile-asset-required/index.phtml',
-			
+			'aula_adminpanel/donation/index' => __DIR__ .'/../view/adminpanel/settings/general/donation/index.phtml',
+			'aula_adminpanel/gallery/index' => __DIR__ .'/../view/adminpanel/settings/general/gallery/index.phtml',
+			'aula_adminpanel/message/index' => __DIR__ .'/../view/adminpanel/settings/general/message/index.phtml',
+			'aula_adminpanel/research-notes/index' => __DIR__ .'/../view/adminpanel/settings/general/research-notes/index.phtml',
+			'aula_adminpanel/donor/index' => __DIR__ .'/../view/adminpanel/settings/general/donor/index.phtml',
+			'aula_adminpanel/advance-search-form/index' => __DIR__ .'/../view/adminpanel/settings/general/advance-search-form/index.phtml',
 			
 			'aula_adminpanel/login/index' => '/../view/adminpanel/admin-layout/login-layout.phtml',
 			

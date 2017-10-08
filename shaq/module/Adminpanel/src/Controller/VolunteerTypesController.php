@@ -563,7 +563,7 @@ class VolunteerTypesController extends AbstractActionController
     }
 	public function getvolunteertypeAction() 
 	  {                
-		$sql="select id as id,name as name,published from view_beneficiary_profile_volunteer_type where published='Yes'";      
+		$sql="select id as id,name as name from view_beneficiary_profile_volunteer_type where published='Yes'";      
 		$optionalParameters=array();        
 		$statement 		   = $this->dbAdapter->createStatement($sql, $optionalParameters);       
 	    $result = $statement->execute();        

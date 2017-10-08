@@ -201,11 +201,9 @@
                     null,
                     null,
 					null,
-					null,
-					
 					{ "bSearchable": true, "bSortable": true,
                         "mRender" : function (data, type, full) {							
-							return grid_switch(full[0],'published',full[5],'Yes');							
+							return grid_switch(full[0],'published',full[4],'Yes');							
 						}
 					},
                     {"bSearchable": false, "bSortable": false,
@@ -216,7 +214,7 @@
                 ],
                 "columnDefs": [
                     { className: "hidden", "targets": [ 0 ] },
-					{ "type": "html-input", "targets": [5] }
+					{ "type": "html-input", "targets": [4] }
                 ]	
 			});			
 			$("#tblMasterList thead th input[type=text]").on( 'keyup change', function () {	    	

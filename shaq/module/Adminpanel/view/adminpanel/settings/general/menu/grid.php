@@ -64,10 +64,6 @@
 										<input type="text" class="form-control" placeholder="Filter Status" >
 									</th>
 									<th class="hasinput">
-										<input type="text" class="form-control" placeholder="Filter Sequence" />
-									</th>
-									
-									<th class="hasinput">
 										<input type="text" class="form-control" placeholder="Filter Menu Category" />
 									</th>
 									<th class="hasinput">
@@ -89,7 +85,6 @@
 									<th>Id</th>
 				                    <th data-class="expand">Name</th>
 				                    <th>Status</th>
-				                    <th data-hide="phone">Sequence</th>
 				                    <th data-hide="phone,tablet">Menu Category</th>
 									<th data-hide="phone,tablet">Country</th>
 									<th data-hide="phone,tablet">Organization Branch</th>

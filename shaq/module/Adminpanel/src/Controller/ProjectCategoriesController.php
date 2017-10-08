@@ -59,7 +59,7 @@ class ProjectCategoriesController extends AbstractActionController
 	public function fnGrid()
 	{
 		
-		$aColumns = array( '`id`','`name`','`sequence`','`published`');
+		$aColumns = array( '`id`','`name`','`published`');
 		if(!($this->memCached->hasItem('aula_projectcategoriesr_data')) || !is_array($this->memCached->getItem('aula_projectcategoriesr_data')))
 		{	
 			$sTable = 'project_category';
@@ -225,13 +225,12 @@ class ProjectCategoriesController extends AbstractActionController
 			$resultSet->initialize($resultData);        
 			$rowset 			= $resultSet->toArray();	
 			
-			$csvData .= "#ID,Name,Sequence,Published(Yes|No)";
+			$csvData .= "#ID,Name,Published(Yes|No)";
 			$csvData .= "\n";
 			foreach($rowset as $row)
 			{
 				$csvData .= $row['id'].",";
 				$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['name']).",";
-				$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['sequence']).",";
 				$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['published']).",";
 				$csvData .= "\n";		
 			}
@@ -270,13 +269,12 @@ class ProjectCategoriesController extends AbstractActionController
 					{
 						fgetcsv($handle);   
 					   	while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
-							if($data[1] != "" && $data[2] != "" && $data[3] != "" )
+							if($data[1] != "" && $data[2] != "" )
 							{
 							 
 								$saveDataArray = array();
 								$column_index = 1;
 								$saveDataArray['name'] 	= $this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]);
-								$saveDataArray['sequence'] 	= $this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]);
 								$saveDataArray['published'] 	= $this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]);
 									
 									
@@ -294,7 +292,8 @@ class ProjectCategoriesController extends AbstractActionController
 								else
 								{
 									$saveDataArray['owner_organization_id'] = self::$Aula_OwnerOrgID;
-									$saveDataArray['owner_organization_user_id'] = self::$Aula_OwnerOrgUserID;								
+									$saveDataArray['owner_organization_user_id'] = self::$Aula_OwnerOrgUserID;	
+									$saveDataArray['sequence'] = $this->AdminfunctionsPlugin()->getSequence("select sequence from project_category order by sequence DESC LIMIT 1",$this->dbAdapter);								 							
 									$projectTable->insert($saveDataArray);	
 								}
 							}
@@ -326,7 +325,7 @@ class ProjectCategoriesController extends AbstractActionController
 	public function downloadtemplateAction()
 	{
 		$csvData = '';		
-		$csvData .= "#ID,Name,Sequence,Published(Yes|No)";
+		$csvData .= "#ID,Name,Published(Yes|No)";
 		$csvData .= "\n";
 		header('Content-Type: text/csv; charset=utf-8');
 		header("Content-Disposition: attachment; filename=project-categories.csv");

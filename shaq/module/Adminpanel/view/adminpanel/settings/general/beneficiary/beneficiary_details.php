@@ -1,4 +1,4 @@
-<section id="widFormDetail" class="">	
+<section id="widFormDetail" class="hide">	
 	<div class="row">
 		<div class="col-sm-12 col-md-12 col-lg-12">
 		     <div class="jarviswidget infocolor" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-deletebutton="false" data-widget-sortable="false">  
@@ -7,7 +7,7 @@
 					<h2>Beneficiary Details Info </h2>
 					<div class="widget-toolbar">
 								
-								<button id="btnBack" type="submit" class="right btn btnBack  addEventBtn ">
+								<button id="btnBackFromSteps" type="button" class="right btn btnBack  addEventBtn ">
 									   <i class="fa fa-angle-left"></i> &nbsp;Back
 							    </button>
 								<?php /*?><button id="btnSave" type="submit" class="right btn btnSave  addEventBtn ">
@@ -34,7 +34,7 @@
 								  <li id="ap_education"><a href="#education_detail" data-toggle="tab">Education Details<i class="fa fa-ban fa-right"></a></i></li>
 								  <li id="ap_volunteer"><a href="#lay_reader_detail" data-toggle="tab">Lay Reader Details<i class="fa fa-ban fa-right"></a></i></li>
 								  <li id="ap_gallery"><a href="#media_gallery" data-toggle="tab">Media Gallery<i class="fa fa-ban fa-right"></a></i></li>
-								  <li id="ap_research_notes"><a href="#researcher_notes" data-toggle="tab">Researcher Notes<i class="fa fa-ban fa-right"></a></i></li>
+								  <li id="ap_research_notes"><a href="#research_notes" data-toggle="tab">Researcher Notes<i class="fa fa-ban fa-right"></a></i></li>
 								</ul>
 									<fieldset>
 										<div class="panel panel-hovered panel-stacked mb30">
@@ -54,7 +54,7 @@
 													 <?php include("education_detail.php");?>
 													 <?php include("lay_reader_detail.php");?>
 													 <?php include("media_gallery.php");?>
-													 <?php include("researcher_notes.php");?>												 
+													 <?php include("research_notes.php");?>												 
 												</div>
 											</div>
 										</div>
@@ -69,6 +69,7 @@
 </section>	
 <script language="javascript">
 	var iActiveDetailID;
+	var lastTabKey1='';
 	function loadJsForDetailForm()
 	{
 		$("#beneficiryDetailSteps > li").each(function(){
@@ -99,7 +100,15 @@
 	function callNextTab(currentTabID)
 	{		
 		var nextTab;				 	
-		var isCurrent = false;	
+		var isCurrent = false;
+		if(currentTabID == lastTabKey1)
+		{
+			
+			visibleControl('widGrid', true);
+			visibleControl('widFormDetail', false);
+			fetch_grid_data();
+			
+		}
 		$("#beneficiryDetailSteps > li").each(function(){
 			if(isCurrent == true)
 			{
@@ -123,6 +132,7 @@
 	}
 	function showProfileDetailTabs(ALLOWED_PROFILE_LIST)
 	{
+		hideShowLoaderActive(true);
 		$("#beneficiryDetailSteps > li").each(function(){
 			 $(this).removeClass('active').removeClass('disabled').addClass('hide');
 		});
@@ -139,9 +149,14 @@
 				else {
 					$("#ap_"+key).addClass('disabled').removeClass('hide');
 				}
-					
+				if(key != 'published')
+				{
+					lastTabKey1=key	;
+				}
+				getStepData(key);					
 			}
 		});
+		hideShowLoaderActive(false);
 	}
 	function resetFormLocales(formID,tabID)
 	{			
@@ -166,5 +181,59 @@
 		var objData = { beneficiaryID : beneficiaryID };
 		var profile_family_array=[profile_family,profile_family1,profile_family2,profile_family3,profile_family4,profile_family5,profile_family6];
 		populateDependentOptionValuesObjectBulk(profile_family_array,"<?php echo $this->url('adminpanel/beneficiary', array('action'=>'getFamilyDetail'));?>","Select Beneficiary Profile Family",objData);		
+	}
+	function getStepData(step)
+	{
+		switch(step)
+		{
+			case 'details' :
+				setStepFormData('frmBasicDetail',"<?php echo $this->url('adminpanel/beneficiary', array('action'=>'getBasicDetail'));?>");
+				break;
+			case 'family' :
+				fetch_grid_data_familyDetail();
+				break;
+			case 'family_flag' :
+				fetch_grid_data_familyExtraDetail();
+				break;
+			case 'income' :
+				fetch_grid_data_incomeDetail();
+				break;
+			case 'spending' :
+				fetch_grid_data_spendingDetail();
+				break;
+			case 'home' : 
+				setStepFormData('frmHomeDetail',"<?php echo $this->url('adminpanel/beneficiary', array('action'=>'getHomeDetail'));?>");
+				break;
+			case 'asset' :
+				fetch_grid_data_allOwnedDetail();
+				break;
+			case 'asset_required' :
+				fetch_grid_data_allRequiredAssets();
+				break;
+			case 'education' :
+				fetch_grid_data_educationDetail();
+				break;
+			case 'medical' :
+				fetch_grid_data_medicalCondition();
+				break;
+			case 'medical_examination' :
+				fetch_grid_data_medicalExtraDetail();
+				break;
+			case 'disabled' :
+				fetch_grid_data_disabledDetail();
+				break;
+			case 'volunteer' :
+				setStepFormData('frmLayReaderDetail',"<?php echo $this->url('adminpanel/beneficiary', array('action'=>'getLayReaderDetail'));?>");
+				break;
+			case 'gallery' :
+				fetch_grid_data_mediaGallery();
+				fetch_grid_data_mediaYoutubeGallery();
+				break;
+			case 'research_notes' :
+				setStepFormData('frmResearcherNotes',"<?php echo $this->url('adminpanel/beneficiary', array('action'=>'getResearchNotes'));?>");
+				break;
+			default :
+				return;
+		}
 	}
 </script>

@@ -244,5 +244,15 @@ class AdminfunctionsPlugin extends AbstractPlugin {
 
 		return $rowset;
 	}
+	public function getSequence($sql,$dbAdapter)
+	{
+		$optionalParameters	= array();        
+		$statement 			= $dbAdapter->createStatement($sql, $optionalParameters);        
+		$resultData			= $statement->execute();        
+		$resultSet 			= new ResultSet; 			   
+		$resultSet->initialize($resultData);        
+		$rowset 			= $resultSet->toArray();
+		return $rowset[0]['sequence']+1;
+	}
 }
 ?>

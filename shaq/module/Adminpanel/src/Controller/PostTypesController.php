@@ -62,7 +62,7 @@ class PostTypesController extends AbstractActionController
 	public function fnGrid()
 	{
 		$activeLocalesArray = $this->AdminfunctionsPlugin()->getActiveLocales($this->dbAdapter);
-		$aColumns = array( '`id`','`name`','`post_category`','`sequence`','`country_name`','`published`');
+		$aColumns = array( '`id`','`name`','`post_category`','`country_name`','`published`');
 		if(!($this->memCached->hasItem('aula_posttypes_data')) || !is_array($this->memCached->getItem('aula_posttypes_data')))
 		{	
 			$sTable = 'view_post_type';
@@ -243,7 +243,7 @@ class PostTypesController extends AbstractActionController
 			$resultSet 			= new ResultSet; 			   
 			$resultSet->initialize($resultData);        
 			$rowset 			= $resultSet->toArray();
-			$csvData .= "#ID,Post Categories,Sequence,Country,Published(Yes|No),";
+			$csvData .= "#ID,Post Categories,Country,Published(Yes|No),";
 			foreach($activeLocalesArray as $locale)
 			{
 				$csvData .= "Name(".$locale['name']."),";
@@ -258,7 +258,6 @@ class PostTypesController extends AbstractActionController
 				
 				$csvData .= $row['id'].",";
 				$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['post_category']).",";
-				$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['sequence']).",";
 				$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['country_name']).",";
 				$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['published']).",";
 				foreach($activeLocalesArray as $locale)
@@ -314,20 +313,19 @@ class PostTypesController extends AbstractActionController
 					{
 						fgetcsv($handle);   
 					   	while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
-							if($data[1] != "" && $data[2] != "" && $data[3] != ""&& $data[4] != "" && $data[5] != "" )
+							if($data[1] != "" && $data[2] != "" && $data[3] != ""&& $data[4] != "" && $data[5] != ""&& $data[6] != "" )
 							{
 								$saveDataArray = array();
 								$column_index = 1;
+								
 							 	$getPostCategoryID = $this->AdminfunctionsPlugin()->validateduplicateLocaleCSV('post_category_locale',$this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]),'name','post_category_id',$this->dbAdapter,$this->config['global_locale_id'],'locale_id');
-								
-								
 								$saveDataArray['post_category_id']= $getPostCategoryID;
-								$saveDataArray['sequence'] 	= $this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]);
 								
 								$getCountryID = $this->AdminfunctionsPlugin()->validateduplicateLocaleCSV('country_locale',$this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]),'name','country_id',$this->dbAdapter,$this->config['global_locale_id'],'locale_id');
 								$saveDataArray['country_id']= $getCountryID;
 								
 								$saveDataArray['published'] 	= $this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]);
+								
 								$saveDataArray['parent_id'] 	= 0;
 								
 								$detailData = array();
@@ -357,7 +355,8 @@ class PostTypesController extends AbstractActionController
 								{
 									
 									$saveDataArray['owner_organization_id'] = self::$Aula_OwnerOrgID;
-									$saveDataArray['owner_organization_user_id'] = self::$Aula_OwnerOrgUserID;								
+									$saveDataArray['owner_organization_user_id'] = self::$Aula_OwnerOrgUserID;	
+									$saveDataArray['sequence'] = $this->AdminfunctionsPlugin()->getSequence("select count(id) sequence  from post_type order by sequence DESC LIMIT 1",$this->dbAdapter);							
 									$projectTable->insert($saveDataArray);	
 									$existRecordID = $projectTable->lastInsertValue;	
 									
@@ -425,7 +424,7 @@ class PostTypesController extends AbstractActionController
 		$activeLocalesArray = $this->AdminfunctionsPlugin()->getActiveLocales($this->dbAdapter);
 		$csvData = '';		
 		
-		$csvData .= "#ID,Post Categories,Sequence,Country,Published(Yes|No),";
+		$csvData .= "#ID,Post Categories,Country,Published(Yes|No),";
 		foreach($activeLocalesArray as $locale)
 		{
 			$csvData .= "Name(".$locale['name']."),";

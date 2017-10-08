@@ -307,11 +307,24 @@
 
 <?php include($this->admin_layout_dir_path."global_include.php");?>
 <script language="javascript">
+	populateOptionValues("beneficiary_id","<?php echo $this->url('adminpanel/beneficiary', array('action'=>'getbeneficiary'));?>","Select Beneficiary");
+		$("#beneficiary_id").change(function()
+		{
+			var beneficiary_id =$(this).val();
+			
+			if(beneficiary_id > 0)
+			{
+				var objFormData = {
+						beneficiary_id    : beneficiary_id
+				}
+				
+				populateDependentOptionValues("beneficiary_profile_asset_received_id","<?php echo $this->url('adminpanel/beneficiary-profile-asset-received', array('action'=>'getassetreceived'));?>","Select Beneficiary Profile Asset Received",objFormData);
+			}
+		});
 	$("#beneficiary_profile_asset_received_date").datepicker();
 	populateOptionValues("asset_id","<?php echo $this->url('adminpanel/asset', array('action'=>'getasset'));?>","Select Asset");
 	populateOptionValues("asset_type_id","<?php echo $this->url('adminpanel/asset-type', array('action'=>'getassettype'));?>","Select Asset Type");
 	populateOptionValues("asset_unit_id","<?php echo $this->url('adminpanel/asset-unit-types', array('action'=>'getassetunit'));?>","Select Asset Unit");
 	populateOptionValues("asset_condition_id","<?php echo $this->url('adminpanel/asset-conditions', array('action'=>'getcondition'));?>","Select Asset Conditions");
-	populateOptionValues("beneficiary_id","<?php echo $this->url('adminpanel/beneficiary', array('action'=>'getbeneficiary'));?>","Select Beneficiary");
 	
 </script>

@@ -200,13 +200,7 @@
 			savefrmAllOwnedAssetsData();
 		});
 		
-		var asset_type=$("#frmAllOwnedAssets").find("#asset_type_id");
-		var asset_type_array=[asset_type];	
-		populateOptionValuesBulk(asset_type_array,"<?php echo $this->url('adminpanel/asset-type', array('action'=>'getassettype'));?>","Select Asset Type");
 		
-		var asset=$("#frmAllOwnedAssets").find("#asset_id");
-		var asset_array=[asset];
-		populateOptionValuesBulk(asset_array,"<?php echo $this->url('adminpanel/asset', array('action'=>'getasset'));?>","Select Asset");
 		
 		var asset_condition=$("#frmAllOwnedAssets").find("#asset_condition_id");
 		var asset_condition_array=[asset_condition];

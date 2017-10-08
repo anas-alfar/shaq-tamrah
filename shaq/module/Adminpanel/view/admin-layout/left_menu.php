@@ -306,16 +306,16 @@
 						<a href="beneficiary" title="Manage"><i class="fa fa-lg fa-fw fa-list-alt"></i> <span class="menu-item-parent">Manage</span></a>
 					</li>
 					<li class="">
-						<a href="#" title="Advance search form"><i class="fa fa-lg fa-fw fa-search"></i> <span class="menu-item-parent">Advance search form</span></a>
+						<a href="advance-search-form" title="Advance search form"><i class="fa fa-lg fa-fw fa-search"></i> <span class="menu-item-parent">Advance search form</span></a>
 					</li>
 					<li class="">
-						<a href="#" title="Gallery"><i class="fa fa-lg fa-fw fa-picture-o"></i> <span class="menu-item-parent">Gallery</span></a>
+						<a href="gallery" title="Gallery"><i class="fa fa-lg fa-fw fa-picture-o"></i> <span class="menu-item-parent">Gallery</span></a>
 					</li>
 					<li class="">
-						<a href="#" title="Donations"><i class="fa fa-lg fa-fw fa-dollar"></i> <span class="menu-item-parent">Donations</span></a>
+						<a href="donation" title="Donations"><i class="fa fa-lg fa-fw fa-dollar"></i> <span class="menu-item-parent">Donations</span></a>
 					</li>
 					<li class="">
-						<a href="#" title="Research Notes"><i class="fa fa-lg fa-fw fa-outdent"></i> <span class="menu-item-parent">Research Notes</span></a>
+						<a href="research-notes" title="Research Notes"><i class="fa fa-lg fa-fw fa-outdent"></i> <span class="menu-item-parent">Research Notes</span></a>
 					</li>
 					<li class="">
 						<a href="beneficiary-profile-asset-received" title="Assets received"><i class="fa fa-lg fa-fw fa-mail-reply-all"></i> <span class="menu-item-parent">Assets received</span></a>
@@ -327,7 +327,7 @@
 						<a href="group" title="Groups"><i class="fa fa-lg fa-fw fa-tasks"></i> <span class="menu-item-parent">Groups</span></a>
 					</li>
 					<li class="">
-						<a href="#" title="Messages"><i class="fa fa-lg fa-fw fa-envelope"></i> <span class="menu-item-parent">Messages</span></a>
+						<a href="message" title="Messages"><i class="fa fa-lg fa-fw fa-envelope"></i> <span class="menu-item-parent">Messages</span></a>
 					</li>
 				</ul>	
 			</li>

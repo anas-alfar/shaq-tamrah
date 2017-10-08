@@ -224,7 +224,7 @@ class LocalesController extends AbstractActionController
 			$resultSet->initialize($resultData);        
 			$rowset 			= $resultSet->toArray();	
 			
-			$csvData .= "#ID,Locale,Name,Locale Title,Published(Yes|No),Status(Draft|Pending|Active|Blocked|Deleted),Sequence,Country,Icon";
+			$csvData .= "#ID,Locale,Name,Locale Title,Published(Yes|No),Status(Draft|Pending|Active|Blocked|Deleted),Country,Icon";
 			$csvData .= "\n";
 			foreach($rowset as $row)
 			{
@@ -235,7 +235,6 @@ class LocalesController extends AbstractActionController
 				$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['locale_title']).",";
 				$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['published']).",";
 				$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['status']).",";
-				$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['sequence']).",";
 				$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['country_name']).",";
 				$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['icon']).",";
 				$csvData .= "\n";		
@@ -275,7 +274,7 @@ class LocalesController extends AbstractActionController
 					{
 						fgetcsv($handle);   
 					   	while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
-							if($data[1] != "" && $data[2] != "" && $data[3] != "" && $data[4] != "" && $data[5] != "" && $data[6] != "" && $data[7] != "" )
+							if($data[1] != "" && $data[2] != "" && $data[3] != "" && $data[4] != "" && $data[5] != "" && $data[6] != "")
 							{
 								
 							 	
@@ -285,8 +284,6 @@ class LocalesController extends AbstractActionController
 								$saveDataArray['name'] 				= $this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]);
 								$saveDataArray['locale_title'] 		= $this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]);
 								$saveDataArray['published'] 		= $this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]);
-								$saveDataArray['status'] 			= $this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]);
-								$saveDataArray['sequence'] 			= $this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]);
 								$getCountryID = $this->AdminfunctionsPlugin()->validateduplicateLocaleCSV('country_locale',$this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]),'name','country_id',$this->dbAdapter,$this->config['global_locale_id'],'locale_id');
 								$saveDataArray['country_id']		= $getCountryID;
 								$saveDataArray['icon'] 				= $this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]);
@@ -310,6 +307,7 @@ class LocalesController extends AbstractActionController
 									
 									
 									//$saveDataArray['organization_id'] = self::$Aula_OrgID;
+									$saveDataArray['sequence'] = $this->AdminfunctionsPlugin()->getSequence("select sequence from locale order by sequence DESC LIMIT 1 ",$this->dbAdapter);
 									$saveDataArray['owner_organization_id'] = self::$Aula_OwnerOrgID;
 									$saveDataArray['owner_organization_user_id'] = self::$Aula_OwnerOrgUserID;								
 									$projectTable->insert($saveDataArray);	
@@ -387,7 +385,7 @@ class LocalesController extends AbstractActionController
 	public function downloadtemplateAction()
 	{
 		$csvData = '';		
-		$csvData .= "#ID,Locale,Name,Locale Title,Published(Yes|No),Status(Draft|Pending|Active|Blocked|Deleted),Sequence,Country,Icon";
+		$csvData .= "#ID,Locale,Name,Locale Title,Published(Yes|No),Status(Draft|Pending|Active|Blocked|Deleted),Country,Icon";
 		$csvData .= "\n";
 		header('Content-Type: text/csv; charset=utf-8');
 		header("Content-Disposition: attachment; filename=locales.csv");
@@ -570,7 +568,7 @@ class LocalesController extends AbstractActionController
     }
 	public function getlocaleAction() 
 	  {                
-		$sql="select id as id,name as name from locale";		        
+		$sql="select id as id,name as name from locale where published='Yes'";		        
 		$optionalParameters=array();        
 		$statement 		   = $this->dbAdapter->createStatement($sql, $optionalParameters);       
 	    $result = $statement->execute();        

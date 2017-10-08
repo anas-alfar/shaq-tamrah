@@ -64,7 +64,7 @@ class GlAccountController extends AbstractActionController
 	public function fnGrid()
 	{
 		$activeLocalesArray = $this->AdminfunctionsPlugin()->getActiveLocales($this->dbAdapter);
-		$aColumns = array( '`id`','`name`','`sequence`','`account_type`','`transaction_type`','`current_balance`','`is_main`','`is_leaf`','`organization`');
+		$aColumns = array( '`id`','`name`','`account_type`','`transaction_type`','`current_balance`','`is_main`','`is_leaf`','`organization`');
 		if(!($this->memCached->hasItem('aula_glaccount_data')) || !is_array($this->memCached->getItem('aula_glaccount_data')))
 		{	
 			$sTable = 'view_gl_account';
@@ -245,7 +245,7 @@ class GlAccountController extends AbstractActionController
 			$resultSet 			= new ResultSet; 			   
 			$resultSet->initialize($resultData);        
 			$rowset 			= $resultSet->toArray();
-			$csvData .= "#ID,Sequence,Account Types,Transaction Types(D|C),Current Balance,Is Main,Is Leaf,Organization,";
+			$csvData .= "#ID,Account Types,Transaction Types(D|C),Current Balance,Is Main,Is Leaf,";
 			foreach($activeLocalesArray as $locale)
 			{
 				$csvData .= "Name(".$locale['name']."),";
@@ -259,13 +259,11 @@ class GlAccountController extends AbstractActionController
 			{
 				
 				$csvData .= $row['id'].",";
-				$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['sequence']).",";
 				$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['account_type']).",";
 				$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['transaction_type']).",";
 				$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['current_balance']).",";
 				$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['is_main']).",";
 				$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['is_leaf']).",";
-				$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['organization']).",";
 				foreach($activeLocalesArray as $locale)
 					{
 						$sQuery_locale1 		= "SELECT name,description FROM gl_account_locale WHERE locale_id = '".$locale['id']."' AND gl_account_id = '".$row['id']."' ";
@@ -323,30 +321,29 @@ class GlAccountController extends AbstractActionController
 							{
 								$saveDataArray = array();
 								$column_index = 1;
-								$saveDataArray['sequence'] 				= $this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]);
 								
 								$getAccountTypeID = $this->AdminfunctionsPlugin()->validateduplicateLocaleCSV('gl_account_type_locale',$this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]),'name','gl_account_type_id',$this->dbAdapter,$this->config['global_locale_id'],'locale_id');
 								$saveDataArray['gl_account_type_id'] 	= $getAccountTypeID;
-								
 								$saveDataArray['transaction_type'] 		= $this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]);
 								$saveDataArray['current_balance'] 		= $this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]);
 								$saveDataArray['is_main'] 				= $this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]);
 								$saveDataArray['is_leaf'] 				= $this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]);
 								
-								
-								
 								$detailData = array();
 								$detailData['name'] = $data[$column_index++];
 								$detailData['description'] = $data[$column_index++];
 								
-								$existRecordID = $this->AdminfunctionsPlugin()->validateduplicateCSV('view_gl_account',$detailData['name'],'name',$this->dbAdapter);	
+								$existRecordID = $this->AdminfunctionsPlugin()->validateduplicateCSV('view_gl_account',$detailData['name'],'name',$this->dbAdapter,$data[0]);
+								
 								if($existRecordID > 0)
 								{
 									continue;
 								}
-								$existRecordID = $data[0]; 
+								
+								$existRecordID = $data[0];
 								if($existRecordID > 0)
 								{
+									
 									$saveDataArray['date_updated'] = date('Y-m-d H:i:s');		
 									$projectTable->update($saveDataArray,array("id=".$existRecordID));
 									
@@ -355,11 +352,11 @@ class GlAccountController extends AbstractActionController
 								}
 								else
 								{
-									
 									$saveDataArray['parent_id'] 			= 0;
 									$saveDataArray['organization_id'] 	= self::$Aula_OrgID;
 									$saveDataArray['owner_organization_id'] = self::$Aula_OwnerOrgID;
-									$saveDataArray['owner_organization_user_id'] = self::$Aula_OwnerOrgUserID;								
+									$saveDataArray['owner_organization_user_id'] = self::$Aula_OwnerOrgUserID;
+									$saveDataArray['sequence'] = $this->AdminfunctionsPlugin()->getSequence("select sequence from gl_account order by sequence DESC LIMIT 1 ",$this->dbAdapter);								
 									$projectTable->insert($saveDataArray);	
 									$existRecordID = $projectTable->lastInsertValue;	
 									
@@ -382,7 +379,8 @@ class GlAccountController extends AbstractActionController
 									
 									
 									if($existLocaleRecordID > 0)
-									{										
+									{	
+																		
 										$detailData['date_updated'] = date('Y-m-d H:i:s');
 										$projectTableLocale->update($detailData,array("id=".$existLocaleRecordID));
 									}
@@ -427,7 +425,7 @@ class GlAccountController extends AbstractActionController
 		$activeLocalesArray = $this->AdminfunctionsPlugin()->getActiveLocales($this->dbAdapter);
 		$csvData = '';		
 		
-		$csvData .= "#ID,Sequence,Account Types,Transaction Types(D|C),Current Balance,Is Main,Is Leaf,Organization,";
+		$csvData .= "#ID,Account Types,Transaction Types(D|C),Current Balance,Is Main,Is Leaf,";
 		foreach($activeLocalesArray as $locale)
 		{
 			$csvData .= "Name(".$locale['name']."),";
@@ -628,4 +626,20 @@ class GlAccountController extends AbstractActionController
         echo $result;
         exit;
     }
+	public function getglaccountAction() 
+	  {                
+		$sql="select id as id,name as name from view_gl_account";		        
+		$optionalParameters=array();        
+		$statement 		   = $this->dbAdapter->createStatement($sql, $optionalParameters);       
+	    $result = $statement->execute();        
+		$resultSet = new ResultSet;        
+		$resultSet->initialize($result);        
+		$rowset=$resultSet->toArray();        
+		$result1['DBData'] = $rowset;        
+		$result1['recordsTotal'] = count($rowset);        
+		$result1['DBStatus'] = 'OK';        
+		$result = json_encode($result1);       
+		echo $result;        
+		exit;    
+	 }
 }

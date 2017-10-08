@@ -45,56 +45,49 @@
 												 </section>
 										</div>
 										<div class="row">
-												  <section class="col-md-6">
-											<div class="form-group">
-												<label class="control-label">Sequence<span>*</span></label>
-												<input type="number" class="form-control" name="sequence" id="sequence" min="0"/>
-											</div>
-										</section>
-												 <section class="col-md-2">
-													<div class="form-group">
-													 <label>&nbsp;</label>
-													  <label class="customwidth">
-														Published
-														<span class="onoffswitch">															
-															<input name="published" class="onoffswitch-checkbox" id="published" type="checkbox">
-															<label class="onoffswitch-label" for="published">
-																<span class="onoffswitch-inner" data-swchon-text="Yes" data-swchoff-text="No"></span> 
-																<span class="onoffswitch-switch"></span>
-															</label>
-														</span>
-														</label>
-													</div>
-												 </section>
-										</div>
-											<div class="row">
-												 <section class="col-md-6">
-													<div class="form-group">
+											 
+											 <section class="col-md-6">
+												<div class="form-group">
 												<label class="control-label">Menu Category<span>*</span></label>
 													<select class="select2" id="menu_category_id" name="menu_category_id" type="select">
 														<option value="0">Select Menu Category</option>
 												</select>
-											</div>
+												</div>
 											 </section>
-												 <section class="col-md-6">
+											 <section class="col-md-6">
 													<div class="form-group">
-												<label class="control-label">Country<span>*</span></label>
-								<select class="select2" id="country_id" name="country_id" type="select">
-										<option value="0">Select Country</option>
-								</select>
-											</div>
-											 </section>
+														<label class="control-label">Country<span>*</span></label>
+														<select class="select2" id="country_id" name="country_id" type="select">
+																<option value="0">Select Country</option>
+														</select>
+													</div>
+												 </section>
 											</div>
 											<div class="row">
-												
-											 <section class="col-md-6">
-												<div class="form-group">
-												<label class="control-label">Organization Branch<span>*</span></label>
-												<select class="select2" id="organization_branch_id" name="organization_branch_id" type="select">
-													<option value="0">Select Organization Branch</option>
-												</select>
-											</div>
+												 
+												 <section class="col-md-6">
+													<div class="form-group">
+														<label class="control-label">Organization Branch<span>*</span></label>
+														<select class="select2" id="organization_branch_id" name="organization_branch_id" type="select">
+															<option value="0">Select Organization Branch</option>
+														</select>
+													</div>
 												 </section>
+												 <section class="col-md-6">
+												<div class="form-group">
+												 <label>&nbsp;</label>
+												  <label class="customwidth">
+													Published
+													<span class="onoffswitch">															
+														<input name="published" class="onoffswitch-checkbox" id="published" type="checkbox">
+														<label class="onoffswitch-label" for="published">
+															<span class="onoffswitch-inner" data-swchon-text="Yes" data-swchoff-text="No"></span> 
+															<span class="onoffswitch-switch"></span>
+														</label>
+													</span>
+													</label>
+												</div>
+											 </section>
 											</div>
 											
 											

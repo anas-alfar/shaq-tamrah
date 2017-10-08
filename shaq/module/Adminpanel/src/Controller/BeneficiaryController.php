@@ -63,7 +63,7 @@ class BeneficiaryController extends AbstractActionController
 	public function fnGrid()
 	{
 		$activeLocalesArray = $this->AdminfunctionsPlugin()->getActiveLocales($this->dbAdapter);
-		$aColumns = array( '`id`','`id`','`family_name`','`sequence`','`family_book_number`','`status`','`country_name`','`visibility`');
+		$aColumns = array( '`id`','`id`','`family_name`','`family_book_number`','`status`','`country_name`','`visibility`');
 		if(!($this->memCached->hasItem('aula_beneficiary_data')) || !is_array($this->memCached->getItem('aula_beneficiary_data')))
 		{	
 			$sTable = 'view_beneficiary';
@@ -223,7 +223,7 @@ class BeneficiaryController extends AbstractActionController
 			$resultSet 			= new ResultSet; 			   
 			$resultSet->initialize($resultData);        
 			$rowset 			= $resultSet->toArray();
-			$csvData .= "#ID,Sequence,Family Book Number,Status(New|Draft|In Review|Moved|Approved|Rejected|Duplicate|Deleted),Notes,Options,Country,Visibility,";
+			$csvData .= "#ID,Family Book Number,Status(New|Draft|In Review|Moved|Approved|Rejected|Duplicate|Deleted),Notes,Options,Country,Visibility,";
 			foreach($activeLocalesArray as $locale)
 			{
 				$csvData .= "Family Name(".$locale['name']."),";
@@ -237,7 +237,6 @@ class BeneficiaryController extends AbstractActionController
 			{
 				
 				$csvData .= $row['id'].",";
-				$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['sequence']).",";
 				$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['family_book_number']).",";
 				$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['status']).",";
 				$csvData .= $this->AdminfunctionsPlugin()->exportDataValidate($row['notes']).",";
@@ -301,12 +300,7 @@ class BeneficiaryController extends AbstractActionController
 							{
 								$saveDataArray = array();
 								$column_index = 1;
-							 	
 								
-								
-								
-								
-								$saveDataArray['sequence'] 				= $this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]);
 								$saveDataArray['family_book_number'] 	= $this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]);
 								$saveDataArray['status'] 				= $this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]);
 								$saveDataArray['notes'] 				= $this->AdminfunctionsPlugin()->importDataValidate($data[$column_index++]);
@@ -337,7 +331,8 @@ class BeneficiaryController extends AbstractActionController
 										continue;
 									}
 									$saveDataArray['owner_organization_id'] = self::$Aula_OwnerOrgID;
-									$saveDataArray['owner_organization_user_id'] = self::$Aula_OwnerOrgUserID;								
+									$saveDataArray['owner_organization_user_id'] = self::$Aula_OwnerOrgUserID;	
+									$saveDataArray['sequence'] = $this->AdminfunctionsPlugin()->getSequence("select sequence from beneficiary order by sequence DESC LIMIT 1 ",$this->dbAdapter);							
 									$projectTable->insert($saveDataArray);	
 									$existRecordID = $projectTable->lastInsertValue;	
 									
@@ -405,7 +400,7 @@ class BeneficiaryController extends AbstractActionController
 		$activeLocalesArray = $this->AdminfunctionsPlugin()->getActiveLocales($this->dbAdapter);
 		$csvData = '';		
 		
-		$csvData .= "#ID,Sequence,Family Book Number,Status(New|Draft|In Review|Moved|Approved|Rejected|Duplicate|Deleted),Notes,Options,Country,Visibility,";
+		$csvData .= "#ID,Family Book Number,Status(New|Draft|In Review|Moved|Approved|Rejected|Duplicate|Deleted),Notes,Options,Country,Visibility,";
 		foreach($activeLocalesArray as $locale)
 		{
 				$csvData .= "Family Name(".$locale['name']."),";
@@ -426,8 +421,7 @@ class BeneficiaryController extends AbstractActionController
 			$EDIT_ID = $this->request->getPost('iActiveID');
             $fieldName = $this->request->getPost('fieldName'); 
 			
-			
-			$this->AdminfunctionsPlugin()->validateduplicatelocale($tableName,$ID,$fieldName,$EDIT_ID,'beneficiary_id',$this->dbAdapter,$this->config);           
+			$this->AdminfunctionsPlugin()->validateduplicate($tableName,$ID,$fieldName,$EDIT_ID,$this->dbAdapter);           
         }
 		else {
 			$result1['DBStatus'] = 'ERR';
@@ -454,6 +448,7 @@ class BeneficiaryController extends AbstractActionController
     }
 	public function getrecAction()
     {
+		$activeLocalesArray = $this->AdminfunctionsPlugin()->getActiveLocales($this->dbAdapter);   
         $recs=array();
         if ($this->request->isPost()) {
             
@@ -466,9 +461,21 @@ class BeneficiaryController extends AbstractActionController
 			}
 			else
 			{
-				$projectTable = new TableGateway('beneficiary', $this->dbAdapter);
+				$projectTable = new TableGateway('view_beneficiary', $this->dbAdapter);
 				$rowset = $projectTable->select(array('id' => $iID));
 				$rowset = $rowset->toArray();
+				
+				foreach($activeLocalesArray as $locale)
+				{
+					$sQuery_locale 		= "SELECT family_name,intro_text FROM beneficiary_locale WHERE locale_id = '".$locale['id']."' AND beneficiary_id = '".$rowset[0]['id']."' ";
+					$statement_locale	= $this->dbAdapter->createStatement($sQuery_locale, $optionalParameters);        
+					$resultData_locale	= $statement_locale->execute();        
+					$resultSet_locale	= new ResultSet; 			   
+					$resultSet_locale->initialize($resultData_locale);        
+					$rowset_locale		= $resultSet_locale->toArray();
+					$rowset[0]['family_name_'.$locale['id']] = $rowset_locale[0]['family_name'];
+					$rowset[0]['intro_text_'.$locale['id']] = $rowset_locale[0]['intro_text'];
+				}
 			}
 
             foreach ($rowset as $record)
@@ -568,8 +575,17 @@ class BeneficiaryController extends AbstractActionController
 
 			if ($this->request->getPost("pAction") == "ADD")
 			{
+				$sql="select sequence from beneficiary order by sequence DESC LIMIT 1 ";
+				
+				$optionalParameters	= array();        
+				$statement 			= $this->dbAdapter->createStatement($sql, $optionalParameters);        
+				$resultData			= $statement->execute();        
+				$resultSet 			= new ResultSet; 			   
+				$resultSet->initialize($resultData);        
+				$rowset 			= $resultSet->toArray();
+				
 				$masterData = array();
-				//$masterData['sequence'] 			= $aData['sequence'];
+				$masterData['sequence'] 			= $rowset[0]['sequence']+1;
 				$masterData['family_book_number'] 	= $aData['family_book_number'];
 				$masterData['status'] 				= 'Draft';
 				$masterData['country_id'] 			= $aData['country_id'];
@@ -604,7 +620,7 @@ class BeneficiaryController extends AbstractActionController
 				$profileData['owner_organization_id'] = self::$Aula_OwnerOrgID;
 				$profileData['owner_organization_user_id'] = self::$Aula_OwnerOrgUserID;
 				
-				$projectTableHasProfile->insert();	
+				$projectTableHasProfile->insert($profileData);	
 				
 				$rowsetProfile = $projectTableProfile->select(['id' => $aData['beneficiary_profile_id'] ]);						
 				$rowsetProfile = $rowsetProfile->toArray();
@@ -630,9 +646,25 @@ class BeneficiaryController extends AbstractActionController
 					$detailData = array();
 					$detailData['family_name'] = $aData['family_name_'.$locale['id']];
 					$detailData['intro_text'] = $aData['intro_text_'.$locale['id']];
-					$detailData['date_updated'] = date('Y-m-d H:i:s');
 					
-					$projectTableLocale->update($detailData,array("beneficiary_id=".$iMasterID,"locale_id=".$locale['id']));
+					$detailRowset = $projectTableLocale->select(array("beneficiary_id=".$iMasterID,"locale_id=".$locale['id']));
+					$detailRowset = $detailRowset->toArray();
+					if($detailRowset[0]['id'] > 0)
+					{
+						$detailData['date_updated'] = date('Y-m-d H:i:s');
+						$projectTableLocale->update($detailData,array("beneficiary_id=".$iMasterID,"locale_id=".$locale['id']));
+					}
+					else
+					{
+						$detailData['date_added'] = date('Y-m-d H:i:s');
+						$detailData['locale_id'] = $locale['id'];
+						$detailData['beneficiary_id'] = $iMasterID;
+						
+						$detailData['owner_organization_id'] = self::$Aula_OwnerOrgID;
+						$detailData['owner_organization_user_id'] = self::$Aula_OwnerOrgUserID;
+					
+						$projectTableLocale->insert($detailData);	
+					}
 				}	
 				
 				$rowsetProfile = $projectTableProfile->select(['id' => $aData['beneficiary_profile_id'] ]);					
@@ -722,6 +754,27 @@ class BeneficiaryController extends AbstractActionController
         echo $result;
         exit;
 	}
+	public function getBasicDetailAction()
+    { 
+        $recs=array();
+        if ($this->request->isPost()) {
+            
+			$beneficiaryID = $this->request->getPost("beneficiaryID");
+			$projectTable = new TableGateway('beneficiary_profile_details', $this->dbAdapter);
+			$rowset = $projectTable->select(['beneficiary_id' => $beneficiaryID]);
+			$rowset = $rowset->toArray();
+            foreach ($rowset as $record)
+                $recs[] = $record;
+
+            $result['data'] = $recs;
+            $result['recordsTotal'] = count($recs);
+            $result['DBStatus'] = 'OK';
+
+            $result = json_encode($result);
+            echo $result;
+            exit;
+        }
+    }
 		
 	/********* FAMILY DETAIL STEP **********/
 	public function listFamilyDetailAction()
@@ -820,6 +873,12 @@ class BeneficiaryController extends AbstractActionController
 				
 				
 				$masterData = array();
+				$avatar=$aData['photohidden'];
+				unset($aData['photohidden']);
+				if($avatar != "")
+				{
+					$masterData['avatar']=$avatar;
+				}
 				$masterData['ssn'] 												= $aData['ssn'];
 				$masterData['phone_number'] 									= $aData['phone_number'];
 				$masterData['mobile_number'] 									= $aData['mobile_number'];
@@ -969,7 +1028,7 @@ class BeneficiaryController extends AbstractActionController
     }
 	public function getFamilyDetailAction()
 	{
-		$sql="select id as id,concat(first_name,concat(' ',second_name)) as name from view_beneficiary_profile_family where beneficiary_id = '".$this->request->getPost("beneficiaryID")."' ";		        
+		$sql="select id as id,first_name as name from view_beneficiary_profile_family where beneficiary_id = '".$this->request->getPost("beneficiaryID")."' ";		        
 		$optionalParameters=array();        
 		$statement 		   = $this->dbAdapter->createStatement($sql, $optionalParameters);       
 	    $result = $statement->execute();        
@@ -988,7 +1047,7 @@ class BeneficiaryController extends AbstractActionController
 	public function listFamilyExtraDetailAction()
 	{
 		$activeLocalesArray = $this->AdminfunctionsPlugin()->getActiveLocales($this->dbAdapter);
-		$aColumns = array( '`id`','first_name','`flag_name`','`flag_value`');
+		$aColumns = array( '`id`','profile_family_name','`flag_name`','`flag_value`');
 			
 		$sTable = 'view_beneficiary_profile_family_has_flag';
 	
@@ -1556,6 +1615,41 @@ class BeneficiaryController extends AbstractActionController
         echo $result;
         exit;
 	}
+	public function getHomeDetailAction()
+    {
+		$activeLocalesArray = $this->AdminfunctionsPlugin()->getActiveLocales($this->dbAdapter);   
+        $recs=array();
+        if ($this->request->isPost()) {            
+		
+			$beneficiaryID = $this->request->getPost("beneficiaryID");
+			$projectTable = new TableGateway('beneficiary_profile_home', $this->dbAdapter);
+			$rowset = $projectTable->select(['beneficiary_id' => $beneficiaryID]);
+			$rowset = $rowset->toArray();
+			
+			foreach($activeLocalesArray as $locale)
+			{
+				$sQuery_locale 		= "SELECT building_owner_name,description FROM beneficiary_profile_home_locale WHERE locale_id = '".$locale['id']."' AND beneficiary_profile_home_id = '".$rowset[0]['id']."' ";
+				$statement_locale	= $this->dbAdapter->createStatement($sQuery_locale, $optionalParameters);        
+				$resultData_locale	= $statement_locale->execute();        
+				$resultSet_locale	= new ResultSet; 			   
+				$resultSet_locale->initialize($resultData_locale);        
+				$rowset_locale		= $resultSet_locale->toArray();
+				$rowset[0]['building_owner_name_'.$locale['id']] = $rowset_locale[0]['building_owner_name'];
+				$rowset[0]['description_'.$locale['id']] = $rowset_locale[0]['description'];
+			}		
+
+            foreach ($rowset as $record)
+                $recs[] = $record;
+
+            $result['data'] = $recs;
+            $result['recordsTotal'] = count($recs);
+            $result['DBStatus'] = 'OK';
+
+            $result = json_encode($result);
+            echo $result;
+            exit;
+        }
+    }
 	
 	/********* ALL OWNED DETAIL STEP **********/
 	public function listAllOwnedDetailAction()
@@ -2861,13 +2955,61 @@ class BeneficiaryController extends AbstractActionController
         echo $result;
         exit;
 	}
-	public function savedonationAction()
+	public function getLayReaderDetailAction()
     {
-		$result1['DBStatus'] = 'OK';
-		$result = json_encode($result1);
-        echo $result;
-        exit;
-	}
+		$activeLocalesArray = $this->AdminfunctionsPlugin()->getActiveLocales($this->dbAdapter);   
+        $recs=array();
+        if ($this->request->isPost()) {            
+		
+			$beneficiaryID = $this->request->getPost("beneficiaryID");
+			$projectTable = new TableGateway('beneficiary_profile_volunteer', $this->dbAdapter);
+			$rowset = $projectTable->select(['beneficiary_id' => $beneficiaryID]);
+			$rowset = $rowset->toArray();
+			
+			foreach($activeLocalesArray as $locale)
+			{
+				$sQuery_locale 		= "SELECT details,address FROM beneficiary_profile_volunteer_locale WHERE locale_id = '".$locale['id']."' AND beneficiary_profile_volunteer_id = '".$rowset[0]['id']."' ";
+				$statement_locale	= $this->dbAdapter->createStatement($sQuery_locale, $optionalParameters);        
+				$resultData_locale	= $statement_locale->execute();        
+				$resultSet_locale	= new ResultSet; 			   
+				$resultSet_locale->initialize($resultData_locale);        
+				$rowset_locale		= $resultSet_locale->toArray();
+				$rowset[0]['address_'.$locale['id']] = $rowset_locale[0]['address'];
+				$rowset[0]['details_'.$locale['id']] = $rowset_locale[0]['details'];
+			}	
+			
+			$projectTable = new TableGateway('beneficiary_profile_volunteer_activity', $this->dbAdapter);
+			$rowset1 = $projectTable->select(['beneficiary_id' => $beneficiaryID]);
+			$rowset1 = $rowset1->toArray();
+			
+			foreach($activeLocalesArray as $locale)
+			{
+				$sQuery_locale 		= "SELECT name,description FROM beneficiary_profile_volunteer_activity_locale WHERE locale_id = '".$locale['id']."' AND beneficiary_profile_volunteer_activity_id = '".$rowset1[0]['id']."' ";
+				$statement_locale	= $this->dbAdapter->createStatement($sQuery_locale, $optionalParameters);        
+				$resultData_locale	= $statement_locale->execute();        
+				$resultSet_locale	= new ResultSet; 			   
+				$resultSet_locale->initialize($resultData_locale);        
+				$rowset_locale		= $resultSet_locale->toArray();
+				$rowset[0]['name_'.$locale['id']] = $rowset_locale[0]['name'];
+				$rowset[0]['description_'.$locale['id']] = $rowset_locale[0]['description'];
+			}	
+			
+            foreach ($rowset as $record)
+                $recs[] = $record;
+
+            $result['data'] = $recs;
+            $result['recordsTotal'] = count($recs);
+            $result['DBStatus'] = 'OK';
+
+            $result = json_encode($result);
+            echo $result;
+            exit;
+        }
+    }
+	
+	
+	
+	/************* PLUS VIEW *****************/
 	public function getgriddetailslistAction()
 	{
 		
@@ -2939,10 +3081,30 @@ class BeneficiaryController extends AbstractActionController
 		die();
 	
 	}
+	
+	/************* START ACTIONS SAVING ************/
 	public function savesponsorshipAction()
     {
-		$result1['DBStatus'] = 'OK';
-		$result = json_encode($result1);
+		if ($this->request->isPost()) {
+
+            $projectTable = new TableGateway('beneficiary_profile_family_sponsorship',$this->dbAdapter);
+			
+			$aData = json_decode($this->request->getPost("FORM_DATA"));
+			$aData = (array)$aData;
+			unset($aData['MASTER_KEY_ID']);
+			$aData['owner_organization_id'] 		= self::$Aula_OwnerOrgID;
+			$aData['owner_organization_user_id']	= self::$Aula_OwnerOrgUserID;
+			$projectTable->insert($aData);											
+			$result['DBStatus'] = 'OK';
+			
+			$this->memCached->setItem('aula_donation_data','');
+        }
+        else
+        {
+            $result['DBStatus'] = 'ERR';
+        }
+
+        $result = json_encode($result);
         echo $result;
         exit;
 	}
@@ -2953,6 +3115,696 @@ class BeneficiaryController extends AbstractActionController
         echo $result;
         exit;
 	}
+	public function savechangeorganizationAction()
+    {					
+		if ($this->request->isPost()) {
 
+            $projectTable = new TableGateway('beneficiary_movement',$this->dbAdapter);
+			
+			$aData = json_decode($this->request->getPost("FORM_DATA"));
+			$aData = (array)$aData;
+			unset($aData['MASTER_KEY_ID']);
+			$beneficiaryTable = new TableGateway('beneficiary', $this->dbAdapter);
+			$rowset = $beneficiaryTable->select(array('id' => $aData['beneficiary_id']));
+			$rowset = $rowset->toArray();
+			$aData['status']						= "Initiated";
+			$aData['beneficiary_current_status']	= $rowset[0]['status'];
+			$aData['owner_organization_id'] 		= self::$Aula_OwnerOrgID;
+			$aData['owner_organization_user_id']	= self::$Aula_OwnerOrgUserID;
+			$projectTable->insert($aData);											
+			$result['DBStatus'] = 'OK';
+			
+			$this->memCached->setItem('aula_donation_data','');
+        }
+        else
+        {
+            $result['DBStatus'] = 'ERR';
+        }
+
+        $result = json_encode($result);
+        echo $result;
+        exit;
+	}
+	public function beneficiaryprofilefamilyAction()
+	{
+		$beneficiary_id=$this->request->getPost("beneficiaryID");
+		$sTable = 'view_beneficiary_profile_family';
+		
+		/* Indexed column (used for fast and accurate table cardinality) */
+		$sIndexColumn = "id";  
+		
+		$sWhere = " WHERE 1=1 and beneficiary_id=".$beneficiary_id." ";
+		$sOrder = " ORDER BY id ASC ";		
+		
+		/** SQL queries ** Get data to display **/ 
+		$sQuery = "
+			SELECT *
+			FROM   $sTable
+			$sWhere
+			$sOrder
+		"; 				    
+		$optionalParameters	= array();        
+		$statement 			= $this->dbAdapter->createStatement($sQuery, $optionalParameters);        
+		$resultData			= $statement->execute();        
+		$resultSet 			= new ResultSet; 			   
+		$resultSet->initialize($resultData);        
+		$rowset 			= $resultSet->toArray();	
+		
+		$beneficiary_profile_list .= '<div class="row">';
+		$img_path="../public/uploads/localeicons/";
+		$count=1;
+		
+		foreach($rowset as $aRow)
+		{	
+			
+			$beneficiary_profile_list .= '<div class="col-md-4">
+											  <div class="panel1 panel-default1">
+												 <div class="panel-heading">
+													<a href="#" class="pull-right text-muted">
+													   <em class="fa"></em>
+													</a>
+												 </div>
+												 <div class="panel-body text-center">
+													<img src="'.$img_path.$aRow['avatar'].'" alt="Contact" class="center-block img-responsive img-circle thumb64">
+													<h4><b>'.$aRow['first_name'].'</b></h4>
+													<p><i>'.$aRow['address'].'</i></p>
+												 </div>
+												 <div class="panel-footer clearfix">
+													<div class="pull-left"><a href="#" class="btn btn-xs btn-primary">Send message</a>
+													</div>
+													<div class="pull-right"><a href="#" class="btn btn-xs btn-default">View</a>
+													</div>
+												 </div>
+											  </div>';
+											  
+			$beneficiary_profile_list .= '</div>';
+			if($count%3==0)
+			{
+			$beneficiary_profile_list .= '</div><div class="row">';
+			}
+			$count++;
+		}
+		$beneficiary_profile_list .= '</div>';
+		$result['DBStatus'] = 'OK';
+        $result['beneficiary_profile_list'] = $beneficiary_profile_list;
+        
+        $result = json_encode($result);
+        echo $result;
+        exit;
+	}
+	/************* END ACTIONS SAVING ************/
+	/************* START MEDIA GALLERY ************/
+	public function saveMediaGalleryAction()
+	{  
+		$activeLocalesArray = $this->AdminfunctionsPlugin()->getActiveLocales($this->dbAdapter);       
+		$tableName = 'beneficiary_media_gallery';
+		$tableNameLocale = 'beneficiary_media_gallery_locale';
+        if ($this->request->isPost()) {
+
+			if ($this->request->getPost("beneficiaryID") > 0)
+			{
+				$beneficiaryID = $this->request->getPost("beneficiaryID");
+				$projectTable = new TableGateway($tableName,$this->dbAdapter);
+				$projectTableLocale = new TableGateway($tableNameLocale,$this->dbAdapter);
+				
+				$aData = json_decode($this->request->getPost("FORM_DATA"));
+				$aData = (array)$aData;	
+				
+				$aData['published_gallery'] = $this->setCheckboxValue($aData,'published_gallery','Yes','No');
+				
+				$sql="select sequence from beneficiary_media_gallery order by sequence DESC LIMIT 1 ";
+				
+				$optionalParameters	= array();        
+				$statement 			= $this->dbAdapter->createStatement($sql, $optionalParameters);        
+				$resultData			= $statement->execute();        
+				$resultSet 			= new ResultSet; 			   
+				$resultSet->initialize($resultData);        
+				$rowset 			= $resultSet->toArray();
+				
+				$masterData = array();
+				$info=mime_content_type($this->config['site_dir_path']['public_dir_path']."uploads/localeicons/".$aData['pathhidden']);
+				$size = filesize($this->config['site_dir_path']['public_dir_path']."uploads/localeicons/".$aData['pathhidden']);
+				$path=$aData['pathhidden'];
+				unset($aData['pathhidden']);
+				$masterData['size'] 						= $size;
+				$masterData['mime_type'] 					= $info;
+				if($path != "")
+				{
+					$masterData['path']=$path;
+				}
+				$masterData['media_type_id'] 				= $aData['media_type_id'];
+				$masterData['media_filetype_id']			= $aData['media_filetype_id'];
+				$masterData['media_status_id'] 				= $aData['media_status_id'];
+				$masterData['beneficiary_profile_family_id']= $aData['beneficiary_profile_family_id'];
+				$masterData['beneficiary_id'] 				= $beneficiaryID;
+				$masterData['published'] 					= $aData['published_gallery'];
+				
+				$masterData['owner_organization_id'] 		= self::$Aula_OwnerOrgID;
+				$masterData['owner_organization_user_id'] 	= self::$Aula_OwnerOrgUserID;
+				
+	
+				if ($this->request->getPost("pAction") == "ADD")
+				{					
+					$masterData['owner_organization_id'] = self::$Aula_OwnerOrgID;
+					$masterData['owner_organization_user_id'] = self::$Aula_OwnerOrgUserID;
+					$masterData['sequence'] 					= $rowset[0]['sequence']+1;
+					$masterData['date_added'] = date('Y-m-d H:i:s');
+					
+					$projectTable->insert($masterData);	
+					$iMasterID = $projectTable->lastInsertValue;
+					$result['DBStatus'] = 'OK';					
+				}
+				else  if($this->request->getPost("pAction") == "EDIT")
+				{			
+					$iMasterID=$aData['MASTER_KEY_ID'];	
+					$masterData['date_updated'] = date('Y-m-d H:i:s');
+					
+					$projectTable->update($masterData,array("id=".$iMasterID));
+																		
+					$result['DBStatus'] = 'OK';
+				}
+				foreach($activeLocalesArray as $locale)
+				{
+					
+					$detailData = array();
+					$detailData['alias']						 = $aData['alias_'.$locale['id']];
+					$detailData['intro_text'] 					 = $aData['intro_text_'.$locale['id']];
+					
+					$rowset = $projectTableLocale->select(array("beneficiary_media_gallery_id=".$iMasterID,"locale_id=".$locale['id']));
+					$rowset = $rowset->toArray();
+					if(isset($rowset[0]['id']) && $rowset[0]['id'] > 0 ) 
+					{				
+						$detailData['date_updated'] = date('Y-m-d H:i:s');
+						$projectTableLocale->update($detailData,array("id=".$rowset[0]['id']));						
+					} 
+					else 
+					{
+						$detailData['locale_id'] 					 = $locale['id'];
+						$detailData['beneficiary_media_gallery_id']  = $iMasterID;						
+						$detailData['owner_organization_id'] = self::$Aula_OwnerOrgID;
+						$detailData['owner_organization_user_id'] = self::$Aula_OwnerOrgUserID;
+						$detailData['beneficiary_id']  		 		 = $beneficiaryID;
+						$projectTableLocale->insert($detailData);	
+					}
+					
+				}
+			}
+			else
+			{
+				$result['DBStatus'] = 'ERR';
+			}
+		}
+        else
+        {
+            $result['DBStatus'] = 'ERR';
+        }
+
+        $result = json_encode($result);
+        echo $result;
+        exit;
+    
+	}
+	public function listMediaGalleryAction()
+	{
+		$activeLocalesArray = $this->AdminfunctionsPlugin()->getActiveLocales($this->dbAdapter);
+		$aColumns = array( '`id`','`path`','`alias`','`beneficiary`','`beneficiary_profile_family`','`mime_type`','`media_status`','`published`');
+			
+		$sTable = 'view_beneficiary_media_gallery';
+	
+		/* Indexed column (used for fast and accurate table cardinality) */
+		$sIndexColumn = "id";  
+		
+		$sWhere = " WHERE beneficiary_id = '".$this->request->getPost("beneficiaryID")."' ";
+		$sOrder = " ORDER BY $sIndexColumn DESC ";		
+		
+		/** SQL queries ** Get data to display **/ 
+		$sQuery = "
+			SELECT *
+			FROM   $sTable
+			$sWhere
+			$sOrder
+		"; 
+			
+		$optionalParameters	= array();        
+		$statement 			= $this->dbAdapter->createStatement($sQuery, $optionalParameters);        
+		$resultData			= $statement->execute();        
+		$resultSet 			= new ResultSet; 			   
+		$resultSet->initialize($resultData);        
+		$rowset 			= $resultSet->toArray();	
+		
+		$iTotal = count($rowset);
+				
+		/** Output **/
+		$output = array(
+			"sEcho" => intval(@$_GET['sEcho']),
+			"iTotalRecords" => $iTotal,
+			"aaData" => array()
+		);
+	
+		foreach($rowset as $aRow)
+		{
+			$row = array();
+			for ( $i=0 ; $i < count($aColumns); $i++ ) 
+			{
+				$aColumns[$i] = str_replace('`','',$aColumns[$i]);
+				switch($aColumns[$i]){
+					case 'version' :
+						$row[] = ($aRow[ $aColumns[$i] ]=="0") ? '-' : $aRow[ $aColumns[$i] ];
+						break;
+					case '' :						
+						// do nothing
+						break;
+					default :
+						 $row[] = $aRow[ $aColumns[$i] ];
+				}
+			}
+			$output['aaData'][] = $row; 
+		}
+		
+		echo json_encode( $output ); 
+		exit;
+	}	
+	public function getrecMediaGalleryAction()
+    {
+        $activeLocalesArray = $this->AdminfunctionsPlugin()->getActiveLocales($this->dbAdapter);       
+		$recs=array();
+        if ($this->request->isPost()) {
+            
+			$iID = $this->request->getPost("KEY_ID");
+			
+			$projectTable = new TableGateway('beneficiary_media_gallery', $this->dbAdapter);
+			$rowset = $projectTable->select(array('id' => $iID));
+			$rowset = $rowset->toArray();			
+
+            foreach ($rowset as $record)
+			{
+             	foreach($activeLocalesArray as $locale)
+				{
+					$sQuery_locale 		= "SELECT alias,intro_text FROM beneficiary_media_gallery_locale WHERE locale_id = '".$locale['id']."' AND beneficiary_media_gallery_id = '".$record['id']."' ";
+					$statement_locale	= $this->dbAdapter->createStatement($sQuery_locale, $optionalParameters);        
+					$resultData_locale	= $statement_locale->execute();        
+					$resultSet_locale	= new ResultSet; 			   
+					$resultSet_locale->initialize($resultData_locale);        
+					$rowset_locale		= $resultSet_locale->toArray();
+					
+					$record['alias_'.$locale['id']] = $rowset_locale[0]['alias'];
+					$record['intro_text_'.$locale['id']] = $rowset_locale[0]['intro_text'];
+				}
+				$published=$record['published'];
+				unset($record['published']);
+				$record['published_gallery']=$published;
+				
+				$recs[] = $record;
+				$beneficiary_profile_family_id=$recs[0]['beneficiary_profile_family_id'];
+				unset($recs[0]['beneficiary_profile_family_id']);
+				$recs[0]['beneficiary_profile_family_id']=$beneficiary_profile_family_id;
+			}
+            $result['data'] = $recs;
+            $result['recordsTotal'] = count($recs);
+            $result['DBStatus'] = 'OK';
+
+            $result = json_encode($result);
+            echo $result;
+            exit;
+        }
+    }		
+	public function deleteMediaGalleryAction()
+    {        
+        if ($this->request->isPost()) {
+
+            $projectTable = new TableGateway('beneficiary_media_gallery', $this->dbAdapter);
+			$projectTableLocale = new TableGateway('beneficiary_media_gallery_locale', $this->dbAdapter);
+
+            if ($this->request->getPost("pAction") == "DELETE") {
+                $iMasterID = $this->request->getPost("KEY_ID");
+				
+				$projectTable->delete(array("id=".$iMasterID));
+				$projectTableLocale->delete(array("beneficiary_media_gallery_id=".$iMasterID));
+                $result['DBStatus'] = 'OK';
+                $result = json_encode($result);
+                echo $result;
+                exit;
+            }
+        }
+    }
+	/************* END MEDIA GALLERY ************/
+	/************* START YOUTUBE GALLERY ************/
+	public function saveMediaYoutubeGalleryAction()
+	{  
+		$activeLocalesArray = $this->AdminfunctionsPlugin()->getActiveLocales($this->dbAdapter);       
+		$tableName = 'beneficiary_media_youtube_gallery';
+		$tableNameLocale = 'beneficiary_media_youtube_gallery_locale';
+        if ($this->request->isPost()) {
+
+			if ($this->request->getPost("beneficiaryID") > 0)
+			{
+				$beneficiaryID = $this->request->getPost("beneficiaryID");
+				$projectTable = new TableGateway($tableName,$this->dbAdapter);
+				$projectTableLocale = new TableGateway($tableNameLocale,$this->dbAdapter);
+				
+				$aData = json_decode($this->request->getPost("FORM_DATA"));
+				$aData = (array)$aData;	
+				
+				$aData['published_youtube'] = $this->setCheckboxValue($aData,'published_youtube','Yes','No');
+				$sql="select sequence from beneficiary_media_youtube_gallery order by sequence DESC LIMIT 1 ";
+				$optionalParameters	= array();        
+				$statement 			= $this->dbAdapter->createStatement($sql, $optionalParameters);        
+				$resultData			= $statement->execute();        
+				$resultSet 			= new ResultSet; 			   
+				$resultSet->initialize($resultData);        
+				$rowset 			= $resultSet->toArray();
+				
+				$masterData = array();
+				
+				$masterData['youtube_link'] 				= $aData['youtube_link'];
+				$masterData['media_status_id'] 				= $aData['media_status_id'];
+				$masterData['beneficiary_profile_family_id']= $aData['beneficiary_profile_family_id'];
+				$masterData['beneficiary_id'] 				= $beneficiaryID;
+				$masterData['published'] 					= $aData['published_youtube'];
+				
+				$masterData['owner_organization_id'] 		= self::$Aula_OwnerOrgID;
+				$masterData['owner_organization_user_id'] 	= self::$Aula_OwnerOrgUserID;
+				
+	
+				if ($this->request->getPost("pAction") == "ADD")
+				{					
+					$masterData['owner_organization_id'] = self::$Aula_OwnerOrgID;
+					$masterData['owner_organization_user_id'] = self::$Aula_OwnerOrgUserID;
+					$masterData['sequence'] 					= $rowset[0]['sequence']+1;
+					$masterData['date_added'] = date('Y-m-d H:i:s');
+					
+					$projectTable->insert($masterData);	
+					$iMasterID = $projectTable->lastInsertValue;
+					$result['DBStatus'] = 'OK';					
+				}
+				else  if($this->request->getPost("pAction") == "EDIT")
+				{			
+					$iMasterID=$aData['MASTER_KEY_ID'];	
+					$masterData['date_updated'] = date('Y-m-d H:i:s');
+					
+					$projectTable->update($masterData,array("id=".$iMasterID));
+																		
+					$result['DBStatus'] = 'OK';
+				}
+				foreach($activeLocalesArray as $locale)
+				{
+					
+					$detailData = array();
+					$detailData['alias']						 = $aData['alias_'.$locale['id']];
+					$detailData['intro_text'] 					 = $aData['intro_text_'.$locale['id']];
+					
+					$rowset = $projectTableLocale->select(array("beneficiary_media_youtube_gallery_id=".$iMasterID,"locale_id=".$locale['id']));
+					$rowset = $rowset->toArray();
+					if(isset($rowset[0]['id']) && $rowset[0]['id'] > 0 ) 
+					{				
+						$detailData['date_updated'] = date('Y-m-d H:i:s');
+						$projectTableLocale->update($detailData,array("id=".$rowset[0]['id']));						
+					} 
+					else 
+					{
+						$detailData['locale_id'] 					 = $locale['id'];
+						$detailData['beneficiary_media_youtube_gallery_id']  = $iMasterID;						
+						$detailData['owner_organization_id'] = self::$Aula_OwnerOrgID;
+						$detailData['owner_organization_user_id'] = self::$Aula_OwnerOrgUserID;
+						$detailData['beneficiary_id']  		 		 = $beneficiaryID;
+						$projectTableLocale->insert($detailData);	
+					}
+					
+				}
+			}
+			else
+			{
+				$result['DBStatus'] = 'ERR';
+			}
+		}
+        else
+        {
+            $result['DBStatus'] = 'ERR';
+        }
+
+        $result = json_encode($result);
+        echo $result;
+        exit;
+    
+	}
+	public function listMediaYoutubeGalleryAction()
+	{
+		$activeLocalesArray = $this->AdminfunctionsPlugin()->getActiveLocales($this->dbAdapter);
+		$aColumns = array( '`id`','`alias`','`beneficiary`','`beneficiary_profile_family`','`youtube_link`','`media_status`','`published`');
+
+			$sTable = 'view_beneficiary_media_youtube_gallery';
+	
+		/* Indexed column (used for fast and accurate table cardinality) */
+		$sIndexColumn = "id";  
+		
+		$sWhere = " WHERE beneficiary_id = '".$this->request->getPost("beneficiaryID")."' ";
+		$sOrder = " ORDER BY $sIndexColumn DESC ";		
+		
+		/** SQL queries ** Get data to display **/ 
+		$sQuery = "
+			SELECT *
+			FROM   $sTable
+			$sWhere
+			$sOrder
+		"; 
+			
+		$optionalParameters	= array();        
+		$statement 			= $this->dbAdapter->createStatement($sQuery, $optionalParameters);        
+		$resultData			= $statement->execute();        
+		$resultSet 			= new ResultSet; 			   
+		$resultSet->initialize($resultData);        
+		$rowset 			= $resultSet->toArray();	
+		
+		$iTotal = count($rowset);
+				
+		/** Output **/
+		$output = array(
+			"sEcho" => intval(@$_GET['sEcho']),
+			"iTotalRecords" => $iTotal,
+			"aaData" => array()
+		);
+	
+		foreach($rowset as $aRow)
+		{
+			$row = array();
+			for ( $i=0 ; $i < count($aColumns); $i++ ) 
+			{
+				$aColumns[$i] = str_replace('`','',$aColumns[$i]);
+				switch($aColumns[$i]){
+					case 'version' :
+						$row[] = ($aRow[ $aColumns[$i] ]=="0") ? '-' : $aRow[ $aColumns[$i] ];
+						break;
+					case '' :						
+						// do nothing
+						break;
+					default :
+						 $row[] = $aRow[ $aColumns[$i] ];
+				}
+			}
+			$output['aaData'][] = $row; 
+		}
+		
+		echo json_encode( $output ); 
+		exit;
+	}	
+	public function getrecMediaYoutubeGalleryAction()
+    {
+        $activeLocalesArray = $this->AdminfunctionsPlugin()->getActiveLocales($this->dbAdapter);       
+		$recs=array();
+        if ($this->request->isPost()) {
+            
+			$iID = $this->request->getPost("KEY_ID");
+			
+			$projectTable = new TableGateway('beneficiary_media_youtube_gallery', $this->dbAdapter);
+			$rowset = $projectTable->select(array('id' => $iID));
+			$rowset = $rowset->toArray();			
+
+            foreach ($rowset as $record)
+			{
+             	foreach($activeLocalesArray as $locale)
+				{
+					$sQuery_locale 		= "SELECT alias,intro_text FROM beneficiary_media_youtube_gallery_locale WHERE locale_id = '".$locale['id']."' AND beneficiary_media_youtube_gallery_id = '".$record['id']."' ";
+					$statement_locale	= $this->dbAdapter->createStatement($sQuery_locale, $optionalParameters);        
+					$resultData_locale	= $statement_locale->execute();        
+					$resultSet_locale	= new ResultSet; 			   
+					$resultSet_locale->initialize($resultData_locale);        
+					$rowset_locale		= $resultSet_locale->toArray();
+					
+					$record['alias_'.$locale['id']] = $rowset_locale[0]['alias'];
+					$record['intro_text_'.$locale['id']] = $rowset_locale[0]['intro_text'];
+				}
+				$published=$record['published'];
+				unset($record['published']);
+				$record['published_youtube']=$published;
+				
+				$recs[] = $record;
+				$beneficiary_profile_family_id=$recs[0]['beneficiary_profile_family_id'];
+				unset($recs[0]['beneficiary_profile_family_id']);
+				$recs[0]['beneficiary_profile_family_id']=$beneficiary_profile_family_id;
+				
+			}
+            $result['data'] = $recs;
+            $result['recordsTotal'] = count($recs);
+            $result['DBStatus'] = 'OK';
+
+            $result = json_encode($result);
+            echo $result;
+            exit;
+        }
+    }		
+	public function deleteMediaYoutubeGalleryAction()
+    {        
+        if ($this->request->isPost()) {
+
+            $projectTable = new TableGateway('beneficiary_media_youtube_gallery', $this->dbAdapter);
+			$projectTableLocale = new TableGateway('beneficiary_media_youtube_gallery_locale', $this->dbAdapter);
+
+            if ($this->request->getPost("pAction") == "DELETE") {
+                $iMasterID = $this->request->getPost("KEY_ID");
+				
+				$projectTable->delete(array("id=".$iMasterID));
+				$projectTableLocale->delete(array("beneficiary_media_youtube_gallery_id=".$iMasterID));
+                $result['DBStatus'] = 'OK';
+                $result = json_encode($result);
+                echo $result;
+                exit;
+            }
+        }
+    }
+	/************* END YOUTUBE GALLERY ************/
+	/************* START RESEARCH NOTES ************/
+	public function saveResearcherNotesAction()
+	{    
+		$activeLocalesArray = $this->AdminfunctionsPlugin()->getActiveLocales($this->dbAdapter);       
+		$tableName = 'beneficiary_profile_research_notes';
+		$tableNameLocale = 'beneficiary_profile_research_notes_locale';
+        if ($this->request->isPost()) {
+
+			if ($this->request->getPost("beneficiaryID") > 0)
+			{
+				$beneficiaryID = $this->request->getPost("beneficiaryID");
+				$projectTable = new TableGateway($tableName,$this->dbAdapter);
+				$projectTableLocale = new TableGateway($tableNameLocale,$this->dbAdapter);
+				
+				$aData = json_decode($this->request->getPost("FORM_DATA"));
+				$aData = (array)$aData;			
+				$aData['has_small_business_idea'] = $this->setCheckboxValue($aData,'has_small_business_idea','Yes','No');
+				$masterData = array();
+				$masterData['support_type'] 						= $aData['support_type'];
+				$masterData['support_period'] 						= $aData['support_period'];
+				$masterData['expected_support_period'] 				= $aData['expected_support_period'];
+				$masterData['support_modality'] 					= $aData['support_modality'];
+				$masterData['information_source'] 					= $aData['information_source'];
+				$masterData['has_small_business_idea'] 				= $aData['has_small_business_idea'];
+				$masterData['beneficiary_id'] 						= $beneficiaryID;
+				
+				
+				$rowset = $projectTable->select(['beneficiary_id' => $beneficiaryID]);
+				$rowset = $rowset->toArray();
+				if($rowset[0]['id'] > 0)
+				{
+					$masterData['date_updated'] = date('Y-m-d H:i:s');
+					$projectTable->update($masterData,['id' => $rowset[0]['id']]);
+					$iMasterID = $rowset[0]['id'];
+				}
+				else
+				{
+					$masterData['beneficiary_id'] = $beneficiaryID;
+					$masterData['date_added'] = date('Y-m-d H:i:s');
+					
+					$masterData['owner_organization_id'] = self::$Aula_OwnerOrgID;
+					$masterData['owner_organization_user_id'] = self::$Aula_OwnerOrgUserID;
+					$projectTable->insert($masterData);
+					$iMasterID = $projectTable->lastInsertValue;
+				}
+				foreach($activeLocalesArray as $locale)
+				{
+					$detailData = array();
+					$detailData['small_business_idea_description'] 		= $aData['small_business_idea_description_'.$locale['id']];
+					$detailData['researcher_recommendations'] 			= $aData['researcher_recommendations_'.$locale['id']];
+					$detailData['researcher_name']						= $aData['researcher_name_'.$locale['id']];
+					$detailData['notes'] 								= $aData['notes_'.$locale['id']];
+					$detailData['committee_recommendations'] 			= $aData['committee_recommendations_'.$locale['id']];
+					$detailData['committee_member_name'] 				= $aData['committee_member_name_'.$locale['id']];
+					$detailData['committee_manager_name'] 				= $aData['committee_manager_name_'.$locale['id']];
+					
+					$rowset = $projectTableLocale->select([ "beneficiary_profile_research_notes_id" => $iMasterID, "locale_id" => $locale['id'] ]);
+					$rowset = $rowset->toArray();
+					if($rowset[0]['id'] > 0)
+					{
+						$detailData['date_updated'] = date('Y-m-d H:i:s');						
+						$projectTableLocale->update($detailData,['id' => $rowset[0]['id'] ]);
+					}
+					else
+					{							
+						$detailData['locale_id'] = $locale['id'];
+						$detailData['beneficiary_id'] = $beneficiaryID;
+						$detailData['beneficiary_profile_research_notes_id'] = $iMasterID;
+						$detailData['date_added'] = date('Y-m-d H:i:s');
+						
+						$detailData['owner_organization_id'] = self::$Aula_OwnerOrgID;
+						$detailData['owner_organization_user_id'] = self::$Aula_OwnerOrgUserID;
+					
+						$projectTableLocale->insert($detailData);	
+					}
+					
+				}				
+				$result['DBStatus'] = 'OK';
+			}
+			else
+			{
+				 $result['DBStatus'] = 'ERR';
+			}
+		}
+        else
+        {
+            $result['DBStatus'] = 'ERR';
+        }
+
+        $result = json_encode($result);
+        echo $result;
+        exit;
+	}
+	public function getResearchNotesAction()
+    {
+		$activeLocalesArray = $this->AdminfunctionsPlugin()->getActiveLocales($this->dbAdapter);   
+        $recs=array();
+        if ($this->request->isPost()) {            
+		
+			$beneficiaryID = $this->request->getPost("beneficiaryID");
+			$projectTable = new TableGateway('beneficiary_profile_research_notes', $this->dbAdapter);
+			$rowset = $projectTable->select(['beneficiary_id' => $beneficiaryID]);
+			$rowset = $rowset->toArray();
+			
+			foreach($activeLocalesArray as $locale)
+			{
+				$sQuery_locale 		= "SELECT small_business_idea_description,researcher_recommendations,researcher_name,notes,committee_recommendations,committee_member_name,committee_manager_name FROM beneficiary_profile_research_notes_locale WHERE locale_id = '".$locale['id']."' AND beneficiary_profile_research_notes_id = '".$rowset[0]['id']."' ";
+				$statement_locale	= $this->dbAdapter->createStatement($sQuery_locale, $optionalParameters);        
+				$resultData_locale	= $statement_locale->execute();        
+				$resultSet_locale	= new ResultSet; 			   
+				$resultSet_locale->initialize($resultData_locale);        
+				$rowset_locale		= $resultSet_locale->toArray();
+				$rowset[0]['small_business_idea_description_'.$locale['id']] = $rowset_locale[0]['small_business_idea_description'];
+				$rowset[0]['researcher_recommendations_'.$locale['id']] = $rowset_locale[0]['researcher_recommendations'];
+				$rowset[0]['researcher_name_'.$locale['id']] = $rowset_locale[0]['researcher_name'];
+				$rowset[0]['notes_'.$locale['id']] = $rowset_locale[0]['notes'];
+				$rowset[0]['committee_recommendations_'.$locale['id']] = $rowset_locale[0]['committee_recommendations'];
+				$rowset[0]['committee_member_name_'.$locale['id']] = $rowset_locale[0]['committee_member_name'];
+				$rowset[0]['committee_manager_name_'.$locale['id']] = $rowset_locale[0]['committee_manager_name'];
+			}		
+
+            foreach ($rowset as $record)
+                $recs[] = $record;
+
+            $result['data'] = $recs;
+            $result['recordsTotal'] = count($recs);
+            $result['DBStatus'] = 'OK';
+
+            $result = json_encode($result);
+            echo $result;
+            exit;
+        }
+    }
+	/************* END RESEARCH NOTES ************/
 
 }

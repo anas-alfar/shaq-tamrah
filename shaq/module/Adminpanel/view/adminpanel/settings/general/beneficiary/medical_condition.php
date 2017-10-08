@@ -81,7 +81,7 @@
 					<section class="col-md-6">
 						<div class="form-group">
 							<label class="control-label">Lab Results History<span>*</span></label>
-							<input type="text" class="form-control" name="lab_results_history_<?php echo $this->global_locale_id; ?>" id="lab_results_history_<?php echo $this->global_locale_id; ?>"/>
+							<textarea type="text" class="form-control" name="lab_results_history_<?php echo $this->global_locale_id; ?>" id="lab_results_history_<?php echo $this->global_locale_id; ?>"></textarea>
 						</div>
 					</section>
 					<section class="col-md-6">

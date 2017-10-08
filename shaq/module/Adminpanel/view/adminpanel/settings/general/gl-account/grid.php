@@ -124,9 +124,6 @@
 										<input type="text" class="form-control" placeholder="Filter Name" />
 									</th>
 									<th class="hasinput">
-										<input type="text" class="form-control" placeholder="Filter Sequence" >
-									</th>
-									<th class="hasinput">
 										<input type="text" class="form-control" placeholder="Filter Account Types" >
 									</th>
 									<th class="hasinput">
@@ -146,8 +143,7 @@
 					            <tr>
 									<th>Id</th>
 				                    <th data-class="expand">Name</th>
-				                    <th>Sequence</th>
-									<th data-hide="phone,tablet">Account Types</th>
+									<th >Account Types</th>
 									<th data-hide="phone,tablet">Transaction Types</th>
 									<th data-hide="phone,tablet">Current Balance</th>
 									<th data-hide="phone,tablet">Is Main</th>

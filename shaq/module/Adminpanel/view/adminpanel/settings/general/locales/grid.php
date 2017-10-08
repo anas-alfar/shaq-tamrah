@@ -73,7 +73,7 @@
 										<input type="text" class="form-control" placeholder="Filter Status" />
 									</th>
 									<th class="hasinput">
-										<input type="text" class="form-control" placeholder="Filter Country Id" />
+										<input type="text" class="form-control" placeholder="Filter Country" />
 									</th>
 									<th class="hasinput">
 										<select id="publishedfilter" name="publishedfilter"class="searchdrop">
@@ -89,7 +89,7 @@
 				                    <th>Name</th>
 				                    <th data-hide="phone">Locale Title</th>
 				                    <th data-hide="phone,tablet">Status</th>
-									<th data-hide="phone,tablet">Country Id</th>
+									<th data-hide="phone,tablet">Country</th>
 									<th data-hide="phone,tablet">Published</th>
 									<th data-hide="phone" class="action">Action</th>
 					            </tr>
